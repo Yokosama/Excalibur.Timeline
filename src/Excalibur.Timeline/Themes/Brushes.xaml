@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:o="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+    
+    <!--Timeline-->
+    <SolidColorBrush x:Key="Timeline.BackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource Timeline.BackgroundColor}" />
+
+    <SolidColorBrush x:Key="Timeline.SplitterBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource Timeline.SplitterColor}" />
+    
+    <!--TimelineHeader-->
+    <SolidColorBrush x:Key="TimelineHeader.BackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineHeader.BackgroundColor}" />
+
+    <!--TimelineScale-->
+    <SolidColorBrush x:Key="TimelineScale.BackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScale.BackgroundColor}" />   
+    <SolidColorBrush x:Key="TimelineScale.LineBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScale.LineColor}" />
+    
+</ResourceDictionary>
