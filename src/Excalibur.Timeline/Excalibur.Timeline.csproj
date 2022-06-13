@@ -3,6 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net462</TargetFrameworks>
     <UseWPF>true</UseWPF>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Images\PanCursorMouseDown.cur" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\PanCursorMouseDown.cur" />
+  </ItemGroup>
 
 </Project>

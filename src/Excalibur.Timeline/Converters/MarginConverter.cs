@@ -28,24 +28,39 @@ namespace Excalibur.Timeline.Converters
             try
             {
                 var v = double.Parse(value.ToString());
-                var mode = (MarginMode)Enum.Parse(typeof(MarginMode), parameter.ToString());
                 double left = 0d, right = 0d, top = 0d, bottom = 0d;
-                if ((mode & MarginMode.Left) != 0)
+ 
+                var parameters = parameter.ToString().Split('|');
+                foreach (var p in parameters)
                 {
-                    left = v;
+                    var mf = p.Split(',');
+                    if(mf.Length >= 1)
+                    {
+                        var mode = (MarginMode)Enum.Parse(typeof(MarginMode), mf[0].Trim());
+                        var offset = 0d;
+                        if (mf.Length >= 2 && double.TryParse(mf[1].Trim(), out offset))
+                        {
+                        }
+
+                        if (mode ==  MarginMode.Left)
+                        {
+                            left = v + offset;
+                        }
+                        if (mode == MarginMode.Right)
+                        {
+                            right = v + offset;
+                        }
+                        if (mode == MarginMode.Top)
+                        {
+                            top = v + offset;
+                        }
+                        if (mode == MarginMode.Bottom)
+                        {
+                            bottom = v + offset;
+                        }
+                    }
                 }
-                if ((mode & MarginMode.Right) != 0)
-                {
-                    right = v;
-                }
-                if ((mode & MarginMode.Top) != 0)
-                {
-                    top = v;
-                }
-                if ((mode & MarginMode.Bottom) != 0)
-                {
-                    bottom = v;
-                }
+
                 return new Thickness(left, top, right, bottom);
             }
             catch { }

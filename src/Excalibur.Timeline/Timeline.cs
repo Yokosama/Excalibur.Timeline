@@ -10,8 +10,11 @@ namespace Excalibur.Timeline
     /// <summary>
     /// 时间轴控件
     /// </summary>
+    [TemplatePart(Name = ElementTimelineScale, Type = typeof(TimelineScale))]
     public class Timeline : Control
     {
+        private const string ElementTimelineScale = "PART_TineimeScale";
+
         /// <summary>
         /// 左边区域，Track和Group的Header区域最小宽度
         /// </summary>

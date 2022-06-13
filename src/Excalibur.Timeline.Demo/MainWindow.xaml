@@ -5,14 +5,37 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Excalibur.Timeline.Demo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow"
+        Height="450"
+        Width="800"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:tl="clr-namespace:Excalibur.Timeline;assembly=Excalibur.Timeline">
+    <Window.Resources>
+        <Style TargetType="{x:Type tl:TimelineScale}" BasedOn="{StaticResource {x:Type tl:TimelineScale}}">
+            <Setter Property="ScaleMiddleLineHeight"
+                    Value="10" />
+            <Setter Property="ScaleNormalLineHeight"
+                    Value="5" />
+            <Setter Property="ScaleTextHeight"
+                    Value="16" />
+            <Setter Property="LastTimePosOffset"
+                    Value="40" />
+            <Setter Property="ZoomMode"
+                    Value="Fixed" />
+        </Style>
+    </Window.Resources>
     <Grid>
         <tl:Timeline >
             <tl:Timeline.AdditionalContent>
                 <Grid Background="LightBlue">
                 </Grid>
             </tl:Timeline.AdditionalContent>
+            <tl:Timeline.Items>
+                <x:Array Type="sys:String">
+                    <sys:String>1st item</sys:String>
+                    <sys:String>2nd item</sys:String>
+                </x:Array>
+            </tl:Timeline.Items>
         </tl:Timeline>
     </Grid>
 </Window>

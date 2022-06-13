@@ -26,6 +26,10 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly object Double1 = 1d;
         /// <summary>
+        /// 5d
+        /// </summary>
+        public static readonly object Double5 = 5d;
+        /// <summary>
         /// 10d
         /// </summary>
         public static readonly object Double10 = 10d;
@@ -38,9 +42,17 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly object Double15 = 15d;
         /// <summary>
+        /// 16d
+        /// </summary>
+        public static readonly object Double16 = 16d;
+        /// <summary>
         /// 20d
         /// </summary>
         public static readonly object Double20 = 20d;
+        /// <summary>
+        /// 20d
+        /// </summary>
+        public static readonly object Double40 = 40d;
         /// <summary>
         /// 1
         /// </summary>
@@ -49,6 +61,10 @@ namespace Excalibur.Timeline
         /// 10
         /// </summary>
         public static readonly object Int10 = 10;
+        /// <summary>
+        /// 100
+        /// </summary>
+        public static readonly object Int100 = 100;
         /// <summary>
         /// 1f
         /// </summary>

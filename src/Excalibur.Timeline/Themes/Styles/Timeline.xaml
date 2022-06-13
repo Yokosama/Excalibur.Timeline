@@ -38,7 +38,7 @@
                              
                             </Grid>
 
-                            <Border Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top'}" 
+                            <Border Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,-0.5'}" 
                                     VerticalAlignment="Top" 
                                     Height="1"
                                     Background="{StaticResource TimelineScale.LineBrush}"/>
@@ -46,10 +46,10 @@
                             <GridSplitter HorizontalAlignment="Stretch" Grid.Column="1" Background="{StaticResource Timeline.SplitterBrush}"/>
 
                             <!--TimlineScale-->
-                            <Grid Grid.Column="2"
-                                  Background="{StaticResource TimelineScale.BackgroundBrush}">
+                            <tl:TimelineScale Grid.Column="2" 
+                                              ItemsSource="{TemplateBinding Items}">
                                 
-                            </Grid>
+                            </tl:TimelineScale>
                         </Grid>
                     </Border>
                 </ControlTemplate>
