@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Excalibur.Timeline
 {
@@ -17,13 +17,13 @@ namespace Excalibur.Timeline
     [TemplatePart(Name = ElementHorizontalScrollBar, Type = typeof(ScrollBar))]
     [TemplatePart(Name = ElementVerticalScrollBar, Type = typeof(ScrollBar))]
     [TemplatePart(Name = ElementTimelineScalePanel, Type = typeof(TimelineScalePanel))]
-    //[TemplatePart(Name = ElementTimelinePointer, Type = typeof(TimelinePointer))]
+    [TemplatePart(Name = ElementTimelinePointers, Type = typeof(TimelinePointers))]
     public class TimelineScale : ItemsControl
     {
         private const string ElementHorizontalScrollBar = "PART_HorizontalScrollBar";
         private const string ElementVerticalScrollBar = "PART_VerticalScrollBar";
         private const string ElementTimelineScalePanel = "PART_TimelineScalePanel";
-        private const string ElementTimelinePointer = "PART_TimelinePointer";
+        private const string ElementTimelinePointers = "PART_TimelinePointers";
 
         /// <summary>
         /// 时间改变时的事件
@@ -212,18 +212,18 @@ namespace Excalibur.Timeline
         public double Duration
         {
             get { return (double)GetValue(DurationProperty); }
-            set 
+            set
             {
                 if (value <= MinDuration) value = MinDuration;
 
-                SetValue(DurationProperty, value); 
+                SetValue(DurationProperty, value);
             }
         }
         /// <summary>
         /// Duration属性
         /// </summary>
         public static readonly DependencyProperty DurationProperty =
-            DependencyProperty.Register(nameof(Duration), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double20, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault| FrameworkPropertyMetadataOptions.AffectsRender, OnDurationChanged));
+            DependencyProperty.Register(nameof(Duration), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double20, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender, OnDurationChanged));
 
         /// <summary>
         /// 用于计算时间之间的间隔
@@ -237,7 +237,7 @@ namespace Excalibur.Timeline
         /// Modulos属性
         /// </summary>
         public static readonly DependencyProperty ModulosProperty =
-            DependencyProperty.Register(nameof(Modulos), typeof(double[]), typeof(TimelineScale), new FrameworkPropertyMetadata(new double[] 
+            DependencyProperty.Register(nameof(Modulos), typeof(double[]), typeof(TimelineScale), new FrameworkPropertyMetadata(new double[]
             {
                 0.1d, 0.5d, 1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 250000, 500000
             }));
@@ -268,7 +268,7 @@ namespace Excalibur.Timeline
         /// FrameRate属性
         /// </summary>
         public static readonly DependencyProperty FrameRateProperty =
-            DependencyProperty.Register(nameof(FrameRate), typeof(int), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Int100,FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnFrameRateChanged));
+            DependencyProperty.Register(nameof(FrameRate), typeof(int), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Int100, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnFrameRateChanged));
 
         /// <summary>
         /// 当前时间
@@ -276,13 +276,19 @@ namespace Excalibur.Timeline
         public double CurrentTime
         {
             get { return (double)GetValue(CurrentTimeProperty); }
-            set { SetValue(CurrentTimeProperty, value); }
+            set
+            {
+                if (value < MinEffectiveTime) value = MinEffectiveTime;
+                else if (value > Duration) value = Duration;
+
+                SetValue(CurrentTimeProperty, value); 
+            }
         }
         /// <summary>
         /// CurrentTime属性
         /// </summary>
         public static readonly DependencyProperty CurrentTimeProperty =
-            DependencyProperty.Register(nameof(CurrentTime), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsMeasure, OnCurrentTimeChanged));
+            DependencyProperty.Register(nameof(CurrentTime), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender, OnCurrentTimeChanged));
 
         /// <summary>
         /// 0点时间的位置偏移
@@ -313,6 +319,48 @@ namespace Excalibur.Timeline
             DependencyProperty.Register(nameof(LastTimePosOffset), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double40, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
+        /// 拖拽时间指针或Clip的时候，自动移动
+        /// </summary>
+        public bool DisableAutoPanning
+        {
+            get { return (bool)GetValue(DisableAutoPanningProperty); }
+            set { SetValue(DisableAutoPanningProperty, value); }
+        }
+        /// <summary>
+        /// DisableAutoPanning属性
+        /// </summary>
+        public static readonly DependencyProperty DisableAutoPanningProperty =
+            DependencyProperty.Register(nameof(DisableAutoPanning), typeof(bool), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.False, OnDisableAutoPanningChanged));
+
+        /// <summary>
+        /// 边界自动移动的距离
+        /// </summary>
+        public double AutoPanEdgeDistance
+        {
+            get { return (double)GetValue(AutoPanEdgeDistanceProperty); }
+            set { SetValue(AutoPanEdgeDistanceProperty, value); }
+        }
+        /// <summary>
+        /// AutoPanEdgeDistance属性
+        /// </summary>
+        public static readonly DependencyProperty AutoPanEdgeDistanceProperty =
+            DependencyProperty.Register(nameof(AutoPanEdgeDistance), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double15));        
+        
+        /// <summary>
+        /// 边界自动移动的速度
+        /// </summary>
+        public double AutoPanSpeed
+        {
+            get { return (double)GetValue(AutoPanSpeedProperty); }
+            set { SetValue(AutoPanSpeedProperty, value); }
+        }
+        /// <summary>
+        /// AutoPanSpeed属性
+        /// </summary>
+        public static readonly DependencyProperty AutoPanSpeedProperty =
+            DependencyProperty.Register(nameof(AutoPanSpeed), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double5));
+
+        /// <summary>
         /// 当前时间的最小有效时间
         /// </summary>
         public double MinEffectiveTime { get; set; } = 0d;
@@ -339,6 +387,15 @@ namespace Excalibur.Timeline
 
         private double ViewWidth => ActualWidth;
 
+        /// <summary>
+        /// 当前时间的显示文本
+        /// </summary>
+        public string CurrentTimeText => TimeStep == TimeStepMode.Frames ? (CurrentTime * FrameRate).ToString("0") : CurrentTime.ToString("0.00");
+        /// <summary>
+        /// 当前有效时间的显示文本
+        /// </summary>
+        public string DurationText => TimeStep == TimeStepMode.Frames ? (Duration * FrameRate).ToString("0") : Duration.ToString("0.00");
+
         private double _snapInterval = 0.01f;
         /// <summary>
         /// 根据时间模式，四舍五入时间的间隔
@@ -348,7 +405,7 @@ namespace Excalibur.Timeline
             get { return Math.Max(_snapInterval, 0.001f); }
             set
             {
-                if(_snapInterval != value)
+                if (_snapInterval != value)
                 {
                     _snapInterval = Math.Max(_snapInterval, value);
                 }
@@ -375,6 +432,7 @@ namespace Excalibur.Timeline
         #endregion
 
         private TimelineScalePanel _itemsPanel;
+        private TimelinePointers _pointers;
 
         #region Render
         private double _timeInfoStart;
@@ -391,9 +449,19 @@ namespace Excalibur.Timeline
         #endregion
 
         #region Drag
-        private bool _dragStart = false; 
+        private bool _dragStart = false;
         private Point _dragStartPosition;
         private static Cursor _panCursor;
+
+        private DispatcherTimer _autoPanningTimer;
+        /// <summary>
+        /// 自动移动的间隔时间
+        /// </summary>
+        public double AutoPanningTickRate { get; set; } = 1;
+        /// <summary>
+        /// 是否正在自动移动
+        /// </summary>
+        public bool IsInAutoPanning { get; set; } = false;
         #endregion
 
         static TimelineScale()
@@ -429,8 +497,21 @@ namespace Excalibur.Timeline
             _horizontalBar = Template.FindName(ElementHorizontalScrollBar, this) as ScrollBar;
             _verticalBar = Template.FindName(ElementVerticalScrollBar, this) as ScrollBar;
             _itemsPanel = Template.FindName(ElementTimelineScalePanel, this) as TimelineScalePanel;
+            _pointers = Template.FindName(ElementTimelinePointers, this) as TimelinePointers;
 
-            if(_horizontalBar != null)_horizontalBar.Scroll += HorizontalBarScroll;
+            if (_horizontalBar != null) _horizontalBar.Scroll += HorizontalBarScroll;
+
+            OnDisableAutoPanningChanged(DisableAutoPanning);
+        }
+
+        /// <summary>
+        /// Override OnRenderSizeChanged
+        /// </summary>
+        /// <param name="sizeInfo"></param>
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+            RaiseTimeScaleChangedEvent();
         }
 
         /// <summary>
@@ -450,7 +531,7 @@ namespace Excalibur.Timeline
             var timeInfoHighMod = timeInfoInterval;
 
             var lowMod = 0.01d;
-            if(Modulos == null || Modulos.Length == 0)
+            if (Modulos == null || Modulos.Length == 0)
             {
                 Modulos = new double[] { 0.1d, 0.5d, 1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 250000, 500000 };
             }
@@ -458,7 +539,7 @@ namespace Excalibur.Timeline
             {
                 var count = ViewTime / Modulos[i];
                 if (ViewWidth / count > 50)
-                { 
+                {
                     timeInfoInterval = Modulos[i];
                     lowMod = i > 0 ? Modulos[i - 1] : lowMod;
                     timeInfoHighMod = i < Modulos.Length - 1 ? Modulos[i + 1] : timeInfoHighMod;
@@ -543,7 +624,7 @@ namespace Excalibur.Timeline
             {
                 if (ViewTimeMax > Duration + t)
                 {
-                    maximun = Math.Abs(ViewTimeMax - ViewTimeMin)- ViewTime;
+                    maximun = Math.Abs(ViewTimeMax - ViewTimeMin) - ViewTime;
                 }
                 else
                 {
@@ -571,6 +652,8 @@ namespace Excalibur.Timeline
             UpdateVerticalScrollBarValue();
             _horizontalBar.Track.Thumb.DragStarted += HorizontalBarThumbDragStarted;
             _horizontalBar.Track.Thumb.DragCompleted += HorizontalBarThumbDragCompleted;
+
+            if (_pointers != null) _pointers.UpdatePointersPosition();
         }
 
         private void TimelineScaleUnloaded(object sender, RoutedEventArgs e)
@@ -615,8 +698,9 @@ namespace Excalibur.Timeline
                     }
                     else
                     {
+                        var vt = ViewTime; // 先缓存当前的viewtime
                         ViewTimeMin = MinEffectiveTime;
-                        ViewTimeMax = Math.Abs(ViewTime);
+                        ViewTimeMax = Math.Abs(vt);
                         _hsbDragStart = false;
                     }
 
@@ -645,10 +729,11 @@ namespace Excalibur.Timeline
         {
             if (d is TimelineScale scale)
             {
-                // update TimelinePointer Duration position
+                scale._pointers.UpdateDurationPointerPosition(scale.TimeToPos(scale.Duration),
+                       scale.DurationText);
             }
-        }        
-        
+        }
+
         private static void OnFrameRateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is TimelineScale scale)
@@ -659,15 +744,24 @@ namespace Excalibur.Timeline
 
         private static void OnCurrentTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TimelineScale timeline)
+            if (d is TimelineScale scale && !scale.IsInAutoPanning)
             {
-                // update TimelinePointer current position
+                scale._pointers.UpdateCurrentTimePointerPosition(scale.TimeToPos(scale.CurrentTime),
+                      scale.CurrentTimeText);
+            }
+        }
+
+        private static void OnDisableAutoPanningChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is TimelineScale scale)
+            {
+                scale.OnDisableAutoPanningChanged(scale.DisableAutoPanning);
             }
         }
 
         private static void OnScaleLineBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if(d is TimelineScale scale)
+            if (d is TimelineScale scale)
             {
                 if (scale._scaleLinePen == null) scale._scaleLinePen = new Pen(scale.ScaleLineBrush, 1);
                 scale._scaleLinePen.Brush = scale.ScaleLineBrush;
@@ -684,7 +778,7 @@ namespace Excalibur.Timeline
                 scale.InvalidateVisual();
             }
         }
-        
+
         private static void OnItemsLineBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is TimelineScale scale)
@@ -694,7 +788,7 @@ namespace Excalibur.Timeline
                 scale.InvalidateVisual();
             }
         }
-        
+
         private static void OnItemsLineSecondaryBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is TimelineScale scale)
@@ -704,7 +798,7 @@ namespace Excalibur.Timeline
                 scale.InvalidateVisual();
             }
         }
-        
+
         private void UpdateVerticalScrollBarValue()
         {
             if (_itemsPanel == null || _verticalBar == null) return;
@@ -726,6 +820,70 @@ namespace Excalibur.Timeline
             RaiseEvent(args);
         }
 
+        private void OnDisableAutoPanningChanged(bool shouldDisable)
+        {
+            if (shouldDisable)
+            {
+                _autoPanningTimer?.Stop();
+            }
+            else if (_autoPanningTimer == null)
+            {
+                _autoPanningTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(AutoPanningTickRate),
+                    DispatcherPriority.Background, HandleAutoPanning, Dispatcher);
+            }
+            else
+            {
+                _autoPanningTimer.Interval = TimeSpan.FromMilliseconds(AutoPanningTickRate);
+                _autoPanningTimer.Start();
+            }
+        }
+
+        private void HandleAutoPanning(object sender, EventArgs e)
+        {
+            if (IsMouseOver && Mouse.LeftButton == MouseButtonState.Pressed && Mouse.Captured != null)
+            {
+                IsInAutoPanning = true;
+                Point mousePosition = Mouse.GetPosition(this);
+                double edgeDistance = AutoPanEdgeDistance;
+                double autoPanSpeed = Math.Min(AutoPanSpeed, AutoPanSpeed * AutoPanningTickRate);
+                double x = 0;
+
+                if (mousePosition.X <= edgeDistance)
+                {
+                    x -= autoPanSpeed;
+                }
+                else if (mousePosition.X >= ActualWidth - edgeDistance)
+                {
+                    x += autoPanSpeed;
+                }
+
+                if (x != 0 && (_dragPointer || _pointers.IsCurrentTimePointerDragging || _pointers.IsDurationPointerDragging))
+                {
+                    HorizontalDrag(-x);
+                    if (_dragPointer || _pointers.IsCurrentTimePointerDragging)
+                    {
+                        var time = PosToTime(Mouse.GetPosition(this).X);
+                        CurrentTime = SnapTime(time);
+                    }
+                    else if (_pointers.IsDurationPointerDragging)
+                    {
+                        var time = PosToTime(Mouse.GetPosition(this).X);
+                        Duration = SnapTime(time);
+                    }
+                    RaiseTimeScaleChangedEvent();
+                    InvalidateVisual();
+                }
+                else
+                {
+                    IsInAutoPanning = false;
+                }
+            }
+            else
+            {
+                IsInAutoPanning = false;
+            }
+        }
+
         /// <summary>
         /// Override OnMouseWheel 处理鼠标滚轮滚动时，缩放视图
         /// </summary>
@@ -745,7 +903,7 @@ namespace Excalibur.Timeline
             ViewTimeMin += diff;
             ViewTimeMax += diff;
 
-            if(ZoomMode == ZoomMode.Fixed && ViewTimeMin <= MinEffectiveViewTime)
+            if (ZoomMode == ZoomMode.Fixed && ViewTimeMin <= MinEffectiveViewTime)
             {
                 ViewTimeMin = MinEffectiveViewTime;
             }
@@ -763,10 +921,10 @@ namespace Excalibur.Timeline
             base.OnMouseLeftButtonDown(e);
 
             var pos = e.GetPosition(this);
-            if (pos.Y < ScaleLineAreaHeight && !_dragPointer) // 鼠标左键点击刻度线区域，设置当前时间
+            if (pos.Y < ScaleLineAreaHeight && pos.Y >= 0 && !_dragPointer) // 鼠标左键点击刻度线区域，设置当前时间
             {
                 _dragPointer = true;
-                CurrentTime = PosToTime(pos.X);
+                PosToCurrentTime(pos.X);
                 Mouse.Capture(this);
             }
             e.Handled = true;
@@ -799,24 +957,22 @@ namespace Excalibur.Timeline
         {
             base.OnPreviewMouseUp(e);
 
-            if (_dragPointer)
+            if (_dragPointer || _pointers.IsCurrentTimePointerDragging)
             {
-                _dragPointer = false; 
-                // TODO:
-                //_pointer.DraggingPointer = false;
+                _dragPointer = false;
+                _pointers.EndPointersDragging();
             }
 
             if (_dragStart)
             {
-                if (e.MouseDevice.Captured == this)
-                    ReleaseMouseCapture();
-
                 _dragStart = false;
                 Cursor = Cursors.Arrow;
 
                 _dragStartPosition.X = 0;
                 _dragStartPosition.Y = 0;
             }
+            if (e.MouseDevice.Captured == this)
+                ReleaseMouseCapture();
         }
 
         /// <summary>
@@ -830,10 +986,8 @@ namespace Excalibur.Timeline
             Point pos = e.GetPosition(this);
             if (_dragPointer)
             {
-                // if (!_pointer.DraggingPointer) _pointer.DraggingPointer = true;
-                var time = PosToTime(pos.X);
-                CurrentTime = SnapTime(time);
-
+                if (!_pointers.IsCurrentTimePointerDragging) _pointers.IsCurrentTimePointerDragging = true;
+                PosToCurrentTime(pos.X);
             }
             if (_dragStart)
             {
@@ -842,23 +996,14 @@ namespace Excalibur.Timeline
                 {
                     var delta = pos - _dragStartPosition;
 
-                    var t = (Math.Abs(delta.X) / ViewWidth) * ViewTime;
+                    HorizontalDrag(delta.X);
 
-                    var viewTimeMin = ViewTimeMin + (delta.X > 0 ? -t : t);
-                    if (ZoomMode == ZoomMode.Fixed && viewTimeMin <= MinEffectiveViewTime)
-                    {
-                        return;
-                    }
-                    ViewTimeMin = viewTimeMin;
-                    ViewTimeMax += delta.X > 0 ? -t : t;
+                    VerticalDrag(delta.Y);
+
                     _dragStartPosition = pos;
 
                     InvalidateVisual();
                     RaiseTimeScaleChangedEvent();
-
-                    var yoffset = _verticalBar.Value - delta.Y;
-                    if (yoffset <= 0) yoffset = 0; else if (yoffset > _verticalBar.Maximum) yoffset = _verticalBar.Maximum;
-                    _verticalBar.Value = yoffset;
                 }
                 else
                 {
@@ -869,6 +1014,31 @@ namespace Excalibur.Timeline
                     _dragStartPosition.Y = 0;
                 }
             }
+        }
+
+        private void VerticalDrag(double delta)
+        {
+            var yoffset = _verticalBar.Value - delta;
+            if (yoffset <= 0)
+                yoffset = 0;
+            else if (yoffset > _verticalBar.Maximum)
+                yoffset = _verticalBar.Maximum;
+            _verticalBar.Value = yoffset;
+        }
+
+        private void HorizontalDrag(double delta)
+        {
+            var t = (Math.Abs(delta) / ViewWidth) * ViewTime;
+            var viewTime = ViewTime;
+            var viewTimeMin = ViewTimeMin + (delta > 0 ? -t : t);
+            if (ZoomMode == ZoomMode.Fixed && viewTimeMin <= MinEffectiveViewTime)
+            {
+                ViewTimeMin = MinEffectiveViewTime;
+                ViewTimeMax = ViewTimeMin + viewTime;
+                return;
+            }
+            ViewTimeMin = viewTimeMin;
+            ViewTimeMax += delta > 0 ? -t : t;
         }
 
         /// <summary>
@@ -889,6 +1059,48 @@ namespace Excalibur.Timeline
         public double PosToTime(double pos)
         {
             return (pos - TimePosOffset) / ViewWidth * ViewTime + ViewTimeMin;
+        }
+
+        /// <summary>
+        /// 界面上的位置转换为当前时间
+        /// </summary>
+        /// <param name="pos">界面上的位置</param>
+        public void PosToCurrentTime(double pos)
+        {
+            if (IsInAutoPanning) return;
+            var time = PosToTime(pos);
+            time = SnapTime(time);
+
+            CurrentTime = time;
+        }
+
+        /// <summary>
+        /// 界面上的位置转换为当前有效区间时间
+        /// </summary>
+        /// <param name="pos">界面上的位置</param>
+        public void PosToDuration(double pos)
+        {
+            if (IsInAutoPanning) return;
+            var time = PosToTime(pos);
+            Duration = SnapTime(time);
+        }
+
+        /// <summary>
+        /// 最小时间转换为界面位置
+        /// </summary>
+        /// <returns></returns>
+        public double MinEffectiveTimeToPos()
+        {
+            return TimeToPos(MinEffectiveTime);
+        }
+
+        /// <summary>
+        /// 有效时间转换为界面位置
+        /// </summary>
+        /// <returns></returns>
+        public double DurationToPos()
+        {
+            return TimeToPos(Duration);
         }
 
         /// <summary>

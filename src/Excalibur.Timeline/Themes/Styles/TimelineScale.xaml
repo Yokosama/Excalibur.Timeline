@@ -22,7 +22,7 @@
                                                IsItemsHost="True"
                                                Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,1'}" />
 
-                        <!--<tl:TimelinePointer x:Name="PART_TimelinePointer"/>-->
+                        <tl:TimelinePointers x:Name="PART_TimelinePointers"/>
 
                         <ScrollBar x:Name="PART_HorizontalScrollBar"
                                    Orientation="Horizontal"

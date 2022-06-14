@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 namespace Excalibur.Timeline
 {
@@ -72,6 +73,14 @@ namespace Excalibur.Timeline
         /// <summary>
         /// 10f
         /// </summary>
-        public static readonly object Float10 = 10f;
+        public static readonly object Float10 = 10f;  
+        /// <summary>
+        /// Point(0,0)
+        /// </summary>
+        public static readonly object Point0 = new Point();
+        /// <summary>
+        /// Rect(0,0,0,0)
+        /// </summary>
+        public static readonly object Rect0 = new Rect();
     }
 }

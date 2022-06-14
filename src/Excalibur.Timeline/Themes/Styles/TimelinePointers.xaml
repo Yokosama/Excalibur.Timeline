@@ -1,0 +1,108 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:tl="clr-namespace:Excalibur.Timeline"
+                    xmlns:cvrts="clr-namespace:Excalibur.Timeline.Converters">
+
+    <cvrts:MarginConverter x:Key="MarginConverter" />
+
+    <Style x:Key="CurrentTimePointerThumb"
+           TargetType="Thumb">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Polygon Fill="Green"
+                             Points="1,0 1,16 6,22 11,16 11,0"
+                             StrokeThickness="0" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DurationPointerThumb"
+           TargetType="Thumb">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Polygon Fill="Red"
+                             Points="1,0 1,16 6,22 11,16 11,0"
+                             StrokeThickness="0" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type tl:TimelinePointers}">
+        <Setter Property="CurrentTimePointerPositionOffset"
+                Value="5.5" />
+        <Setter Property="DurationPointerPositionOffset"
+                Value="5.5" />
+        <Setter Property="CurrentTimeBrush"
+                Value="Green" />
+        <Setter Property="MinEffectiveTimeEdgeLineBrush"
+                Value="Green" />
+        <Setter Property="DurationEdgeLineBrush"
+                Value="Red" />
+        <Setter Property="TimeTextFontBrush"
+                Value="Blue" />
+        <Setter Property="TimeTextBox"
+                Value="14,15,8,4" />
+        <Setter Property="TimeTextPosition"
+                Value="4,3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type tl:TimelinePointers}">
+                    <Canvas x:Name="PART_Canvas"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Left"
+                            Background="Transparent"
+                            SnapsToDevicePixels="True">
+                        <Thumb Canvas.Top="0"
+                               x:Name="PART_DurationPointer"
+                               Canvas.Left="{TemplateBinding DurationPointerPosition}"
+                               Style="{StaticResource DurationPointerThumb}">
+                        </Thumb>
+                        <Thumb Canvas.Top="0"
+                               x:Name="PART_CurrentTimePointer"
+                               Canvas.Left="{TemplateBinding CurrentTimePointerPosition}"
+                               Style="{StaticResource CurrentTimePointerThumb}">
+                        </Thumb>
+
+                        <Rectangle x:Name="minEffectiveTimeEdge"
+                                   Margin="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}},
+                            Converter={StaticResource MarginConverter}, ConverterParameter='Top,1'}"
+                                   Height="{TemplateBinding Height}"
+                                   Width="{TemplateBinding MinEffectiveTimeEdgeWidth}"
+                                   Fill="{TemplateBinding MinEffectiveTimeEdgeBrush}"
+                                   HorizontalAlignment="Left" 
+                                   IsHitTestVisible="False"/>
+
+                        <Rectangle x:Name="durationEdge"
+                                   Margin="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}},
+                            Converter={StaticResource MarginConverter}, ConverterParameter='Top,1'}"
+                                   Height="{TemplateBinding Height}"
+                                   Width="{TemplateBinding DurationEdgeWidth}"
+                                   Fill="{TemplateBinding MinEffectiveTimeEdgeBrush}"
+                                   HorizontalAlignment="Right"
+                                   IsHitTestVisible="False"/>
+                    </Canvas>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="MinEffectiveTimeEdgeWidth"
+                                 Value="0">
+                            <Setter Property="Visibility"
+                                    TargetName="minEffectiveTimeEdge"
+                                    Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="DurationEdgeWidth"
+                                 Value="0">
+                            <Setter Property="Visibility"
+                                    TargetName="durationEdge"
+                                    Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
