@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:tl="clr-namespace:Excalibur.Timeline">
+
+    <Style TargetType="{x:Type tl:TimelineTriggerClip}">
+        <Setter Property="Height"
+                Value="25" />
+
+        <Setter Property="Background"
+                Value="Blue" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="Cursor"
+                Value="SizeAll" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type tl:TimelineTriggerClip}">
+                    <Border Width="5"
+                            Background="{TemplateBinding Background}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="FoldTimelineTriggerClipClip"
+           TargetType="{x:Type tl:TimelineTriggerClip}"
+           BasedOn="{StaticResource {x:Type tl:TimelineTriggerClip}}">
+        <Setter Property="Background"
+                Value="Gray" />
+    </Style>
+
+    <Style TargetType="{x:Type tl:TimelineDurationClip}">
+        <Setter Property="Height"
+                Value="25" />
+        <Setter Property="MinWidth"
+                Value="5" />
+        <Setter Property="Background"
+                Value="Violet" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="Cursor"
+                Value="SizeAll" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type tl:TimelineDurationClip}">
+                    <Border Width="{TemplateBinding Width}"
+                            Background="{TemplateBinding Background}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="FoldTimelineDurationClip"
+           TargetType="{x:Type tl:TimelineDurationClip}"
+           BasedOn="{StaticResource {x:Type tl:TimelineDurationClip}}">
+        <Setter Property="Background"
+                Value="Gray" />
+    </Style>
+
+</ResourceDictionary>

@@ -1,7 +1,6 @@
 ﻿using Excalibur.Timeline.Helper;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -411,6 +410,11 @@ namespace Excalibur.Timeline
                 }
             }
         }
+
+        /// <summary>
+        /// 是否正在批量更新
+        /// </summary>
+        public bool IsBulkUpdatingItems { get; private set; }
 
         #region ScrollBar
         /// <summary>
@@ -1141,6 +1145,16 @@ namespace Excalibur.Timeline
         {
             return (Math.Round(time / SnapInterval) * SnapInterval);
         }
+
+        #region Selection
+        /// <summary>
+        /// 取消所有选中项
+        /// </summary>
+        public void UnselectAll()
+        {
+
+        }
+        #endregion
     }
 
     /// <summary>
