@@ -4,22 +4,22 @@ namespace Excalibur.Timeline.Demo
 {
     public interface IDirector
     {
-        public double Duration { get; set; }
-        public double CurrentTime { get; set; }
-        public ObservableCollection<IDirectable> Items { get; set; }
+        double Duration { get; set; }
+        double CurrentTime { get; set; }
+        ObservableCollection<IDirectable> Items { get; set; }
     }
 
     public interface IDirectable
     {
-        public string Name { get; set; }
-        public bool IsLocked { get; set; }
-        public bool IsDisabled { get; set; }
+        string Name { get; set; }
+        bool IsLocked { get; set; }
+        bool IsDisabled { get; set; }
     }
 
     public interface IClip
     {
-        public string Name { get; set; }
-        public double StartTime { get; set; }
+        string Name { get; set; }
+        double StartTime { get; set; }
     }
 
     public class CutSceneGroup : IDirectable
@@ -27,10 +27,8 @@ namespace Excalibur.Timeline.Demo
         public string Name { get; set; }
         public ObservableCollection<IDirectable> Items { get; set; } = new ObservableCollection<IDirectable>();
         public bool IsLocked { get; set; }
-        public bool IsDisabled
-        {
-            get; set;
-        }
+        public bool IsDisabled { get; set; }
+        public bool IsExpanded { get; set; } = true;
     }
 
     public class CutSceneTrack : IDirectable

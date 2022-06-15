@@ -134,7 +134,14 @@ namespace Excalibur.Timeline
         {
             base.OnApplyTemplate();
             Scale = this.TryFindParent<TimelineScale>();
+            if(Scale != null)
+                Scale.TimeScaleChanged += TimeScaleChanged;
             _owner = this.TryFindParent<TimelineTrackCanvas>();
+            UpdatePosition();
+        }
+
+        private void TimeScaleChanged(object sender, RoutedEventArgs e)
+        {
             UpdatePosition();
         }
 

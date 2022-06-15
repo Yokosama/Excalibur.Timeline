@@ -11,7 +11,8 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:tl="clr-namespace:Excalibur.Timeline;assembly=Excalibur.Timeline">
     <Window.Resources>
-        <Style TargetType="{x:Type tl:TimelineScale}" BasedOn="{StaticResource {x:Type tl:TimelineScale}}">
+        <Style TargetType="{x:Type tl:TimelineScale}"
+               BasedOn="{StaticResource {x:Type tl:TimelineScale}}">
             <Setter Property="ScaleMiddleLineHeight"
                     Value="10" />
             <Setter Property="ScaleNormalLineHeight"
@@ -31,18 +32,87 @@
                     Value="5.6" />
         </Style>
     </Window.Resources>
-    <Grid>
-        <tl:Timeline Margin="10">
+    <Grid Background="#7F808080">
+        <Grid.Resources>
+
+            <local:TimelineScaleItemSelector x:Key="TimelineScaleItemSelector" />
+            <local:TimelineTrackItemSelector x:Key="TimelineTrackItemSelector" />
+
+            <DataTemplate x:Key="ContentTemlate">
+                <ContentControl Content="{Binding}" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="TriggerClipTemplate"
+                          DataType="{x:Type local:TriggerClip}">
+                <tl:TimelineTriggerClip />
+            </DataTemplate>
+
+            <DataTemplate x:Key="DurationClipTemplate"
+                          DataType="{x:Type local:DurationClip}">
+                <tl:TimelineDurationClip Duration="{Binding Duration}" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="CutSceneTrackTemplate"
+                          DataType="{x:Type local:CutSceneTrack}">
+                <tl:TimelineTrack ItemsSource="{Binding Items}"
+                                  ItemTemplate="{x:Null}"
+                                  ItemTemplateSelector="{StaticResource TimelineTrackItemSelector}" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="CutSceneFoldTrackTemplate"
+                          DataType="{x:Type local:CutSceneTrack}">
+                <tl:TimelineTrack ItemsSource="{Binding Items}"
+                                  ItemTemplate="{x:Null}"
+                                  Style="{StaticResource FoldTrack}">
+                    <tl:TimelineTrack.Resources>
+                        <DataTemplate DataType="{x:Type local:TriggerClip}">
+                            <tl:TimelineTriggerClip Style="{StaticResource FoldTimelineTriggerClipClip}" />
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type local:DurationClip}">
+                            <tl:TimelineDurationClip Duration="{Binding Duration}"
+                                                     Style="{StaticResource FoldTimelineDurationClip}" />
+                        </DataTemplate>
+
+                    </tl:TimelineTrack.Resources>
+                </tl:TimelineTrack>
+            </DataTemplate>
+
+            <DataTemplate x:Key="CutSceneGroupTemplate"
+                          DataType="{x:Type local:CutSceneGroup}">
+                <tl:TimelineGroup ItemsSource="{Binding Items}"
+                                  TrackTemplate="{StaticResource CutSceneTrackTemplate}"
+                                  FoldTrackTemplate="{StaticResource CutSceneFoldTrackTemplate}"
+                                  IsExpanded="{Binding IsExpanded}"
+                                  Locked="{Binding IsLocked}"
+                                  Disabled="{Binding IsDisabled}" />
+            </DataTemplate>
+
+            <Style TargetType="{x:Type tl:TimelineTrackItemContainer}"
+                   BasedOn="{StaticResource {x:Type tl:TimelineTrackItemContainer}}">
+                <Setter Property="CurrentTime"
+                        Value="{Binding StartTime}" />
+            </Style>
+
+            <Style TargetType="{x:Type tl:TimelineScale}"
+                   BasedOn="{StaticResource {x:Type tl:TimelineScale}}">
+                <Setter Property="ItemTemplate"
+                        Value="{x:Null}" />
+                <Setter Property="ItemTemplateSelector"
+                        Value="{StaticResource TimelineScaleItemSelector}" />
+            </Style>
+
+        </Grid.Resources>
+        <tl:Timeline Margin="10"
+                     Items="{Binding CutScene.Items}">
+            <tl:Timeline.Resources>
+
+            </tl:Timeline.Resources>
+
             <tl:Timeline.AdditionalContent>
                 <Grid Background="LightBlue">
                 </Grid>
             </tl:Timeline.AdditionalContent>
-            <tl:Timeline.Items>
-                <x:Array Type="sys:String">
-                    <sys:String>1st item</sys:String>
-                    <sys:String>2nd item</sys:String>
-                </x:Array>
-            </tl:Timeline.Items>
         </tl:Timeline>
     </Grid>
 </Window>

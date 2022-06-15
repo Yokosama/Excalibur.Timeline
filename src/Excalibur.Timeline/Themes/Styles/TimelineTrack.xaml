@@ -3,7 +3,7 @@
                     xmlns:tl="clr-namespace:Excalibur.Timeline">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/TimelineClips.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Styles/TimelineClips.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <DataTemplate x:Key="DefaultTimelineTrackItemTemplate">

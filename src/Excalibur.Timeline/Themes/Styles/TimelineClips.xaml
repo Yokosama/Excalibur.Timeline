@@ -5,7 +5,8 @@
     <Style TargetType="{x:Type tl:TimelineTriggerClip}">
         <Setter Property="Height"
                 Value="25" />
-
+        <Setter Property="Width"
+                Value="5" />
         <Setter Property="Background"
                 Value="Blue" />
         <Setter Property="BorderThickness"
@@ -15,7 +16,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineTriggerClip}">
-                    <Border Width="5"
+                    <Border Width="{TemplateBinding Width}"
                             Background="{TemplateBinding Background}" />
                 </ControlTemplate>
             </Setter.Value>
@@ -26,7 +27,7 @@
            TargetType="{x:Type tl:TimelineTriggerClip}"
            BasedOn="{StaticResource {x:Type tl:TimelineTriggerClip}}">
         <Setter Property="Background"
-                Value="Gray" />
+                Value="#7F808080" />
     </Style>
 
     <Style TargetType="{x:Type tl:TimelineDurationClip}">
@@ -54,7 +55,7 @@
            TargetType="{x:Type tl:TimelineDurationClip}"
            BasedOn="{StaticResource {x:Type tl:TimelineDurationClip}}">
         <Setter Property="Background"
-                Value="Gray" />
+                Value="#7F808080" />
     </Style>
 
 </ResourceDictionary>

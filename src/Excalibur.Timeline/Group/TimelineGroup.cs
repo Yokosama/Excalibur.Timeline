@@ -69,18 +69,32 @@ namespace Excalibur.Timeline
             DependencyProperty.Register(nameof(IsExpanded), typeof(bool), typeof(TimelineGroup), new FrameworkPropertyMetadata(BoxValue.True));
 
         /// <summary>
+        /// 子物体模板
+        /// </summary>
+        public DataTemplate TrackTemplate
+        {
+            get { return (DataTemplate)GetValue(TrackTemplateProperty); }
+            set { SetValue(TrackTemplateProperty, value); }
+        }
+        /// <summary>
+        /// TrackTemplate属性
+        /// </summary>
+        public static readonly DependencyProperty TrackTemplateProperty =
+            DependencyProperty.Register(nameof(TrackTemplate), typeof(DataTemplate), typeof(TimelineGroup));
+
+        /// <summary>
         /// IsExpanded=false，折叠后的子物体模板
         /// </summary>
-        public DataTemplate FoldItemTemplate
+        public DataTemplate FoldTrackTemplate
         {
-            get { return (DataTemplate)GetValue(FoldItemTemplateProperty); }
-            set { SetValue(FoldItemTemplateProperty, value); }
+            get { return (DataTemplate)GetValue(FoldTrackTemplateProperty); }
+            set { SetValue(FoldTrackTemplateProperty, value); }
         }
         /// <summary>
         /// FoldTrackTemplate属性
         /// </summary>
-        public static readonly DependencyProperty FoldItemTemplateProperty =
-            DependencyProperty.Register(nameof(FoldItemTemplate), typeof(DataTemplate), typeof(TimelineGroup));
+        public static readonly DependencyProperty FoldTrackTemplateProperty =
+            DependencyProperty.Register(nameof(FoldTrackTemplate), typeof(DataTemplate), typeof(TimelineGroup));
 
         static TimelineGroup()
         {

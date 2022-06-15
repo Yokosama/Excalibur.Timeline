@@ -45,6 +45,16 @@ namespace Excalibur.Timeline
             base.OnApplyTemplate();
 
             _container = this.TryFindParent<TimelineTrackItemContainer>();
+            if(_container != null && _container.Scale != null)
+            {
+                _container.Scale.TimeScaleChanged += TimeScaleChanged;
+            }
+            UpdateDuration();
+        }
+
+        private void TimeScaleChanged(object sender, RoutedEventArgs e)
+        {
+            UpdateDuration();
         }
 
         private static void OnDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

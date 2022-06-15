@@ -44,7 +44,8 @@ namespace Excalibur.Timeline.Demo
                             Items = new ObservableCollection<IClip>
                             {
                                 new TriggerClip(2),
-                                new TriggerClip(6),
+                                new TriggerClip(6),    
+                                new DurationClip(2, 3),
                                 new TriggerClip(10.5)
                             }
                         },
@@ -52,12 +53,14 @@ namespace Excalibur.Timeline.Demo
                 },
                 new CutSceneGroup
                 {
+                    IsExpanded=false,
                     Items = new ObservableCollection<IDirectable>()
                     {
                         new CutSceneTrack
                         {
                             Items = new ObservableCollection<IClip>
                             {
+                                new DurationClip(2, 3),
                                 new TriggerClip(3),
                             }
                         },

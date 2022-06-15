@@ -2,9 +2,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tl="clr-namespace:Excalibur.Timeline">
 
+
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/TimelineTrack.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Styles/TimelineTrack.xaml" />
     </ResourceDictionary.MergedDictionaries>
+   
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
     <DataTemplate x:Key="DefaultTimelineGroupItemTemplate">
         <tl:TimelineTrack />
@@ -22,20 +25,28 @@
                 Value="#CC849193" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
-        <Setter Property="ItemTemplate"
+        <Setter Property="TrackTemplate"
                 Value="{StaticResource DefaultTimelineGroupItemTemplate}" />
-        <Setter Property="FoldItemTemplate"
+        <Setter Property="FoldTrackTemplate"
                 Value="{StaticResource DefaultTimelineGroupFoldItemTemplate}" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"
+                                Margin="0,20,0,5"
+                                IsItemsHost="True" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemTemplate"
+                Value="{Binding TrackTemplate, RelativeSource={RelativeSource Mode=Self}}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineGroup}">
                     <Grid Background="{TemplateBinding Background}"
                           Visibility="{TemplateBinding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"
                           x:Name="container">
-                        <StackPanel Orientation="Vertical"
-                                    Margin="0,20,0,5"
-                                    x:Name="itemsHost"
-                                    IsItemsHost="True"/>
+                        <ItemsPresenter />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected"
@@ -46,20 +57,18 @@
                         <Trigger Property="IsExpanded"
                                  Value="False">
                             <Setter Property="ItemTemplate"
-                                    Value="{Binding FoldTrackTemplate, RelativeSource={RelativeSource TemplateParent}}" />
+                                    Value="{Binding FoldTrackTemplate, RelativeSource={RelativeSource Mode=Self}}" />
                             <Setter Property="Visibility"
                                     TargetName="container"
                                     Value="Visible" />
-                            <Setter Property="Margin"
-                                    TargetName="itemsHost"
-                                    Value="0,0,0,5" />
                             <Setter Property="IsEnabled"
                                     TargetName="container"
                                     Value="False" />
                             <Setter Property="ItemsPanel">
                                 <Setter.Value>
                                     <ItemsPanelTemplate>
-                                        <Grid />
+                                        <Grid IsItemsHost="True"
+                                              Margin="0,0,0,5" />
                                     </ItemsPanelTemplate>
                                 </Setter.Value>
                             </Setter>

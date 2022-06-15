@@ -3,13 +3,23 @@
                     xmlns:tl="clr-namespace:Excalibur.Timeline"
                     xmlns:cvrts="clr-namespace:Excalibur.Timeline.Converters">
 
-    <cvrts:MarginConverter x:Key="MarginConverter" />
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Styles/TimelineTrack.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
+    <cvrts:MarginConverter x:Key="MarginConverter" />
+    
+    <DataTemplate x:Key="DefaultTimelineScaleItemTemplate">
+        <tl:TimelineTrack />
+    </DataTemplate>
+    
     <Style TargetType="{x:Type tl:TimelineScale}">
         <Setter Property="SnapsToDevicePixels"
                 Value="True" />
         <Setter Property="ClipToBounds"
-                Value="True" />
+                Value="True" />    
+        <Setter Property="ItemTemplate"
+                Value="{StaticResource DefaultTimelineScaleItemTemplate}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineScale}">

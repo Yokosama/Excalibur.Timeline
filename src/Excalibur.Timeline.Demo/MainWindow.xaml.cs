@@ -23,6 +23,7 @@ namespace Excalibur.Timeline.Demo
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowVM();
         }
     }
 }
