@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Excalibur.Timeline.Helper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -344,8 +345,7 @@ namespace Excalibur.Timeline
         /// AutoPanEdgeDistance属性
         /// </summary>
         public static readonly DependencyProperty AutoPanEdgeDistanceProperty =
-            DependencyProperty.Register(nameof(AutoPanEdgeDistance), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double15));        
-        
+            DependencyProperty.Register(nameof(AutoPanEdgeDistance), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double10));        
         /// <summary>
         /// 边界自动移动的速度
         /// </summary>
@@ -445,7 +445,7 @@ namespace Excalibur.Timeline
         #endregion
 
         #region Pointer
-        private bool _dragPointer = false;
+        private bool _dragCurrentTimePointer = false;
         #endregion
 
         #region Drag
@@ -457,7 +457,7 @@ namespace Excalibur.Timeline
         /// <summary>
         /// 自动移动的间隔时间
         /// </summary>
-        public double AutoPanningTickRate { get; set; } = 1;
+        public double AutoPanningTickRate { get; set; } = 5;
         /// <summary>
         /// 是否正在自动移动
         /// </summary>
@@ -549,7 +549,8 @@ namespace Excalibur.Timeline
 
             var doFrames = TimeStep == TimeStepMode.Frames;
             var timeStep = doFrames ? (1f / FrameRate) : lowMod;
-
+            var decimalPlaces = timeStep.GetDecimalPlaces();
+            decimalPlaces = decimalPlaces == 0 ? 10 : (int)Math.Pow(10, decimalPlaces);
             _timeInfoStart = (double)Math.Floor(ViewTimeMin / timeInfoInterval) * timeInfoInterval;
             _timeInfoEnd = (double)Math.Ceiling(ViewTimeMax / timeInfoInterval) * timeInfoInterval;
             _timeInfoStart = Math.Round(_timeInfoStart * 10) / 10;
@@ -561,7 +562,7 @@ namespace Excalibur.Timeline
             for (var i = _timeInfoStart; i <= _timeInfoEnd; i += timeInfoInterval)
             {
                 var posX = TimeToPos(i);
-                var rounded = Math.Round(i * 10) / 10;
+                var rounded = Math.Round(i * decimalPlaces) / decimalPlaces;
                 _middleLinePositions.Add(rounded);
 
                 var start = new Point(posX, ScaleLineAreaHeight);
@@ -578,7 +579,7 @@ namespace Excalibur.Timeline
                 for (double i = _timeInfoStart, j = _timeInfoStart; i <= _timeInfoEnd; i += timeStep, j += timeInfoInterval)
                 {
                     var posX = TimeToPos(i);
-                    var rounded = Math.Round(i * 10) / 10;
+                    var rounded = Math.Round(i * decimalPlaces) / decimalPlaces;
                     if (_middleLinePositions.Contains(rounded))
                     {
                         continue;
@@ -731,6 +732,11 @@ namespace Excalibur.Timeline
             {
                 scale._pointers.UpdateDurationPointerPosition(scale.TimeToPos(scale.Duration),
                        scale.DurationText);
+
+                if(scale.CurrentTime >= scale.Duration)
+                {
+                    scale.CurrentTime = scale.Duration;
+                }
             }
         }
 
@@ -840,45 +846,68 @@ namespace Excalibur.Timeline
 
         private void HandleAutoPanning(object sender, EventArgs e)
         {
-            if (IsMouseOver && Mouse.LeftButton == MouseButtonState.Pressed && Mouse.Captured != null)
+            if (IsMouseOver && Mouse.LeftButton == MouseButtonState.Pressed && Mouse.Captured != null &&
+                _pointers != null &&
+                (_dragCurrentTimePointer || _pointers.IsCurrentTimePointerDragging || _pointers.IsDurationPointerDragging))
             {
-                IsInAutoPanning = true;
-                Point mousePosition = Mouse.GetPosition(this);
+                //Point mousePosition = Mouse.GetPosition(this);
                 double edgeDistance = AutoPanEdgeDistance;
                 double autoPanSpeed = Math.Min(AutoPanSpeed, AutoPanSpeed * AutoPanningTickRate);
                 double x = 0;
 
-                if (mousePosition.X <= edgeDistance)
+                if (_dragCurrentTimePointer || _pointers.IsCurrentTimePointerDragging)
                 {
-                    x -= autoPanSpeed;
-                }
-                else if (mousePosition.X >= ActualWidth - edgeDistance)
-                {
-                    x += autoPanSpeed;
-                }
+                    var pos = TimeToPos(CurrentTime);
 
-                if (x != 0 && (_dragPointer || _pointers.IsCurrentTimePointerDragging || _pointers.IsDurationPointerDragging))
-                {
-                    HorizontalDrag(-x);
-                    if (_dragPointer || _pointers.IsCurrentTimePointerDragging)
+                    if (pos <= edgeDistance)
                     {
+                        x -= autoPanSpeed;
+                    }
+                    else if (pos >= ActualWidth - edgeDistance)
+                    {
+                        x += autoPanSpeed;
+                    }
+                    if (x != 0)
+                    {
+                        IsInAutoPanning = true;
+
+                        HorizontalDrag(-x);
                         var time = PosToTime(Mouse.GetPosition(this).X);
                         CurrentTime = SnapTime(time);
+
+                        RaiseTimeScaleChangedEvent();
+                        InvalidateVisual();
+                        return;
                     }
-                    else if (_pointers.IsDurationPointerDragging)
+                }
+                else if (_pointers.IsDurationPointerDragging)
+                {
+                    var pos = TimeToPos(Duration);
+
+                    if (pos <= edgeDistance)
                     {
+                        x -= autoPanSpeed;
+                    }
+                    else if (pos >= ActualWidth - edgeDistance)
+                    {
+                        x += autoPanSpeed;
+                    }
+                    if (x != 0)
+                    {
+                        IsInAutoPanning = true;
+
+                        HorizontalDrag(-x);
                         var time = PosToTime(Mouse.GetPosition(this).X);
                         Duration = SnapTime(time);
+
+                        RaiseTimeScaleChangedEvent();
+                        InvalidateVisual();
+                        return;
                     }
-                    RaiseTimeScaleChangedEvent();
-                    InvalidateVisual();
-                }
-                else
-                {
-                    IsInAutoPanning = false;
                 }
             }
-            else
+      
+            if(IsInAutoPanning)
             {
                 IsInAutoPanning = false;
             }
@@ -921,9 +950,9 @@ namespace Excalibur.Timeline
             base.OnMouseLeftButtonDown(e);
 
             var pos = e.GetPosition(this);
-            if (pos.Y < ScaleLineAreaHeight && pos.Y >= 0 && !_dragPointer) // 鼠标左键点击刻度线区域，设置当前时间
+            if (pos.Y < ScaleLineAreaHeight && pos.Y >= 0 && !_dragCurrentTimePointer) // 鼠标左键点击刻度线区域，设置当前时间
             {
-                _dragPointer = true;
+                _dragCurrentTimePointer = true;
                 PosToCurrentTime(pos.X);
                 Mouse.Capture(this);
             }
@@ -957,9 +986,9 @@ namespace Excalibur.Timeline
         {
             base.OnPreviewMouseUp(e);
 
-            if (_dragPointer || _pointers.IsCurrentTimePointerDragging)
+            if (_dragCurrentTimePointer || _pointers.IsCurrentTimePointerDragging)
             {
-                _dragPointer = false;
+                _dragCurrentTimePointer = false;
                 _pointers.EndPointersDragging();
             }
 
@@ -984,7 +1013,7 @@ namespace Excalibur.Timeline
             base.OnMouseMove(e);
 
             Point pos = e.GetPosition(this);
-            if (_dragPointer)
+            if (_dragCurrentTimePointer)
             {
                 if (!_pointers.IsCurrentTimePointerDragging) _pointers.IsCurrentTimePointerDragging = true;
                 PosToCurrentTime(pos.X);

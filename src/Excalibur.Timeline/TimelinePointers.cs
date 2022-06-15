@@ -64,7 +64,7 @@ namespace Excalibur.Timeline
         /// CurrentTimePointerPositionOffset属性
         /// </summary>
         public static readonly DependencyProperty CurrentTimePointerPositionOffsetProperty =
-            DependencyProperty.Register(nameof(CurrentTimePointerPositionOffset), typeof(double), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
+            DependencyProperty.Register(nameof(CurrentTimePointerPositionOffset), typeof(double), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         /// <summary>
         /// 有效时间指针的位置偏移
@@ -78,7 +78,7 @@ namespace Excalibur.Timeline
         /// DurationPointerPositionOffset属性
         /// </summary>
         public static readonly DependencyProperty DurationPointerPositionOffsetProperty =
-            DependencyProperty.Register(nameof(DurationPointerPositionOffset), typeof(double), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
+            DependencyProperty.Register(nameof(DurationPointerPositionOffset), typeof(double), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         /// <summary>
         /// 当前时间的刻度线笔刷
@@ -400,8 +400,13 @@ namespace Excalibur.Timeline
         public void UpdatePointersPosition()
         {
             if (_scale == null) return;
+            var durationPos = _scale.TimeToPos(_scale.Duration);
+            var zeroPos = _scale.TimeToPos(_scale.MinEffectiveTime);
+
             UpdateCurrentTimePointerPosition(_scale.TimeToPos(_scale.CurrentTime), _scale.CurrentTimeText);
-            UpdateDurationPointerPosition(_scale.TimeToPos(_scale.Duration), _scale.DurationText);
+            UpdateDurationPointerPosition(durationPos, _scale.DurationText);
+
+            UpdateEdgeWidth(zeroPos, durationPos);
         }
 
         /// <summary>
@@ -411,8 +416,6 @@ namespace Excalibur.Timeline
         /// <param name="timeText">当前时间文本</param>
         public void UpdateCurrentTimePointerPosition(double timePos, string timeText)
         {
-            Debug.WriteLine($"timePos:{timePos}");
-
             _currentTimeText = timeText;
             CurrentTimePointerPosition = timePos - CurrentTimePointerPositionOffset;
         }
@@ -444,6 +447,10 @@ namespace Excalibur.Timeline
             }
         }
 
+        /// <summary>
+        /// Override OnPreviewMouseUp
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseUp(e);
@@ -477,24 +484,29 @@ namespace Excalibur.Timeline
             var end = new Point(zeroPos, ActualHeight);
             dc.DrawLine(_minTimeLinePen, start, end);
 
-            if (zeroPos > 0)
-                MinEffectiveTimeEdgeWidth = zeroPos;
-            else MinEffectiveTimeEdgeWidth = 0;
-
             // Duration边界线
             var durationPos = _scale.DurationToPos();
             start = new Point(durationPos, startPosY);
             end = new Point(durationPos, ActualHeight);
             dc.DrawLine(_durationLinePen, start, end);
 
-            if (ActualWidth > durationPos)
-                DurationEdgeWidth = ActualWidth - durationPos; 
-            else DurationEdgeWidth = 0;
+            UpdateEdgeWidth(zeroPos, durationPos);
 
             var posx = CurrentTimePointerPosition + CurrentTimePointerPositionOffset;
             start = new Point(posx, startPosY);
             end = new Point(posx, ActualHeight);
             dc.DrawLine(_currentTimePen, start, end);
+        }
+
+        private void UpdateEdgeWidth(double zeroPos, double durationPos)
+        {
+            if (zeroPos > 0)
+                MinEffectiveTimeEdgeWidth = zeroPos - 1;
+            else MinEffectiveTimeEdgeWidth = 0;
+
+            if (ActualWidth > durationPos)
+                DurationEdgeWidth = ActualWidth - durationPos - 1;
+            else DurationEdgeWidth = 0;
         }
 
         private void DrawTimeText(DrawingContext dc, string timeText, double boxPosX, double textPosX)

@@ -27,6 +27,8 @@
                BasedOn="{StaticResource {x:Type tl:TimelinePointers}}">
             <Setter Property="TimeTextFontBrush"
                     Value="White" />
+            <Setter Property="DurationPointerPositionOffset"
+                    Value="5.6" />
         </Style>
     </Window.Resources>
     <Grid>
