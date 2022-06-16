@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -87,7 +88,7 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly DependencyProperty CurrentTimeBrushProperty =
             DependencyProperty.Register(nameof(CurrentTimeBrush), typeof(Brush), typeof(TimelinePointers), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender, OnCurrentTimeBrushChanged));
-        
+
         /// <summary>
         /// 最小时间的边界刻度线笔刷
         /// </summary>
@@ -185,7 +186,7 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly DependencyProperty TimeTextFontBrushProperty =
             DependencyProperty.Register(nameof(TimeTextFontBrush), typeof(Brush), typeof(TimelinePointers), new FrameworkPropertyMetadata(Brushes.White, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
-        
+
         /// <summary>
         /// 时间文字背景框笔刷
         /// </summary>
@@ -242,6 +243,19 @@ namespace Excalibur.Timeline
         public static readonly DependencyProperty TimeTextPositionProperty =
             DependencyProperty.Register(nameof(TimeTextPosition), typeof(Point), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Point0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
 
+        /// <summary>
+        /// 渲染过程中的事件
+        /// </summary>
+        public event TimelinePointersRenderingHandler Rendering
+        {
+            add => AddHandler(RenderingEvent, value);
+            remove => RemoveHandler(RenderingEvent, value);
+        }
+        /// <summary>
+        /// 渲染过程中的事件
+        /// </summary>
+        public static readonly RoutedEvent RenderingEvent = EventManager.RegisterRoutedEvent(nameof(Rendering), RoutingStrategy.Bubble, typeof(TimelinePointersRenderingHandler), typeof(TimelinePointers));
+
         private Thumb _currentTimePointer;
         private Thumb _durationPointer;
 
@@ -266,9 +280,15 @@ namespace Excalibur.Timeline
 
         private TimelineScale _scale;
 
+        #region Draw
         private Pen _minTimeLinePen;
         private Pen _durationLinePen;
         private Pen _currentTimePen;
+
+        private bool _isDrawDraggingPrompt = false;
+        private double _draggingMinTime;
+        private double _draggingMaxTime;
+        #endregion
 
         static TimelinePointers()
         {
@@ -284,6 +304,7 @@ namespace Excalibur.Timeline
             _minTimeLinePen = new Pen(MinEffectiveTimeEdgeLineBrush, 2);
             _durationLinePen = new Pen(DurationEdgeLineBrush, 2);
             _currentTimePen = new Pen(CurrentTimeBrush, 2);
+
         }
 
         /// <summary>
@@ -297,7 +318,7 @@ namespace Excalibur.Timeline
             _durationPointer = Template.FindName(ElementDurationPointer, this) as Thumb;
 
             _scale = this.TryFindParent<TimelineScale>();
-            if(_scale != null)
+            if (_scale != null)
             {
                 _scale.TimeScaleChanged += TimeScaleChanged;
             }
@@ -326,7 +347,7 @@ namespace Excalibur.Timeline
                 p._currentTimePen.Brush = p.CurrentTimeBrush;
             }
         }
-        
+
         private static void OnMinEffectiveTimeEdgeLineBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is TimelinePointers p)
@@ -463,33 +484,48 @@ namespace Excalibur.Timeline
 
             if (IsCurrentTimePointerDragging)
             {
-                DrawTimeText(dc, _currentTimeText, CurrentTimePointerPosition + TimeTextBox.X, CurrentTimePointerPosition + TimeTextPosition.X);
+                DrawTimeText(dc, _currentTimeText, CurrentTimePointerPosition + TimeTextBox.X);
             }
 
             if (IsDurationPointerDragging)
             {
-                DrawTimeText(dc, _durationTimeText, DurationPointerPosition + TimeTextBox.X, DurationPointerPosition + TimeTextPosition.X);
+                DrawTimeText(dc, _durationTimeText, DurationPointerPosition + TimeTextBox.X);
             }
 
             var startPosY = _scale.ScaleLineAreaHeight;
+            var height = ActualHeight;
             // 0边界线
             var zeroPos = _scale.MinEffectiveTimeToPos();
             var start = new Point(zeroPos, startPosY);
-            var end = new Point(zeroPos, ActualHeight);
+            var end = new Point(zeroPos, height);
             dc.DrawLine(_minTimeLinePen, start, end);
 
             // Duration边界线
             var durationPos = _scale.DurationToPos();
             start = new Point(durationPos, startPosY);
-            end = new Point(durationPos, ActualHeight);
+            end = new Point(durationPos, height);
             dc.DrawLine(_durationLinePen, start, end);
 
             UpdateEdgeWidth(zeroPos, durationPos);
 
             var posx = CurrentTimePointerPosition + CurrentTimePointerPositionOffset;
             start = new Point(posx, startPosY);
-            end = new Point(posx, ActualHeight);
+            end = new Point(posx, height);
             dc.DrawLine(_currentTimePen, start, end);
+
+            if (_isDrawDraggingPrompt)
+            {
+                var curPos = _scale.TimeToPos(_draggingMinTime);
+                dc.DrawLine(new Pen(Brushes.Blue, 1), new Point(curPos, startPosY), new Point(curPos, height));
+                DrawTimeText(dc, _scale.TimeToText(_draggingMinTime), curPos, true);
+
+                if(_draggingMinTime != _draggingMaxTime)
+                {
+                    var endPos = _scale.TimeToPos(_draggingMaxTime);
+                    dc.DrawLine(new Pen(Brushes.Blue, 1), new Point(endPos, startPosY), new Point(endPos, height));
+                    DrawTimeText(dc, _scale.TimeToText(_draggingMaxTime), endPos, true);
+                }
+            }
         }
 
         private void UpdateEdgeWidth(double zeroPos, double durationPos)
@@ -503,16 +539,79 @@ namespace Excalibur.Timeline
             else DurationEdgeWidth = 0;
         }
 
-        private void DrawTimeText(DrawingContext dc, string timeText, double boxPosX, double textPosX)
+        /// <summary>
+        /// 绘制事件文字
+        /// </summary>
+        /// <param name="dc">绘制上下文</param>
+        /// <param name="timeText">时间文本</param>
+        /// <param name="boxPosX">背景框位置</param>
+        public void DrawTimeText(DrawingContext dc, string timeText, double boxPosX, bool alignMiddle = false)
         {
             var ft = new FormattedText(timeText, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Sergio UI"), TimeTextFontSize, TimeTextFontBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
             var boxPosY = TimeTextBox.Y - ft.Height;
-
+            var boxWidth = TimeTextBox.Width + ft.Width;
+            if (alignMiddle)
+            {
+                boxPosX -= boxWidth / 2;
+            }
             // TODO: 自动根据边界，替换左右侧位置
 
-            dc.DrawRoundedRectangle(TimeTextBoxBrush, null, new Rect(boxPosX, boxPosY, TimeTextBox.Width + ft.Width, TimeTextBox.Height + ft.Height), 3, 3);
+            dc.DrawRoundedRectangle(TimeTextBoxBrush, null, new Rect(boxPosX, boxPosY, boxWidth, TimeTextBox.Height + ft.Height), 3, 3);
 
             dc.DrawText(ft, new Point(boxPosX + TimeTextPosition.X, boxPosY + TimeTextPosition.Y));
+        }
+
+        internal void DrawDraggingPrompt(double minTime, double maxTime)
+        {
+            if (!_isDrawDraggingPrompt) _isDrawDraggingPrompt = true;
+            _draggingMinTime = minTime;
+            _draggingMaxTime = maxTime;
+            InvalidateVisual();
+        }
+
+        internal void EndDrawDraggingPrompt()
+        {
+            _isDrawDraggingPrompt = false;
+            InvalidateVisual();
+        }
+    }
+
+    /// <summary>
+    /// Timeline指针渲染过程中事件处理委托
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public delegate void TimelinePointersRenderingHandler(object sender, TimelinePointersRenderingEventArgs e);
+
+    /// <summary>
+    /// Timeline指针渲染过程中事件参数
+    /// </summary>
+    public class TimelinePointersRenderingEventArgs : RoutedEventArgs
+    {
+        /// <summary>
+        /// Timeline指针
+        /// </summary>
+        public TimelinePointers Pointers { get; set; }
+
+        /// <summary>
+        /// DrawingContext
+        /// </summary>
+        public DrawingContext Context { get; }
+
+        /// <summary>
+        /// 绘制区域, 起始Y值，结束Y值，实际宽，实际高
+        /// </summary>
+        public Rect Area { get; set; }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="context"></param>
+        public TimelinePointersRenderingEventArgs(TimelinePointers pointers, DrawingContext context, Rect area)
+        {
+            Pointers = pointers;
+            Context = context;
+            Area = area;
         }
     }
 }

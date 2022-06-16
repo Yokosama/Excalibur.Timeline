@@ -60,6 +60,10 @@ namespace Excalibur.Timeline
             FocusableProperty.OverrideMetadata(typeof(TimelineTrack), new FrameworkPropertyMetadata(true));
         }
 
+        /// <summary>
+        /// Override GetContainerForItemOverride
+        /// </summary>
+        /// <returns></returns>
         protected override DependencyObject GetContainerForItemOverride()
         {
             return new TimelineTrackItemContainer

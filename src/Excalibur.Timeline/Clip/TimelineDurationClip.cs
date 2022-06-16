@@ -1,16 +1,18 @@
 ﻿using Excalibur.Timeline.Helper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Excalibur.Timeline
 {
     /// <summary>
     /// 持续时间的Clip
     /// </summary>
-    public class TimelineDurationClip : Control
+    public class TimelineDurationClip : TimelineClip
     {
         /// <summary>
         /// 持续时间
@@ -26,10 +28,8 @@ namespace Excalibur.Timeline
         public static readonly DependencyProperty DurationProperty =
             DependencyProperty.Register(nameof(Duration), typeof(double), typeof(TimelineDurationClip), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsMeasure, OnDurationChanged));
 
-        private double CurrentTime => _container == null ? 0 : _container.CurrentTime;
+        private double CurrentTime => container == null ? 0 : container.CurrentTime;
         private double EndTime => CurrentTime + Duration;
-
-        private TimelineTrackItemContainer _container;
 
         static TimelineDurationClip()
         {
@@ -44,10 +44,9 @@ namespace Excalibur.Timeline
         {
             base.OnApplyTemplate();
 
-            _container = this.TryFindParent<TimelineTrackItemContainer>();
-            if(_container != null && _container.Scale != null)
+            if (container != null && container.Scale != null)
             {
-                _container.Scale.TimeScaleChanged += TimeScaleChanged;
+                container.Scale.TimeScaleChanged += TimeScaleChanged;
             }
             UpdateDuration();
         }
@@ -64,10 +63,33 @@ namespace Excalibur.Timeline
 
         private void UpdateDuration()
         {
-            if (_container == null || _container.Scale == null) return;
+            if (container == null || container.Scale == null) return;
 
-            var width = _container.Scale.TimeToPos(EndTime) - _container.Scale.TimeToPos(CurrentTime);
+            container.Duration = Duration;
+
+            var width = container.Scale.TimeToPos(EndTime) - container.Scale.TimeToPos(CurrentTime);
             Width = Math.Max(MinWidth, width);
+        }
+
+        /// <summary>
+        /// Override DrawDraggingPrompt
+        /// </summary>
+        protected override void DrawDraggingPrompt(TimelinePointers pointers, DrawingContext dc, Rect area)
+        {
+            //base.DrawDraggingPrompt(pointers, dc, area);
+
+            //if (container == null) return;
+        
+            //if (container.IsDragging)
+            //{
+            //    var curPos = container.PreviewPosition;
+            //    dc.DrawLine(new Pen(Brushes.Blue, 1), new Point(curPos, area.X), new Point(curPos, area.Y));
+            //    var endPos = curPos + ActualWidth;
+            //    dc.DrawLine(new Pen(Brushes.Blue, 1), new Point(endPos, area.X), new Point(endPos, area.Y));
+
+            //    pointers.DrawTimeText(dc, container.Scale.TimeToText(container.PreviewCurrentTime), curPos, true);
+            //    pointers.DrawTimeText(dc, container.Scale.TimeToText(container.PreviewCurrentTime + Duration), endPos, true);
+            //}
         }
     }
 }

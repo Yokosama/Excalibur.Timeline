@@ -28,6 +28,34 @@ namespace Excalibur.Timeline
             DependencyProperty.Register(nameof(CurrentTime), typeof(double), typeof(TimelineTrackItemContainer), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsMeasure, OnCurrentTimeChanged));
 
         /// <summary>
+        /// 持续时间
+        /// </summary>
+        public double Duration
+        {
+            get { return (double)GetValue(DurationProperty); }
+            set { SetValue(DurationProperty, value); }
+        }
+        /// <summary>
+        /// Duration属性
+        /// </summary>
+        public static readonly DependencyProperty DurationProperty =
+            DependencyProperty.Register(nameof(Duration), typeof(double), typeof(TimelineTrackItemContainer), new FrameworkPropertyMetadata(BoxValue.Double0));
+
+        /// <summary>
+        /// 当前所在时间
+        /// </summary>
+        public double PreviewCurrentTime
+        {
+            get { return (double)GetValue(PreviewCurrentTimeProperty); }
+            set { SetValue(PreviewCurrentTimeProperty, value); }
+        }
+        /// <summary>
+        /// CurrentTime属性
+        /// </summary>
+        public static readonly DependencyProperty PreviewCurrentTimeProperty =
+            DependencyProperty.Register(nameof(PreviewCurrentTime), typeof(double), typeof(TimelineTrackItemContainer), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnCurrentTimeChanged));
+
+        /// <summary>
         /// 当前在界面上的位置
         /// </summary>
         public double Position
@@ -53,7 +81,21 @@ namespace Excalibur.Timeline
         /// IsSelected属性
         /// </summary>
         public static readonly DependencyProperty IsSelectedProperty =
-            DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(TimelineTrackItemContainer), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(TimelineTrackItemContainer), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnIsSelectedChanged));
+
+        /// <summary>
+        /// 是否可被选中
+        /// </summary>
+        public bool IsSelectable
+        {
+            get { return (bool)GetValue(IsSelectableProperty); }
+            set { SetValue(IsSelectableProperty, value); }
+        }
+        /// <summary>
+        /// IsSelectable属性
+        /// </summary>
+        public static readonly DependencyProperty IsSelectableProperty =
+            DependencyProperty.Register(nameof(IsSelectable), typeof(bool), typeof(TimelineTrackItemContainer), new FrameworkPropertyMetadata(BoxValue.True));
 
         /// <summary>
         /// 是否可拖拽
@@ -67,7 +109,7 @@ namespace Excalibur.Timeline
         /// IsDraggable属性
         /// </summary>
         public static readonly DependencyProperty IsDraggableProperty =
-            DependencyProperty.Register(nameof(IsDraggable), typeof(bool), typeof(TimelineTrackItemContainer), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            DependencyProperty.Register(nameof(IsDraggable), typeof(bool), typeof(TimelineTrackItemContainer), new FrameworkPropertyMetadata(BoxValue.True, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
         /// 拖拽开始事件
@@ -109,16 +151,57 @@ namespace Excalibur.Timeline
         public static readonly RoutedEvent DragCompletedEvent = EventManager.RegisterRoutedEvent(nameof(DragCompleted), RoutingStrategy.Bubble, typeof(DragCompletedEventHandler), typeof(TimelineTrackItemContainer));
 
         /// <summary>
+        /// 选中事件
+        /// </summary>
+        public event RoutedEventHandler Selected
+        {
+            add => AddHandler(SelectedEvent, value);
+            remove => RemoveHandler(SelectedEvent, value);
+        }
+        /// <summary>
+        /// 选中事件
+        /// </summary>
+        public static readonly RoutedEvent SelectedEvent = EventManager.RegisterRoutedEvent(nameof(Selected), RoutingStrategy.Bubble, typeof(RoutedEventArgs), typeof(TimelineTrackItemContainer));
+
+        /// <summary>
+        /// 取消选择事件
+        /// </summary>
+        public event RoutedEventHandler Unselected
+        {
+            add => AddHandler(UnselectedEvent, value);
+            remove => RemoveHandler(UnselectedEvent, value);
+        }
+        /// <summary>
+        /// 取消选择事件
+        /// </summary>
+        public static readonly RoutedEvent UnselectedEvent = EventManager.RegisterRoutedEvent(nameof(Unselected), RoutingStrategy.Bubble, typeof(RoutedEventArgs), typeof(TimelineTrackItemContainer));
+
+        /// <summary>
         /// 刻度，Track、Group的区域
         /// </summary>
         public TimelineScale Scale { get; private set; }
 
-        private TimelineTrackCanvas _owner;
+        /// <summary>
+        /// ItemContainer所在的容器
+        /// </summary>
+        public TimelineTrackCanvas Owner { get; private set; }
+        /// <summary>
+        /// ItemContainer所在的Track
+        /// </summary>
+        public TimelineTrack Track { get; private set; }
+
+        /// <summary>
+        /// 预览时间的所在位置
+        /// </summary>
+        public double PreviewPosition { get; private set; }
 
         #region Drag
         private Point _previousDragPosition;
         private Point _initialDragPosition;
-        private bool _isDragStart;
+        /// <summary>
+        /// 是否正在拖拽
+        /// </summary>
+        public bool IsDragging { get; private set; }
         #endregion
 
         static TimelineTrackItemContainer()
@@ -136,13 +219,31 @@ namespace Excalibur.Timeline
             Scale = this.TryFindParent<TimelineScale>();
             if(Scale != null)
                 Scale.TimeScaleChanged += TimeScaleChanged;
-            _owner = this.TryFindParent<TimelineTrackCanvas>();
+            Owner = this.TryFindParent<TimelineTrackCanvas>();
+            Track = this.TryFindParent<TimelineTrack>();
             UpdatePosition();
         }
 
         private void TimeScaleChanged(object sender, RoutedEventArgs e)
         {
             UpdatePosition();
+        }
+
+        private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is TimelineTrackItemContainer container)) return;
+
+            bool result = container.IsSelectable && (bool)e.NewValue;
+            container.OnSelectedChanged(result);
+            container.IsSelected = result;
+        }
+
+        private void OnSelectedChanged(bool newValue)
+        {
+            if (!(Scale?.IsSelecting ?? false))
+            {
+                RaiseEvent(new RoutedEventArgs(newValue ? SelectedEvent : UnselectedEvent, this));
+            }
         }
 
         /// <summary>
@@ -153,9 +254,9 @@ namespace Excalibur.Timeline
         {
             base.OnMouseLeftButtonDown(e);
 
-            if (_owner == null) return;
+            if (Owner == null) return;
 
-            _initialDragPosition = e.GetPosition(_owner);
+            _initialDragPosition = e.GetPosition(Owner);
             _previousDragPosition = _initialDragPosition;
 
             Focus();
@@ -172,19 +273,19 @@ namespace Excalibur.Timeline
             base.OnMouseMove(e);
             if (e.LeftButton == MouseButtonState.Pressed && IsMouseCaptured && IsDraggable)
             {
-                Point position = e.GetPosition(_owner);
+                Point position = e.GetPosition(Owner);
 
                 if (_previousDragPosition != position)
                 {
                     // Start dragging
-                    if (!_isDragStart)
+                    if (!IsDragging)
                     {
                         RaiseEvent(new DragStartedEventArgs(_initialDragPosition.X, _initialDragPosition.Y)
                         {
                             RoutedEvent = DragStartedEvent
                         });
 
-                        _isDragStart = true;
+                        IsDragging = true;
                     }
                     else
                     {
@@ -210,12 +311,12 @@ namespace Excalibur.Timeline
         {
             base.OnPreviewMouseUp(e);
 
-            if (_owner == null || Scale == null) return;
+            if (Owner == null || Scale == null) return;
 
-            if (_isDragStart)
+            if (IsDragging)
             {
-                _isDragStart = false;
-                Vector position = e.GetPosition(_owner) - _initialDragPosition;
+                IsDragging = false;
+                Vector position = e.GetPosition(Owner) - _initialDragPosition;
 
                 RaiseEvent(new DragCompletedEventArgs(position.X, position.Y, false)
                 {
@@ -224,19 +325,21 @@ namespace Excalibur.Timeline
 
                 e.Handled = true;
             }
-
-            switch (Keyboard.Modifiers)
+            else
             {
-                case ModifierKeys.Control:
-                    IsSelected = !IsSelected;
-                    break;
-                case ModifierKeys.Shift:
-                    IsSelected = true;
-                    break;
-                default:
-                    Scale?.UnselectAll();
-                    IsSelected = true;
-                    break;
+                switch (Keyboard.Modifiers)
+                {
+                    case ModifierKeys.Control:
+                        IsSelected = !IsSelected;
+                        break;
+                    case ModifierKeys.Shift:
+                        IsSelected = true;
+                        break;
+                    default:
+                        Scale?.UnselectAllTrackItems();
+                        IsSelected = true;
+                        break;
+                }
             }
 
             Focus();
@@ -267,7 +370,7 @@ namespace Excalibur.Timeline
         {
             if (!Scale.IsBulkUpdatingItems)
             {
-                _owner.InvalidateVisual();
+                Owner.InvalidateVisual();
             }
         }
 
@@ -276,6 +379,61 @@ namespace Excalibur.Timeline
             if (Scale == null) return;
 
             Position = Scale.TimeToPos(CurrentTime);
+            PreviewPosition = Scale.TimeToPos(PreviewCurrentTime);
+        }
+    }
+
+    /// <summary>
+    /// TimelineTrackItemContainer选中事件委托
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public delegate void TrackItemSelectedEventHandler(object sender, TrackItemSelectedEventArgs e);
+
+    /// <summary>
+    /// TimelineTrackItemContainer选中事件参数
+    /// </summary>
+    public class TrackItemSelectedEventArgs : RoutedEventArgs
+    {
+        /// <summary>
+        /// TimelineTrackItemContainer
+        /// </summary>
+        public TimelineTrackItemContainer ItemContainer { get; }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="itemContainer"></param>
+        public TrackItemSelectedEventArgs(TimelineTrackItemContainer itemContainer)
+        {
+            ItemContainer = itemContainer;
+        }
+    }
+
+    /// <summary>
+    /// TimelineTrackItemContainer取消选中事件委托
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public delegate void TrackItemUnselectedEventHandler(object sender, TrackItemUnselectedEventArgs e);
+
+    /// <summary>
+    /// TimelineTrackItemContainer取消选中事件参数
+    /// </summary>
+    public class TrackItemUnselectedEventArgs : RoutedEventArgs
+    {
+        /// <summary>
+        /// TimelineTrackItemContainer
+        /// </summary>
+        public TimelineTrackItemContainer ItemContainer { get; }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="itemContainer"></param>
+        public TrackItemUnselectedEventArgs(TimelineTrackItemContainer itemContainer)
+        {
+            ItemContainer = itemContainer;
         }
     }
 }

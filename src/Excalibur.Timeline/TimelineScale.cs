@@ -1,6 +1,10 @@
 ﻿using Excalibur.Timeline.Helper;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -345,6 +349,7 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly DependencyProperty AutoPanEdgeDistanceProperty =
             DependencyProperty.Register(nameof(AutoPanEdgeDistance), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double10));        
+
         /// <summary>
         /// 边界自动移动的速度
         /// </summary>
@@ -358,6 +363,60 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly DependencyProperty AutoPanSpeedProperty =
             DependencyProperty.Register(nameof(AutoPanSpeed), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double5));
+
+        /// <summary>
+        /// 选中的TimelineTrackItemContainer集合
+        /// </summary>
+        public System.Collections.IList SelectedTrackItems
+        {
+            get { return (System.Collections.IList)GetValue(SelectedTrackItemsProperty); }
+            set { SetValue(SelectedTrackItemsProperty, value); }
+        }
+        /// <summary>
+        /// 选中的TimelineTrackItemContainer集合
+        /// </summary>
+        public static readonly DependencyProperty SelectedTrackItemsProperty =
+            DependencyProperty.Register(nameof(SelectedTrackItems), typeof(System.Collections.IList), typeof(TimelineScale), new FrameworkPropertyMetadata(new ObservableCollection<object>(), OnSelectedTrackItemsSourceChanged));
+
+        /// <summary>
+        /// 是否正在选择
+        /// </summary>
+        public bool IsSelecting
+        {
+            get { return (bool)GetValue(IsSelectingProperty); }
+            set { SetValue(IsSelectingProperty, value); }
+        }
+        /// <summary>
+        /// IsSelecting属性
+        /// </summary>
+        public static readonly DependencyProperty IsSelectingProperty =
+            DependencyProperty.Register(nameof(IsSelecting), typeof(bool), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.False));
+
+        /// <summary>
+        /// Clip Items拖拽开始
+        /// </summary>
+        public ICommand ItemsDragStartedCommand
+        {
+            get => (ICommand)GetValue(ItemsDragStartedCommandProperty);
+            set => SetValue(ItemsDragStartedCommandProperty, value);
+        }
+        /// <summary>
+        /// Clip Items拖拽开始
+        /// </summary>
+        public static readonly DependencyProperty ItemsDragStartedCommandProperty = DependencyProperty.Register(nameof(ItemsDragStartedCommand), typeof(ICommand), typeof(TimelineScale));
+
+        /// <summary>
+        /// Clip Items拖拽结束
+        /// </summary>
+        public ICommand ItemsDragCompletedCommand
+        {
+            get => (ICommand)GetValue(ItemsDragCompletedCommandProperty);
+            set => SetValue(ItemsDragCompletedCommandProperty, value);
+        }
+        /// <summary>
+        /// Clip Items拖拽开始
+        /// </summary>
+        public static readonly DependencyProperty ItemsDragCompletedCommandProperty = DependencyProperty.Register(nameof(ItemsDragCompletedCommand), typeof(ICommand), typeof(TimelineScale));
 
         /// <summary>
         /// 当前时间的最小有效时间
@@ -389,11 +448,11 @@ namespace Excalibur.Timeline
         /// <summary>
         /// 当前时间的显示文本
         /// </summary>
-        public string CurrentTimeText => TimeStep == TimeStepMode.Frames ? (CurrentTime * FrameRate).ToString("0") : CurrentTime.ToString("0.00");
+        public string CurrentTimeText => TimeToText(CurrentTime);
         /// <summary>
         /// 当前有效时间的显示文本
         /// </summary>
-        public string DurationText => TimeStep == TimeStepMode.Frames ? (Duration * FrameRate).ToString("0") : Duration.ToString("0.00");
+        public string DurationText => TimeToText(Duration);
 
         private double _snapInterval = 0.01f;
         /// <summary>
@@ -436,7 +495,10 @@ namespace Excalibur.Timeline
         #endregion
 
         private TimelineScalePanel _itemsPanel;
-        private TimelinePointers _pointers;
+        /// <summary>
+        /// Timeline指针
+        /// </summary>
+        public TimelinePointers Pointers;
 
         #region Render
         private double _timeInfoStart;
@@ -489,6 +551,14 @@ namespace Excalibur.Timeline
             _scaleLinePen2 = new Pen(ScaleLineSecondaryBrush, 1);
             _itemsLinePen = new Pen(ItemsLineBrush, 1);
             _itemsLinePen2 = new Pen(ItemsLineSecondaryBrush, 1);
+
+            AddHandler(TimelineTrackItemContainer.DragStartedEvent, new DragStartedEventHandler(OnTrackItemsDragStarted));
+            AddHandler(TimelineTrackItemContainer.DragCompletedEvent, new DragCompletedEventHandler(OnTrackItemsDragCompleted));
+            AddHandler(TimelineTrackItemContainer.DragDeltaEvent, new DragDeltaEventHandler(OnTrackItemsDragDelta));
+            AddHandler(TimelineTrackItemContainer.SelectedEvent, new RoutedEventHandler(OnTrackItemSelected));
+            AddHandler(TimelineTrackItemContainer.UnselectedEvent, new RoutedEventHandler(OnTrackItemUnselected));
+
+            if(SelectedTrackItems is INotifyCollectionChanged c) c.CollectionChanged += OnSelectedTrackItemsChanged;
         }
 
         /// <summary>
@@ -501,7 +571,7 @@ namespace Excalibur.Timeline
             _horizontalBar = Template.FindName(ElementHorizontalScrollBar, this) as ScrollBar;
             _verticalBar = Template.FindName(ElementVerticalScrollBar, this) as ScrollBar;
             _itemsPanel = Template.FindName(ElementTimelineScalePanel, this) as TimelineScalePanel;
-            _pointers = Template.FindName(ElementTimelinePointers, this) as TimelinePointers;
+            Pointers = Template.FindName(ElementTimelinePointers, this) as TimelinePointers;
 
             if (_horizontalBar != null) _horizontalBar.Scroll += HorizontalBarScroll;
 
@@ -554,7 +624,8 @@ namespace Excalibur.Timeline
             var doFrames = TimeStep == TimeStepMode.Frames;
             var timeStep = doFrames ? (1f / FrameRate) : lowMod;
             var decimalPlaces = timeStep.GetDecimalPlaces();
-            decimalPlaces = decimalPlaces == 0 ? 10 : (int)Math.Pow(10, decimalPlaces);
+            //decimalPlaces = decimalPlaces == 0 ? 10 : (int)Math.Pow(10, decimalPlaces);
+            decimalPlaces = 100;
             _timeInfoStart = (double)Math.Floor(ViewTimeMin / timeInfoInterval) * timeInfoInterval;
             _timeInfoEnd = (double)Math.Ceiling(ViewTimeMax / timeInfoInterval) * timeInfoInterval;
             _timeInfoStart = Math.Round(_timeInfoStart * 10) / 10;
@@ -658,7 +729,7 @@ namespace Excalibur.Timeline
             _horizontalBar.Track.Thumb.DragStarted += HorizontalBarThumbDragStarted;
             _horizontalBar.Track.Thumb.DragCompleted += HorizontalBarThumbDragCompleted;
 
-            if (_pointers != null) _pointers.UpdatePointersPosition();
+            if (Pointers != null) Pointers.UpdatePointersPosition();
         }
 
         private void TimelineScaleUnloaded(object sender, RoutedEventArgs e)
@@ -734,7 +805,7 @@ namespace Excalibur.Timeline
         {
             if (d is TimelineScale scale)
             {
-                scale._pointers.UpdateDurationPointerPosition(scale.TimeToPos(scale.Duration),
+                scale.Pointers.UpdateDurationPointerPosition(scale.TimeToPos(scale.Duration),
                        scale.DurationText);
 
                 if(scale.CurrentTime >= scale.Duration)
@@ -756,7 +827,7 @@ namespace Excalibur.Timeline
         {
             if (d is TimelineScale scale && !scale.IsInAutoPanning)
             {
-                scale._pointers.UpdateCurrentTimePointerPosition(scale.TimeToPos(scale.CurrentTime),
+                scale.Pointers.UpdateCurrentTimePointerPosition(scale.TimeToPos(scale.CurrentTime),
                       scale.CurrentTimeText);
             }
         }
@@ -851,15 +922,15 @@ namespace Excalibur.Timeline
         private void HandleAutoPanning(object sender, EventArgs e)
         {
             if (IsMouseOver && Mouse.LeftButton == MouseButtonState.Pressed && Mouse.Captured != null &&
-                _pointers != null &&
-                (_dragCurrentTimePointer || _pointers.IsCurrentTimePointerDragging || _pointers.IsDurationPointerDragging))
+                Pointers != null &&
+                (_dragCurrentTimePointer || Pointers.IsCurrentTimePointerDragging || Pointers.IsDurationPointerDragging))
             {
                 //Point mousePosition = Mouse.GetPosition(this);
                 double edgeDistance = AutoPanEdgeDistance;
                 double autoPanSpeed = Math.Min(AutoPanSpeed, AutoPanSpeed * AutoPanningTickRate);
                 double x = 0;
 
-                if (_dragCurrentTimePointer || _pointers.IsCurrentTimePointerDragging)
+                if (_dragCurrentTimePointer || Pointers.IsCurrentTimePointerDragging)
                 {
                     var pos = TimeToPos(CurrentTime);
 
@@ -884,7 +955,7 @@ namespace Excalibur.Timeline
                         return;
                     }
                 }
-                else if (_pointers.IsDurationPointerDragging)
+                else if (Pointers.IsDurationPointerDragging)
                 {
                     var pos = TimeToPos(Duration);
 
@@ -972,7 +1043,7 @@ namespace Excalibur.Timeline
             base.OnPreviewMouseDown(e);
 
             // Ctrl+鼠标左键按住 或 按住鼠标滚轮 开始进行拖拽
-            if ((e.ChangedButton == MouseButton.Left && Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && e.LeftButton == MouseButtonState.Pressed) ||
+            if ((e.ChangedButton == MouseButton.Left && Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) && e.LeftButton == MouseButtonState.Pressed) ||
                 (e.ChangedButton == MouseButton.Middle && e.MiddleButton == MouseButtonState.Pressed))
             {
                 Cursor = _panCursor;
@@ -990,10 +1061,10 @@ namespace Excalibur.Timeline
         {
             base.OnPreviewMouseUp(e);
 
-            if (_dragCurrentTimePointer || _pointers.IsCurrentTimePointerDragging)
+            if (_dragCurrentTimePointer || Pointers.IsCurrentTimePointerDragging)
             {
                 _dragCurrentTimePointer = false;
-                _pointers.EndPointersDragging();
+                Pointers.EndPointersDragging();
             }
 
             if (_dragStart)
@@ -1019,7 +1090,7 @@ namespace Excalibur.Timeline
             Point pos = e.GetPosition(this);
             if (_dragCurrentTimePointer)
             {
-                if (!_pointers.IsCurrentTimePointerDragging) _pointers.IsCurrentTimePointerDragging = true;
+                if (!Pointers.IsCurrentTimePointerDragging) Pointers.IsCurrentTimePointerDragging = true;
                 PosToCurrentTime(pos.X);
             }
             if (_dragStart)
@@ -1045,6 +1116,214 @@ namespace Excalibur.Timeline
                     _dragStart = false;
                     _dragStartPosition.X = 0;
                     _dragStartPosition.Y = 0;
+                }
+            }
+        }
+
+        private TimelineTrackItemContainer _dragItem;
+        private Dictionary<object, TimelineTrackItemContainer> _selectedTrackItems = new Dictionary<object, TimelineTrackItemContainer>();
+        private double _dragAccumulator;
+        private static void OnSelectedTrackItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+           => ((TimelineScale)d).OnSelectedTrackItemsSourceChanged((System.Collections.IList)e.OldValue, (System.Collections.IList)e.NewValue);
+
+        private void OnSelectedTrackItemsSourceChanged(IList oldValue, IList newValue)
+        {
+            if (oldValue is INotifyCollectionChanged oc)
+            {
+                oc.CollectionChanged -= OnSelectedTrackItemsChanged;
+            }
+
+            if (newValue is INotifyCollectionChanged nc)
+            {
+                nc.CollectionChanged += OnSelectedTrackItemsChanged;
+            }
+
+            IList selectedItems = SelectedTrackItems;
+
+            selectedItems.Clear();
+            if (newValue != null)
+            {
+                for (var i = 0; i < newValue.Count; i++)
+                {
+                    selectedItems.Add(newValue[i]);
+                }
+            }
+        }
+
+        private void OnSelectedTrackItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Reset:
+                    foreach (var item in _selectedTrackItems)
+                    {
+                        item.Value.IsSelected = false;
+                    }
+                    _selectedTrackItems.Clear();
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    IList oldItems = e.OldItems;
+                    if (oldItems != null)
+                    {
+                        IList selectedItems = SelectedTrackItems;
+                        for (var i = 0; i < oldItems.Count; i++)
+                        {
+                            if(_selectedTrackItems.TryGetValue(oldItems[i], out TimelineTrackItemContainer container))
+                            {
+                                container.IsSelected = false;
+                            }
+                            selectedItems.Remove(oldItems[i]);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void OnTrackItemSelected(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is TimelineTrackItemContainer itemContainer && itemContainer.Owner != null && SelectedTrackItems != null)
+            {
+                var item = GetItemOrContainerFromTrackItemContainer(itemContainer);
+
+                if (item != null && !SelectedTrackItems.Contains(item))
+                {
+                    SelectedTrackItems.Add(item);
+                    _selectedTrackItems[item] = itemContainer;
+                }
+            }
+        }
+
+        private void OnTrackItemUnselected(object sender, RoutedEventArgs e)
+        {
+            if(e.OriginalSource is TimelineTrackItemContainer itemContainer && itemContainer.Owner != null && SelectedTrackItems != null)
+            {
+                var item = GetItemOrContainerFromTrackItemContainer(itemContainer);
+
+                if(item != null && SelectedTrackItems.Contains(item))
+                {
+                    SelectedTrackItems.Remove(item);
+                    _selectedTrackItems.Remove(item);
+                }
+            }
+        }
+
+        private object GetItemOrContainerFromTrackItemContainer(TimelineTrackItemContainer container)
+        {
+            object item = container.Track.ItemContainerGenerator.ItemFromContainer(container);
+
+            if (item == DependencyProperty.UnsetValue
+                && ItemsControlFromItemContainer(container) == container.Track)
+            {
+                item = container;
+            }
+
+            return item;
+        }
+
+        private void OnTrackItemsDragStarted(object sender, DragStartedEventArgs e)
+        {
+            _dragItem = e.OriginalSource as TimelineTrackItemContainer ?? (e.OriginalSource as UIElement)?.TryFindParent<TimelineTrackItemContainer>();
+            System.Collections.IList selectedItems = SelectedTrackItems;
+
+            if(_dragItem != null)
+            {
+                if (!(Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift || _dragItem.IsSelected))
+                {
+                    selectedItems.Clear();
+                }
+
+                _dragItem.IsSelected = true;
+            }
+
+            if (selectedItems.Count > 0)
+            {
+                if (ItemsDragStartedCommand?.CanExecute(null) ?? false)
+                {
+                    ItemsDragStartedCommand.Execute(null);
+                }
+
+                e.Handled = true;
+            }
+        }
+
+        private void OnTrackItemsDragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            if (_selectedTrackItems.Count > 0)
+            {
+                IsBulkUpdatingItems = true;
+
+                foreach (var item in _selectedTrackItems)
+                {
+                    TimelineTrackItemContainer container = item.Value;
+                    var r = (TranslateTransform)container.RenderTransform;
+
+                    var pos = TimeToPos(container.CurrentTime);
+                    var result = pos + r.X;
+
+                    container.CurrentTime = SnapTime(PosToTime(result));
+
+                    r.X = 0;
+                    _dragAccumulator = 0;
+                }
+
+                IsBulkUpdatingItems = false;
+                foreach (var item in _selectedTrackItems)
+                {
+                    TimelineTrackItemContainer container = item.Value;
+                    container.Owner.InvalidateArrange();
+                }
+
+                _dragItem = null;
+
+                if (ItemsDragCompletedCommand?.CanExecute(null) ?? false)
+                {
+                    ItemsDragCompletedCommand.Execute(null);
+                }
+
+                Pointers.EndDrawDraggingPrompt();
+            }
+        }
+        private void OnTrackItemsDragDelta(object sender, DragDeltaEventArgs e)
+        {
+            if (_dragItem != null && _selectedTrackItems.Count > 0)
+            {
+                if (e.HorizontalChange != 0)
+                {
+                    _dragAccumulator += e.HorizontalChange;
+
+                    double minTime = 0, maxTime = 0;
+                    bool init = false;
+                    IsBulkUpdatingItems = true;
+                    foreach (var item in _selectedTrackItems)
+                    {
+                        TimelineTrackItemContainer container = item.Value;
+                        var r = (TranslateTransform)container.RenderTransform;
+
+                        var pos = container.Position + _dragAccumulator;
+                        container.PreviewCurrentTime = SnapTime(PosToTime(pos));
+                        r.X = container.PreviewPosition - container.Position;
+
+                        var endTime = container.PreviewCurrentTime + container.Duration;
+
+                        if (!init)
+                        {
+                            init = true;
+                            minTime = container.PreviewCurrentTime;
+                            maxTime = endTime;
+                        }
+
+                        if (container.PreviewCurrentTime < minTime)
+                        {
+                            minTime = container.PreviewCurrentTime;
+                        }
+                        if(endTime > maxTime)
+                        {
+                            maxTime = endTime;
+                        }
+                    }
+                    IsBulkUpdatingItems = false;
+
+                    Pointers.DrawDraggingPrompt(minTime, maxTime);
                 }
             }
         }
@@ -1145,14 +1424,24 @@ namespace Excalibur.Timeline
         {
             return (Math.Round(time / SnapInterval) * SnapInterval);
         }
+             
+        /// <summary>
+        /// 时间转为文本字符串
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public string TimeToText(double time)
+        {
+            return TimeStep == TimeStepMode.Frames ? (time * FrameRate).ToString("0") : time.ToString("0.00");
+        }
 
         #region Selection
         /// <summary>
         /// 取消所有选中项
         /// </summary>
-        public void UnselectAll()
+        public void UnselectAllTrackItems()
         {
-
+            SelectedTrackItems.Clear();
         }
         #endregion
     }
