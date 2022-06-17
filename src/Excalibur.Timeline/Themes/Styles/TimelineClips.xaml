@@ -61,7 +61,7 @@
         <Setter Property="Height"
                 Value="25" />
         <Setter Property="MinWidth"
-                Value="5" />
+                Value="10" />
         <Setter Property="Background"
                 Value="Violet" />
         <Setter Property="BorderBrush"

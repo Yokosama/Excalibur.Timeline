@@ -498,7 +498,7 @@ namespace Excalibur.Timeline
         /// <summary>
         /// Timeline指针
         /// </summary>
-        public TimelinePointers Pointers;
+        public TimelinePointers Pointers { get; private set; }
 
         #region Render
         private double _timeInfoStart;

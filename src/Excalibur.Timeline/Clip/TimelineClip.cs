@@ -44,14 +44,6 @@ namespace Excalibur.Timeline
                 container.Selected += ContainerSelected;
                 container.Unselected += ContainerUnselected;
             }
-            container.Scale.Pointers.Rendering += PointersRendering;
-        }
-
-        private void PointersRendering(object sender, TimelinePointersRenderingEventArgs e)
-        {
-            if (e.Context == null) return;
-
-            DrawDraggingPrompt(e.Pointers, e.Context, e.Area);
         }
 
         private void ContainerSelected(object sender, RoutedEventArgs e)
@@ -62,16 +54,6 @@ namespace Excalibur.Timeline
         private void ContainerUnselected(object sender, RoutedEventArgs e)
         {
             IsSelected = false;
-        }
-
-        /// <summary>
-        /// 绘制拖拽提示
-        /// </summary>
-        /// <param name="pointers">TimelinePointers</param>
-        /// <param name="dc">TimelinePointers的绘制上下文</param>
-        /// <param name="area">绘制的区域</param>
-        protected virtual void DrawDraggingPrompt(TimelinePointers pointers, DrawingContext dc, Rect area)
-        {
         }
     }
 }

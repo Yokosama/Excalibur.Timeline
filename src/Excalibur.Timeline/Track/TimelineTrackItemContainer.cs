@@ -270,8 +270,7 @@ namespace Excalibur.Timeline
                 default:
                     if (!IsSelected)
                     {
-                        Scale?.UnselectAllTrackItems();
-                        IsSelected = true;
+                        SelectedSelf();
                     }
                     break;
             }
@@ -342,25 +341,6 @@ namespace Excalibur.Timeline
 
                 e.Handled = true;
             }
-            else
-            {
-                //switch (Keyboard.Modifiers)
-                //{
-                //    case ModifierKeys.Control:
-                //        IsSelected = !IsSelected;
-                //        break;
-                //    case ModifierKeys.Shift:
-                //        IsSelected = true;
-                //        break;
-                //    default:
-                //        if (!IsSelected)
-                //        {
-                //            Scale?.UnselectAllTrackItems();
-                //            IsSelected = true;
-                //        }
-                //        break;
-                //}
-            }
 
             Focus();
             if (IsMouseCaptured)
@@ -401,59 +381,11 @@ namespace Excalibur.Timeline
             Position = Scale.TimeToPos(CurrentTime);
             PreviewPosition = Scale.TimeToPos(PreviewCurrentTime);
         }
-    }
 
-    /// <summary>
-    /// TimelineTrackItemContainer选中事件委托
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public delegate void TrackItemSelectedEventHandler(object sender, TrackItemSelectedEventArgs e);
-
-    /// <summary>
-    /// TimelineTrackItemContainer选中事件参数
-    /// </summary>
-    public class TrackItemSelectedEventArgs : RoutedEventArgs
-    {
-        /// <summary>
-        /// TimelineTrackItemContainer
-        /// </summary>
-        public TimelineTrackItemContainer ItemContainer { get; }
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="itemContainer"></param>
-        public TrackItemSelectedEventArgs(TimelineTrackItemContainer itemContainer)
+        internal void SelectedSelf()
         {
-            ItemContainer = itemContainer;
-        }
-    }
-
-    /// <summary>
-    /// TimelineTrackItemContainer取消选中事件委托
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public delegate void TrackItemUnselectedEventHandler(object sender, TrackItemUnselectedEventArgs e);
-
-    /// <summary>
-    /// TimelineTrackItemContainer取消选中事件参数
-    /// </summary>
-    public class TrackItemUnselectedEventArgs : RoutedEventArgs
-    {
-        /// <summary>
-        /// TimelineTrackItemContainer
-        /// </summary>
-        public TimelineTrackItemContainer ItemContainer { get; }
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="itemContainer"></param>
-        public TrackItemUnselectedEventArgs(TimelineTrackItemContainer itemContainer)
-        {
-            ItemContainer = itemContainer;
+            Scale?.UnselectAllTrackItems();
+            IsSelected = true;
         }
     }
 }

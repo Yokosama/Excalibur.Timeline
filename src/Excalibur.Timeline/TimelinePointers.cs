@@ -566,7 +566,7 @@ namespace Excalibur.Timeline
             if (IsShowMinDraggingTimeText)
             {
                 IsShowMinDraggingTimeText = false;
-
+                IsCurrentTimePointerDragging = false;
                 UpdatePointersPosition(); // 防止位置不准确，重新计算位置
 
                 InvalidateVisual();
