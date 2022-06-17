@@ -1028,6 +1028,8 @@ namespace Excalibur.Timeline
             if (pos.Y < ScaleLineAreaHeight && pos.Y >= 0 && !_dragCurrentTimePointer) // 鼠标左键点击刻度线区域，设置当前时间
             {
                 _dragCurrentTimePointer = true;
+                Pointers.StartPointersDragging();
+
                 PosToCurrentTime(pos.X);
                 Mouse.Capture(this);
             }
@@ -1090,7 +1092,6 @@ namespace Excalibur.Timeline
             Point pos = e.GetPosition(this);
             if (_dragCurrentTimePointer)
             {
-                if (!Pointers.IsCurrentTimePointerDragging) Pointers.IsCurrentTimePointerDragging = true;
                 PosToCurrentTime(pos.X);
             }
             if (_dragStart)
@@ -1242,6 +1243,35 @@ namespace Excalibur.Timeline
                     ItemsDragStartedCommand.Execute(null);
                 }
 
+                double minTime = 0, maxTime = 0;
+                bool init = false;
+                foreach (var item in _selectedTrackItems)
+                {
+                    TimelineTrackItemContainer container = item.Value;
+                    var r = (TranslateTransform)container.RenderTransform;
+
+                    var currentTime = container.CurrentTime;
+
+                    var endTime = currentTime + container.Duration;
+
+                    if (!init)
+                    {
+                        init = true;
+                        minTime = currentTime;
+                        maxTime = endTime;
+                    }
+
+                    if (currentTime < minTime)
+                    {
+                        minTime = currentTime;
+                    }
+                    if (endTime > maxTime)
+                    {
+                        maxTime = endTime;
+                    }
+                }
+                Pointers.StartDraggingPrompt(minTime, maxTime);
+
                 e.Handled = true;
             }
         }
@@ -1323,7 +1353,7 @@ namespace Excalibur.Timeline
                     }
                     IsBulkUpdatingItems = false;
 
-                    Pointers.DrawDraggingPrompt(minTime, maxTime);
+                    Pointers.ShowDraggingPrompt(minTime, maxTime);
                 }
             }
         }

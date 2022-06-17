@@ -11,7 +11,7 @@
             <Setter.Value>
                 <ControlTemplate>
                     <Polygon Fill="Green"
-                             Points="1,0 1,16 6,22 11,16 11,0"
+                             Points="0,0 0,15 5,21 10,15 10,0"
                              StrokeThickness="0" />
                 </ControlTemplate>
             </Setter.Value>
@@ -24,7 +24,7 @@
             <Setter.Value>
                 <ControlTemplate>
                     <Polygon Fill="Red"
-                             Points="-1,8 6,22 13,8"
+                             Points="0,8 8,21 16,8"
                              StrokeThickness="0" />
                 </ControlTemplate>
             </Setter.Value>
@@ -33,9 +33,9 @@
 
     <Style TargetType="{x:Type tl:TimelinePointers}">
         <Setter Property="CurrentTimePointerPositionOffset"
-                Value="5.5" />
+                Value="5" />
         <Setter Property="DurationPointerPositionOffset"
-                Value="5.5" />
+                Value="8" />
         <Setter Property="CurrentTimeBrush"
                 Value="Green" />
         <Setter Property="MinEffectiveTimeEdgeLineBrush"
@@ -44,8 +44,10 @@
                 Value="Red" />
         <Setter Property="TimeTextFontBrush"
                 Value="Blue" />
+        <Setter Property="DraggingPromptLineBrush"
+                Value="Violet" />
         <Setter Property="TimeTextBox"
-                Value="14,15,8,4" />
+                Value="16,15,8,4" />
         <Setter Property="TimeTextPosition"
                 Value="4,3" />
         <Setter Property="Template">
@@ -57,16 +59,94 @@
                                 HorizontalAlignment="Left"
                                 Background="Transparent"
                                 SnapsToDevicePixels="True">
-                            <Thumb Canvas.Top="0"
-                                   x:Name="PART_DurationPointer"
-                                   Canvas.Left="{TemplateBinding DurationPointerPosition}"
-                                   Style="{StaticResource DurationPointerThumb}">
-                            </Thumb>
-                            <Thumb Canvas.Top="0"
-                                   x:Name="PART_CurrentTimePointer"
-                                   Canvas.Left="{TemplateBinding CurrentTimePointerPosition}"
-                                   Style="{StaticResource CurrentTimePointerThumb}">
-                            </Thumb>
+                            <Grid Canvas.Left="{TemplateBinding DurationPointerPosition}">
+                                <Thumb x:Name="PART_DurationPointer"
+                                       HorizontalAlignment="Center"
+                                       Style="{StaticResource DurationPointerThumb}">
+                                </Thumb>
+
+                                <Rectangle Width="2"
+                                           Margin="0,10,0,0"
+                                           IsHitTestVisible="False"
+                                           HorizontalAlignment="Center"
+                                           Height="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                           Fill="{TemplateBinding DurationEdgeLineBrush}" />
+                            </Grid>
+
+                            <Grid Canvas.Left="{TemplateBinding CurrentTimePointerPosition}">
+                                <Thumb x:Name="PART_CurrentTimePointer"
+                                       HorizontalAlignment="Center"
+                                       Style="{StaticResource CurrentTimePointerThumb}">
+                                </Thumb>
+
+                                <Rectangle Width="2"
+                                           IsHitTestVisible="False"
+                                           HorizontalAlignment="Center"
+                                           Height="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                           Fill="{TemplateBinding CurrentTimeBrush }" />
+                            </Grid>
+
+                            <Grid Canvas.Left="{Binding MinEffectiveTimePosition, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}"
+                                  Margin="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}},
+                            Converter={StaticResource MarginConverter}, ConverterParameter='Top'}">
+                                <Rectangle Width="2"
+                                           Margin="-1,0,0,0"
+                                           IsHitTestVisible="False"
+                                           Height="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                           Fill="{TemplateBinding MinEffectiveTimeEdgeLineBrush}" />
+                            </Grid>
+
+                            <Grid Canvas.Left="{Binding MinDraggingTimeTextPosition, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}">
+                                <Border Margin="0,1,0,0"
+                                        Padding="5,2"
+                                        CornerRadius="4"
+                                        Background="{TemplateBinding TimeTextBoxBrush}"
+                                        VerticalAlignment="Top"
+                                        Visibility="Hidden"
+                                        x:Name="PART_MinDraggingTimeTextBox">
+                                    <TextBlock Text="{TemplateBinding MinDraggingTimeText}"
+                                               FontSize="10"
+                                               Foreground="{TemplateBinding TimeTextFontBrush}" />
+                                </Border>
+
+                                <Line Stroke="{TemplateBinding DraggingPromptLineBrush}"
+                                      Margin="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}},
+                            Converter={StaticResource MarginConverter}, ConverterParameter='Top'}"
+                                      VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Center"
+                                      Visibility="Hidden"
+                                      x:Name="minDraggingTimeTextLine"
+                                      Y2="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}"
+                                      StrokeDashArray="4 2"
+                                      StrokeThickness="2" />
+                            </Grid>
+
+                            <Grid Canvas.Left="{Binding MaxDraggingTimeTextPosition, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}">
+                                <Border Margin="0,1,0,0"
+                                        Canvas.Top="1"
+                                        Padding="5,2"
+                                        CornerRadius="4"
+                                        VerticalAlignment="Top"
+                                        Visibility="Hidden"
+                                        Background="{TemplateBinding TimeTextBoxBrush}"
+                                        x:Name="PART_MaxDraggingTimeTextBox">
+                                    <TextBlock Text="{TemplateBinding MaxDraggingTimeText}"
+                                               FontSize="10"
+                                               Foreground="{TemplateBinding TimeTextFontBrush}" />
+                                </Border>
+
+                                <Line Stroke="{TemplateBinding DraggingPromptLineBrush}"
+                                      Margin="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}},
+                            Converter={StaticResource MarginConverter}, ConverterParameter='Top'}"
+                                      VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Center"
+                                      x:Name="maxDraggingTimeTextLine"
+                                      Visibility="Hidden"
+                                      Y2="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}"
+                                      StrokeDashArray="4 2"
+                                      StrokeThickness="2" />
+                            </Grid>
+
                         </Canvas>
 
                         <Rectangle x:Name="minEffectiveTimeEdge"
@@ -87,7 +167,7 @@
                                    HorizontalAlignment="Right"
                                    IsHitTestVisible="False" />
                     </Grid>
-                
+
                     <ControlTemplate.Triggers>
                         <Trigger Property="MinEffectiveTimeEdgeWidth"
                                  Value="0">
@@ -101,6 +181,44 @@
                                     TargetName="durationEdge"
                                     Value="Collapsed" />
                         </Trigger>
+                        <Trigger Property="IsShowMinDraggingTimeText"
+                                 Value="True">
+                            <Setter Property="Visibility"
+                                    TargetName="PART_MinDraggingTimeTextBox"
+                                    Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsShowMaxDraggingTimeText"
+                                 Value="True">
+                            <Setter Property="Visibility"
+                                    TargetName="PART_MaxDraggingTimeTextBox"
+                                    Value="Visible" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsShowMinDraggingTimeText"
+                                           Value="True" />
+                                <Condition Property="IsCurrentTimePointerDragging"
+                                           Value="False" />
+                                <Condition Property="IsDurationPointerDragging"
+                                           Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Visibility"
+                                    Value="Visible"
+                                    TargetName="minDraggingTimeTextLine" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsShowMaxDraggingTimeText"
+                                           Value="True" />
+                                <Condition Property="IsCurrentTimePointerDragging"
+                                           Value="False" />
+                                <Condition Property="IsDurationPointerDragging"
+                                           Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Visibility"
+                                    Value="Visible"
+                                    TargetName="maxDraggingTimeTextLine" />
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

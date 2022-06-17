@@ -1,4 +1,5 @@
 ﻿using Excalibur.Timeline.Helper;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,10 +15,14 @@ namespace Excalibur.Timeline
     /// </summary>
     [TemplatePart(Name = ElementCurrentTimePointer, Type = typeof(Thumb))]
     [TemplatePart(Name = ElementDurationPointer, Type = typeof(Thumb))]
+    [TemplatePart(Name = ElementMinDraggingTimeTextBox, Type = typeof(Border))]
+    [TemplatePart(Name = ElementMaxDraggingTimeTextBox, Type = typeof(Border))]
     public class TimelinePointers : Control
     {
         private const string ElementCurrentTimePointer = "PART_CurrentTimePointer";
         private const string ElementDurationPointer = "PART_DurationPointer";
+        private const string ElementMinDraggingTimeTextBox = "PART_MinDraggingTimeTextBox";
+        private const string ElementMaxDraggingTimeTextBox = "PART_MaxDraggingTimeTextBox";
 
         /// <summary>
         /// 当前时间指针的位置
@@ -75,6 +80,21 @@ namespace Excalibur.Timeline
         public static readonly DependencyProperty DurationPointerPositionOffsetProperty =
             DependencyProperty.Register(nameof(DurationPointerPositionOffset), typeof(double), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
+
+        /// <summary>
+        /// 有效时间指针的位置偏移
+        /// </summary>
+        public double MinEffectiveTimePosition
+        {
+            get { return (double)GetValue(MinEffectiveTimePositionProperty); }
+            set { SetValue(MinEffectiveTimePositionProperty, value); }
+        }
+        /// <summary>
+        /// MinEffectiveTimePosition属性
+        /// </summary>
+        public static readonly DependencyProperty MinEffectiveTimePositionProperty =
+            DependencyProperty.Register(nameof(MinEffectiveTimePosition), typeof(double), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
         /// <summary>
         /// 当前时间的刻度线笔刷
         /// </summary>
@@ -87,7 +107,7 @@ namespace Excalibur.Timeline
         /// CurrentTimeBrush属性
         /// </summary>
         public static readonly DependencyProperty CurrentTimeBrushProperty =
-            DependencyProperty.Register(nameof(CurrentTimeBrush), typeof(Brush), typeof(TimelinePointers), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender, OnCurrentTimeBrushChanged));
+            DependencyProperty.Register(nameof(CurrentTimeBrush), typeof(Brush), typeof(TimelinePointers), new FrameworkPropertyMetadata(Brushes.Black));
 
         /// <summary>
         /// 最小时间的边界刻度线笔刷
@@ -101,7 +121,7 @@ namespace Excalibur.Timeline
         /// MinEffectiveTimeEdgeLineBrush属性
         /// </summary>
         public static readonly DependencyProperty MinEffectiveTimeEdgeLineBrushProperty =
-            DependencyProperty.Register(nameof(MinEffectiveTimeEdgeLineBrush), typeof(Brush), typeof(TimelinePointers), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender, OnMinEffectiveTimeEdgeLineBrushChanged));
+            DependencyProperty.Register(nameof(MinEffectiveTimeEdgeLineBrush), typeof(Brush), typeof(TimelinePointers), new FrameworkPropertyMetadata(Brushes.Black));
 
         /// <summary>
         /// 最小时间的边界宽度
@@ -143,7 +163,7 @@ namespace Excalibur.Timeline
         /// DurationEdgeLineBrush属性
         /// </summary>
         public static readonly DependencyProperty DurationEdgeLineBrushProperty =
-            DependencyProperty.Register(nameof(DurationEdgeLineBrush), typeof(Brush), typeof(TimelinePointers), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender, OnDurationEdgeLineBrushChanged));
+            DependencyProperty.Register(nameof(DurationEdgeLineBrush), typeof(Brush), typeof(TimelinePointers), new FrameworkPropertyMetadata(Brushes.Black));
 
         /// <summary>
         /// MinEffectiveTime的边界背景笔刷
@@ -256,39 +276,140 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly RoutedEvent RenderingEvent = EventManager.RegisterRoutedEvent(nameof(Rendering), RoutingStrategy.Bubble, typeof(TimelinePointersRenderingHandler), typeof(TimelinePointers));
 
-        private Thumb _currentTimePointer;
-        private Thumb _durationPointer;
+        /// <summary>
+        /// 显示最小拖拽时间文本
+        /// </summary>
+        public bool IsShowMinDraggingTimeText
+        {
+            get { return (bool)GetValue(IsShowMinDraggingTimeTextProperty); }
+            set { SetValue(IsShowMinDraggingTimeTextProperty, value); }
+        }
+        /// <summary>
+        /// 显示最小拖拽时间文本属性
+        /// </summary>
+        public static readonly DependencyProperty IsShowMinDraggingTimeTextProperty =
+            DependencyProperty.Register(nameof(IsShowMinDraggingTimeText), typeof(bool), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        /// <summary>
+        /// 显示最大拖拽时间文本
+        /// </summary>
+        public bool IsShowMaxDraggingTimeText
+        {
+            get { return (bool)GetValue(IsShowMaxDraggingTimeTextProperty); }
+            set { SetValue(IsShowMaxDraggingTimeTextProperty, value); }
+        }
+        /// <summary>
+        /// 显示最大拖拽时间文本属性
+        /// </summary>
+        public static readonly DependencyProperty IsShowMaxDraggingTimeTextProperty =
+            DependencyProperty.Register(nameof(IsShowMaxDraggingTimeText), typeof(bool), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        /// <summary>
+        /// 最小拖拽时间文本的位置
+        /// </summary>
+        public double MinDraggingTimeTextPosition
+        {
+            get { return (double)GetValue(MinDraggingTimeTextPositionProperty); }
+            set { SetValue(MinDraggingTimeTextPositionProperty, value); }
+        }
+        /// <summary>
+        /// 最小拖拽时间文本的位置属性
+        /// </summary>
+        public static readonly DependencyProperty MinDraggingTimeTextPositionProperty =
+            DependencyProperty.Register(nameof(MinDraggingTimeTextPosition), typeof(double), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        /// <summary>
+        /// 最大拖拽时间文本的位置
+        /// </summary>
+        public double MaxDraggingTimeTextPosition
+        {
+            get { return (double)GetValue(MaxDraggingTimeTextPositionProperty); }
+            set { SetValue(MaxDraggingTimeTextPositionProperty, value); }
+        }
+        /// <summary>
+        /// 最大拖拽时间文本的位置属性
+        /// </summary>
+        public static readonly DependencyProperty MaxDraggingTimeTextPositionProperty =
+            DependencyProperty.Register(nameof(MaxDraggingTimeTextPosition), typeof(double), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        /// <summary>
+        /// 最大拖拽时间文本
+        /// </summary>
+        public string MinDraggingTimeText
+        {
+            get { return (string)GetValue(MinDraggingTimeTextProperty); }
+            set { SetValue(MinDraggingTimeTextProperty, value); }
+        }
+        /// <summary>
+        /// 最大拖拽时间文本
+        /// </summary>
+        public static readonly DependencyProperty MinDraggingTimeTextProperty =
+            DependencyProperty.Register(nameof(MinDraggingTimeText), typeof(string), typeof(TimelinePointers), new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        /// <summary>
+        /// 最大拖拽时间文本
+        /// </summary>
+        public string MaxDraggingTimeText
+        {
+            get { return (string)GetValue(MaxDraggingTimeTextProperty); }
+            set { SetValue(MaxDraggingTimeTextProperty, value); }
+        }
+        /// <summary>
+        /// 最大拖拽时间文本
+        /// </summary>
+        public static readonly DependencyProperty MaxDraggingTimeTextProperty =
+            DependencyProperty.Register(nameof(MaxDraggingTimeText), typeof(string), typeof(TimelinePointers), new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
         /// 当前时间指针是否正在拖拽
         /// </summary>
-        public bool IsCurrentTimePointerDragging { get; set; }
+        public bool IsCurrentTimePointerDragging
+        {
+            get { return (bool)GetValue(IsCurrentTimePointerDraggingProperty); }
+            set { SetValue(IsCurrentTimePointerDraggingProperty, value); }
+        }
+        /// <summary>
+        /// 当前时间指针是否正在拖拽
+        /// </summary>
+        public static readonly DependencyProperty IsCurrentTimePointerDraggingProperty =
+            DependencyProperty.Register(nameof(IsCurrentTimePointerDragging), typeof(bool), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
-        /// 有效时间指针是否正在拖拽
+        /// 当前时间指针是否正在拖拽
         /// </summary>
-        public bool IsDurationPointerDragging { get; set; }
+        public bool IsDurationPointerDragging
+        {
+            get { return (bool)GetValue(IsDurationPointerDraggingProperty); }
+            set { SetValue(IsDurationPointerDraggingProperty, value); }
+        }
+        /// <summary>
+        /// 当前时间指针是否正在拖拽
+        /// </summary>
+        public static readonly DependencyProperty IsDurationPointerDraggingProperty =
+            DependencyProperty.Register(nameof(IsDurationPointerDragging), typeof(bool), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
-        /// 当前显示的时间
+        /// 拖拽提示线笔刷
         /// </summary>
-        private string _currentTimeText;
+        public Brush DraggingPromptLineBrush
+        {
+            get { return (Brush)GetValue(DraggingPromptLineBrushProperty); }
+            set { SetValue(DraggingPromptLineBrushProperty, value); }
+        }
         /// <summary>
-        /// 有效时间的显示文本
+        /// DraggingPromptLineBrush属性
         /// </summary>
-        private string _durationTimeText;
+        public static readonly DependencyProperty DraggingPromptLineBrushProperty =
+            DependencyProperty.Register(nameof(DraggingPromptLineBrush), typeof(Brush), typeof(TimelinePointers), new FrameworkPropertyMetadata(Brushes.Black));
+
+        private Thumb _currentTimePointer;
+        private Thumb _durationPointer;
+        private Border _minTimeTextBox;
+        private Border _maxTimeTextBox;
 
         private TimelineScale _scale;
 
-        #region Draw
-        private Pen _minTimeLinePen;
-        private Pen _durationLinePen;
-        private Pen _currentTimePen;
-
-        private bool _isDrawDraggingPrompt = false;
-        private double _draggingMinTime;
-        private double _draggingMaxTime;
-        #endregion
+        private bool _isShowDraggingPrompt = false;
 
         static TimelinePointers()
         {
@@ -301,10 +422,6 @@ namespace Excalibur.Timeline
         /// </summary>
         public TimelinePointers()
         {
-            _minTimeLinePen = new Pen(MinEffectiveTimeEdgeLineBrush, 2);
-            _durationLinePen = new Pen(DurationEdgeLineBrush, 2);
-            _currentTimePen = new Pen(CurrentTimeBrush, 2);
-
         }
 
         /// <summary>
@@ -316,6 +433,8 @@ namespace Excalibur.Timeline
 
             _currentTimePointer = Template.FindName(ElementCurrentTimePointer, this) as Thumb;
             _durationPointer = Template.FindName(ElementDurationPointer, this) as Thumb;
+            _minTimeTextBox = Template.FindName(ElementMinDraggingTimeTextBox, this) as Border;
+            _maxTimeTextBox = Template.FindName(ElementMaxDraggingTimeTextBox, this) as Border;
 
             _scale = this.TryFindParent<TimelineScale>();
             if (_scale != null)
@@ -336,50 +455,18 @@ namespace Excalibur.Timeline
             }
         }
 
-        private static void OnCurrentTimeBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is TimelinePointers p)
-            {
-                if (p._currentTimePen == null)
-                {
-                    p._currentTimePen = new Pen(p.CurrentTimeBrush, 2);
-                }
-                p._currentTimePen.Brush = p.CurrentTimeBrush;
-            }
-        }
-
-        private static void OnMinEffectiveTimeEdgeLineBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is TimelinePointers p)
-            {
-                if (p._minTimeLinePen == null)
-                {
-                    p._minTimeLinePen = new Pen(p.MinEffectiveTimeEdgeLineBrush, 2);
-                }
-                p._minTimeLinePen.Brush = p.MinEffectiveTimeEdgeLineBrush;
-            }
-        }
-
-        private static void OnDurationEdgeLineBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is TimelinePointers p)
-            {
-                if (p._durationLinePen == null)
-                {
-                    p._durationLinePen = new Pen(p.DurationEdgeLineBrush, 2);
-                }
-                p._durationLinePen.Brush = p.DurationEdgeLineBrush;
-            }
-        }
-
         private void CurrentTimePointerDragCompleted(object sender, DragCompletedEventArgs e)
         {
+            IsShowMinDraggingTimeText = false;
             IsCurrentTimePointerDragging = false;
             InvalidateVisual();
         }
 
         private void CurrentTimePointerDragDelta(object sender, DragDeltaEventArgs e)
         {
+            if (!IsShowMinDraggingTimeText)
+                IsShowMinDraggingTimeText = true;
+
             if (!IsCurrentTimePointerDragging)
                 IsCurrentTimePointerDragging = true;
 
@@ -389,12 +476,15 @@ namespace Excalibur.Timeline
 
         private void DurationPointerDragCompleted(object sender, DragCompletedEventArgs e)
         {
+            IsShowMinDraggingTimeText = false;
             IsDurationPointerDragging = false;
             InvalidateVisual();
         }
 
         private void DurationPointerDragDelta(object sender, DragDeltaEventArgs e)
         {
+            if (!IsShowMinDraggingTimeText)
+                IsShowMinDraggingTimeText = true;
             if (!IsDurationPointerDragging)
                 IsDurationPointerDragging = true;
 
@@ -402,6 +492,9 @@ namespace Excalibur.Timeline
             {
                 _scale.PosToDuration(DurationPointerPosition + e.HorizontalChange + DurationPointerPositionOffset);
             }
+
+            var durationPos = _scale.TimeToPos(_scale.Duration);
+            UpdateEdgeWidth(MinEffectiveTimePosition, durationPos);
         }
 
         private void TimeScaleChanged(object sender, RoutedEventArgs e)
@@ -416,12 +509,12 @@ namespace Excalibur.Timeline
         {
             if (_scale == null) return;
             var durationPos = _scale.TimeToPos(_scale.Duration);
-            var zeroPos = _scale.TimeToPos(_scale.MinEffectiveTime);
+            MinEffectiveTimePosition = _scale.TimeToPos(_scale.MinEffectiveTime);
 
             UpdateCurrentTimePointerPosition(_scale.TimeToPos(_scale.CurrentTime), _scale.CurrentTimeText);
             UpdateDurationPointerPosition(durationPos, _scale.DurationText);
 
-            UpdateEdgeWidth(zeroPos, durationPos);
+            UpdateEdgeWidth(MinEffectiveTimePosition, durationPos);
         }
 
         /// <summary>
@@ -431,8 +524,11 @@ namespace Excalibur.Timeline
         /// <param name="timeText">当前时间文本</param>
         public void UpdateCurrentTimePointerPosition(double timePos, string timeText)
         {
-            _currentTimeText = timeText;
+            MinDraggingTimeText = timeText;
             CurrentTimePointerPosition = timePos - CurrentTimePointerPositionOffset;
+
+            if (IsCurrentTimePointerDragging && IsShowMinDraggingTimeText) MinDraggingTimeTextPosition = CurrentTimePointerPosition + TimeTextBox.X;
+            Debug.WriteLine(_minTimeTextBox.Visibility);
         }
 
         /// <summary>
@@ -442,8 +538,24 @@ namespace Excalibur.Timeline
         /// <param name="timeText">当前有效时间位置</param>
         public void UpdateDurationPointerPosition(double timePos, string timeText)
         {
-            _durationTimeText = timeText;
+            MinDraggingTimeText = timeText;
             DurationPointerPosition = timePos - DurationPointerPositionOffset;
+            if (IsDurationPointerDragging && IsShowMinDraggingTimeText) MinDraggingTimeTextPosition = DurationPointerPosition + TimeTextBox.X; Debug.WriteLine(_minTimeTextBox.Visibility);
+        }
+
+        /// <summary>
+        /// 时间指针开始拖拽
+        /// </summary>
+        internal void StartPointersDragging()
+        {
+            if (!IsCurrentTimePointerDragging)
+            {
+                IsCurrentTimePointerDragging = true;
+            }
+            if (!IsShowMinDraggingTimeText)
+            {
+                IsShowMinDraggingTimeText = true;
+            }
         }
 
         /// <summary>
@@ -451,10 +563,9 @@ namespace Excalibur.Timeline
         /// </summary>
         public void EndPointersDragging()
         {
-            if (IsCurrentTimePointerDragging || IsDurationPointerDragging)
+            if (IsShowMinDraggingTimeText)
             {
-                IsCurrentTimePointerDragging = false;
-                IsDurationPointerDragging = false;
+                IsShowMinDraggingTimeText = false;
 
                 UpdatePointersPosition(); // 防止位置不准确，重新计算位置
 
@@ -472,62 +583,6 @@ namespace Excalibur.Timeline
             EndPointersDragging();
         }
 
-        /// <summary>
-        /// Override OnRender
-        /// </summary>
-        /// <param name="dc"></param>
-        protected override void OnRender(DrawingContext dc)
-        {
-            base.OnRender(dc);
-            if (_scale == null) return;
-            dc.PushGuidelineSet(new GuidelineSet(new[] { 0.5 }, new[] { 0.5 }));
-
-            if (IsCurrentTimePointerDragging)
-            {
-                DrawTimeText(dc, _currentTimeText, CurrentTimePointerPosition + TimeTextBox.X);
-            }
-
-            if (IsDurationPointerDragging)
-            {
-                DrawTimeText(dc, _durationTimeText, DurationPointerPosition + TimeTextBox.X);
-            }
-
-            var startPosY = _scale.ScaleLineAreaHeight;
-            var height = ActualHeight;
-            // 0边界线
-            var zeroPos = _scale.MinEffectiveTimeToPos();
-            var start = new Point(zeroPos, startPosY);
-            var end = new Point(zeroPos, height);
-            dc.DrawLine(_minTimeLinePen, start, end);
-
-            // Duration边界线
-            var durationPos = _scale.DurationToPos();
-            start = new Point(durationPos, startPosY);
-            end = new Point(durationPos, height);
-            dc.DrawLine(_durationLinePen, start, end);
-
-            UpdateEdgeWidth(zeroPos, durationPos);
-
-            var posx = CurrentTimePointerPosition + CurrentTimePointerPositionOffset;
-            start = new Point(posx, startPosY);
-            end = new Point(posx, height);
-            dc.DrawLine(_currentTimePen, start, end);
-
-            if (_isDrawDraggingPrompt)
-            {
-                var curPos = _scale.TimeToPos(_draggingMinTime);
-                dc.DrawLine(new Pen(Brushes.Blue, 1), new Point(curPos, startPosY), new Point(curPos, height));
-                DrawTimeText(dc, _scale.TimeToText(_draggingMinTime), curPos, true);
-
-                if(_draggingMinTime != _draggingMaxTime)
-                {
-                    var endPos = _scale.TimeToPos(_draggingMaxTime);
-                    dc.DrawLine(new Pen(Brushes.Blue, 1), new Point(endPos, startPosY), new Point(endPos, height));
-                    DrawTimeText(dc, _scale.TimeToText(_draggingMaxTime), endPos, true);
-                }
-            }
-        }
-
         private void UpdateEdgeWidth(double zeroPos, double durationPos)
         {
             if (zeroPos > 0)
@@ -539,40 +594,41 @@ namespace Excalibur.Timeline
             else DurationEdgeWidth = 0;
         }
 
-        /// <summary>
-        /// 绘制事件文字
-        /// </summary>
-        /// <param name="dc">绘制上下文</param>
-        /// <param name="timeText">时间文本</param>
-        /// <param name="boxPosX">背景框位置</param>
-        public void DrawTimeText(DrawingContext dc, string timeText, double boxPosX, bool alignMiddle = false)
+        internal void StartDraggingPrompt(double minTime, double maxTime)
         {
-            var ft = new FormattedText(timeText, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Sergio UI"), TimeTextFontSize, TimeTextFontBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
-            var boxPosY = TimeTextBox.Y - ft.Height;
-            var boxWidth = TimeTextBox.Width + ft.Width;
-            if (alignMiddle)
-            {
-                boxPosX -= boxWidth / 2;
-            }
-            // TODO: 自动根据边界，替换左右侧位置
+            MinDraggingTimeText = _scale.TimeToText(minTime);
+            MinDraggingTimeTextPosition = _scale.TimeToPos(minTime) - _minTimeTextBox.ActualWidth / 2;
 
-            dc.DrawRoundedRectangle(TimeTextBoxBrush, null, new Rect(boxPosX, boxPosY, boxWidth, TimeTextBox.Height + ft.Height), 3, 3);
-
-            dc.DrawText(ft, new Point(boxPosX + TimeTextPosition.X, boxPosY + TimeTextPosition.Y));
+            MaxDraggingTimeText = _scale.TimeToText(maxTime);
+            MaxDraggingTimeTextPosition = _scale.TimeToPos(maxTime) - _maxTimeTextBox.ActualWidth / 2;
         }
 
-        internal void DrawDraggingPrompt(double minTime, double maxTime)
+        internal void ShowDraggingPrompt(double minTime, double maxTime)
         {
-            if (!_isDrawDraggingPrompt) _isDrawDraggingPrompt = true;
-            _draggingMinTime = minTime;
-            _draggingMaxTime = maxTime;
-            InvalidateVisual();
+            if (!_isShowDraggingPrompt) _isShowDraggingPrompt = true;
+            IsShowMinDraggingTimeText = true;
+
+            MinDraggingTimeText = _scale.TimeToText(minTime);
+
+            MinDraggingTimeTextPosition = _scale.TimeToPos(minTime) - _minTimeTextBox.ActualWidth / 2;
+
+            if (minTime != maxTime)
+            {
+                MaxDraggingTimeText = _scale.TimeToText(maxTime);
+                MaxDraggingTimeTextPosition = _scale.TimeToPos(maxTime) - _maxTimeTextBox.ActualWidth / 2;
+                IsShowMaxDraggingTimeText = true;
+            }
         }
 
         internal void EndDrawDraggingPrompt()
         {
-            _isDrawDraggingPrompt = false;
-            InvalidateVisual();
+            if (_isShowDraggingPrompt)
+            {
+                IsShowMinDraggingTimeText = false;
+                IsShowMaxDraggingTimeText = false;
+
+                _isShowDraggingPrompt = false;
+            }
         }
     }
 

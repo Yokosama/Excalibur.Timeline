@@ -44,6 +44,19 @@
                 Value="#7F808080" />
     </Style>
 
+    <Style x:Key="TimelineDurationClipThumb"
+           TargetType="Thumb">
+        <Setter Property="Cursor"
+                Value="SizeWE" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border Background="Transparent" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type tl:TimelineDurationClip}">
         <Setter Property="Height"
                 Value="25" />
@@ -63,8 +76,20 @@
                     <Border Width="{TemplateBinding Width}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="{TemplateBinding Background}" />
-
+                            Background="{TemplateBinding Background}">
+                        <Grid>
+                            <Thumb x:Name="PART_LeftResizeThumb"
+                                   Style="{StaticResource TimelineDurationClipThumb}"
+                                   Height="{TemplateBinding Height}"
+                                   Width="3"
+                                   HorizontalAlignment="Left" />
+                            <Thumb x:Name="PART_RightResizeThumb"
+                                   Style="{StaticResource TimelineDurationClipThumb}"
+                                   HorizontalAlignment="Right"
+                                   Height="{TemplateBinding Height}"
+                                   Width="3" />
+                        </Grid>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected"
                                  Value="True">

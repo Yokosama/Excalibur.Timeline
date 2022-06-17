@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace Excalibur.Timeline
@@ -12,8 +13,13 @@ namespace Excalibur.Timeline
     /// <summary>
     /// 持续时间的Clip
     /// </summary>
+    [TemplatePart(Name = ElementLeftResizeThumb, Type = typeof(Thumb))]
+    [TemplatePart(Name = ElementRightResizeThumb, Type = typeof(Thumb))]
     public class TimelineDurationClip : TimelineClip
     {
+        private const string ElementLeftResizeThumb = "PART_LeftResizeThumb";
+        private const string ElementRightResizeThumb = "PART_RightResizeThumb";
+
         /// <summary>
         /// 持续时间
         /// </summary>
@@ -44,11 +50,46 @@ namespace Excalibur.Timeline
         {
             base.OnApplyTemplate();
 
+            var leftResizeThumb = Template.FindName(ElementLeftResizeThumb, this) as Thumb;
+            leftResizeThumb.DragStarted += LeftResizeThumbDragStarted;
+            leftResizeThumb.DragDelta += LeftResizeThumbDragDelta;
+            leftResizeThumb.DragCompleted += LeftResizeThumbDragCompleted;
+
+            var rightResizeThumb = Template.FindName(ElementRightResizeThumb, this) as Thumb;
+            rightResizeThumb.DragStarted += RightResizeThumbDragStarted;
+            rightResizeThumb.DragDelta += RightResizeThumbDragDelta;
+            rightResizeThumb.DragCompleted += RightResizeThumbDragCompleted;
+
             if (container != null && container.Scale != null)
             {
                 container.Scale.TimeScaleChanged += TimeScaleChanged;
             }
             UpdateDuration();
+        }
+
+        private void LeftResizeThumbDragStarted(object sender, DragStartedEventArgs e)
+        {
+        }
+
+        private void LeftResizeThumbDragDelta(object sender, DragDeltaEventArgs e)
+        {
+        }
+
+        private void LeftResizeThumbDragCompleted(object sender, DragCompletedEventArgs e)
+        {
+        }
+
+
+        private void RightResizeThumbDragStarted(object sender, DragStartedEventArgs e)
+        {
+        }
+
+        private void RightResizeThumbDragDelta(object sender, DragDeltaEventArgs e)
+        {
+        }
+
+        private void RightResizeThumbDragCompleted(object sender, DragCompletedEventArgs e)
+        {
         }
 
         private void TimeScaleChanged(object sender, RoutedEventArgs e)

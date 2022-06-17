@@ -259,6 +259,23 @@ namespace Excalibur.Timeline
             _initialDragPosition = e.GetPosition(Owner);
             _previousDragPosition = _initialDragPosition;
 
+            switch (Keyboard.Modifiers)
+            {
+                case ModifierKeys.Control:
+                    IsSelected = !IsSelected;
+                    break;
+                case ModifierKeys.Shift:
+                    IsSelected = true;
+                    break;
+                default:
+                    if (!IsSelected)
+                    {
+                        Scale?.UnselectAllTrackItems();
+                        IsSelected = true;
+                    }
+                    break;
+            }
+
             Focus();
             CaptureMouse();
             e.Handled = true;
@@ -327,19 +344,22 @@ namespace Excalibur.Timeline
             }
             else
             {
-                switch (Keyboard.Modifiers)
-                {
-                    case ModifierKeys.Control:
-                        IsSelected = !IsSelected;
-                        break;
-                    case ModifierKeys.Shift:
-                        IsSelected = true;
-                        break;
-                    default:
-                        Scale?.UnselectAllTrackItems();
-                        IsSelected = true;
-                        break;
-                }
+                //switch (Keyboard.Modifiers)
+                //{
+                //    case ModifierKeys.Control:
+                //        IsSelected = !IsSelected;
+                //        break;
+                //    case ModifierKeys.Shift:
+                //        IsSelected = true;
+                //        break;
+                //    default:
+                //        if (!IsSelected)
+                //        {
+                //            Scale?.UnselectAllTrackItems();
+                //            IsSelected = true;
+                //        }
+                //        break;
+                //}
             }
 
             Focus();
