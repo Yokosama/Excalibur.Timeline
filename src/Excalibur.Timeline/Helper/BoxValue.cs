@@ -73,14 +73,14 @@ namespace Excalibur.Timeline
         /// <summary>
         /// 10f
         /// </summary>
-        public static readonly object Float10 = 10f;  
+        public static readonly object Float10 = 10f;
         /// <summary>
-        /// Point(0,0)
+        /// Default Point
         /// </summary>
-        public static readonly object Point0 = new Point();
+        public static readonly object Point = default(Point);
         /// <summary>
-        /// Rect(0,0,0,0)
+        /// Default Rect
         /// </summary>
-        public static readonly object Rect0 = new Rect();
+        public static readonly object Rect = default(Rect);
     }
 }

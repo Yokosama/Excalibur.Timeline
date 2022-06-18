@@ -7,19 +7,38 @@
         <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Styles/TimelineTrack.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <cvrts:MarginConverter x:Key="MarginConverter" />
-    
+
     <DataTemplate x:Key="DefaultTimelineScaleItemTemplate">
         <tl:TimelineTrack />
     </DataTemplate>
-    
+
+    <Style x:Key="SelectionRectangleStyle"
+           TargetType="Rectangle">
+        <Setter Property="Stroke"
+                Value="DodgerBlue" />
+        <Setter Property="StrokeThickness"
+                Value="1" />
+        <Setter Property="Fill">
+            <Setter.Value>
+                <SolidColorBrush Opacity="0.1"
+                                 Color="DodgerBlue" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type tl:TimelineScale}">
         <Setter Property="SnapsToDevicePixels"
                 Value="True" />
         <Setter Property="ClipToBounds"
-                Value="True" />    
+                Value="True" />
         <Setter Property="ItemTemplate"
                 Value="{StaticResource DefaultTimelineScaleItemTemplate}" />
+        <Setter Property="EnableRealtimeSelection"
+                Value="True" />
+        <Setter Property="SelectionRectangleStyle"
+                Value="{StaticResource SelectionRectangleStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineScale}">
@@ -32,7 +51,16 @@
                                                IsItemsHost="True"
                                                Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,1'}" />
 
-                        <tl:TimelinePointers x:Name="PART_TimelinePointers"/>
+                        <tl:TimelinePointers x:Name="PART_TimelinePointers" />
+
+                        <Canvas>
+                            <Rectangle Style="{TemplateBinding SelectionRectangleStyle}"
+                                       Canvas.Top="{Binding SelectedArea.Y, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Canvas.Left="{Binding SelectedArea.X, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Width="{Binding SelectedArea.Width, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Height="{Binding SelectedArea.Height, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Visibility="{TemplateBinding IsSelecting, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </Canvas>
 
                         <ScrollBar x:Name="PART_HorizontalScrollBar"
                                    Orientation="Horizontal"
@@ -46,6 +74,7 @@
                                    HorizontalAlignment="Right"
                                    Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,1'}"
                                    Grid.Row="0" />
+
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

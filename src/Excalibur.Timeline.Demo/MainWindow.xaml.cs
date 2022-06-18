@@ -20,10 +20,17 @@ namespace Excalibur.Timeline.Demo
     /// </summary>
     public partial class MainWindow : Window
     {
+        MainWindowVM _vm;
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowVM();
+            _vm = new MainWindowVM();
+            DataContext = _vm;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            (_vm.CutScene.Items[0] as CutSceneTrack).Items.RemoveAt(0);
         }
     }
 }

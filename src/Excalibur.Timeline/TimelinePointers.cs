@@ -233,7 +233,7 @@ namespace Excalibur.Timeline
         /// TimeTextBox属性
         /// </summary>
         public static readonly DependencyProperty TimeTextBoxProperty =
-            DependencyProperty.Register(nameof(TimeTextBox), typeof(Rect), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Rect0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
+            DependencyProperty.Register(nameof(TimeTextBox), typeof(Rect), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Rect, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
         /// 时间文字的字体大小
@@ -261,7 +261,7 @@ namespace Excalibur.Timeline
         /// TimeTextPosition属性
         /// </summary>
         public static readonly DependencyProperty TimeTextPositionProperty =
-            DependencyProperty.Register(nameof(TimeTextPosition), typeof(Point), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Point0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
+            DependencyProperty.Register(nameof(TimeTextPosition), typeof(Point), typeof(TimelinePointers), new FrameworkPropertyMetadata(BoxValue.Point, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
         /// 渲染过程中的事件

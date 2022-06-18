@@ -82,6 +82,20 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly DependencyProperty IsSelectedProperty =
             DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(TimelineTrackItemContainer), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnIsSelectedChanged));
+        
+        /// <summary>
+        /// 是否选中
+        /// </summary>
+        public bool? IsPreviewingSelection
+        {
+            get { return (bool?)GetValue(IsPreviewingSelectionProperty); }
+            set { SetValue(IsPreviewingSelectionProperty, value); }
+        }
+        /// <summary>
+        /// IsSelected属性
+        /// </summary>
+        public static readonly DependencyProperty IsPreviewingSelectionProperty =
+            DependencyProperty.Register(nameof(IsPreviewingSelection), typeof(bool?), typeof(TimelineTrackItemContainer), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnIsPreviewingSelectionChanged));
 
         /// <summary>
         /// 是否可被选中
@@ -177,6 +191,19 @@ namespace Excalibur.Timeline
         public static readonly RoutedEvent UnselectedEvent = EventManager.RegisterRoutedEvent(nameof(Unselected), RoutingStrategy.Bubble, typeof(RoutedEventArgs), typeof(TimelineTrackItemContainer));
 
         /// <summary>
+        /// 预览框选改变事件
+        /// </summary>
+        public event IsPreviewingSelectionChangedEventHandler IsPreviewingSelectionChanged
+        {
+            add => AddHandler(IsPreviewingSelectionChangedEvent, value);
+            remove => RemoveHandler(IsPreviewingSelectionChangedEvent, value);
+        }
+        /// <summary>
+        /// 预览框选改变事件
+        /// </summary>
+        public static readonly RoutedEvent IsPreviewingSelectionChangedEvent = EventManager.RegisterRoutedEvent(nameof(IsPreviewingSelectionChanged), RoutingStrategy.Bubble, typeof(IsPreviewingSelectionChangedEventHandler), typeof(TimelineTrackItemContainer));
+
+        /// <summary>
         /// 刻度，Track、Group的区域
         /// </summary>
         public TimelineScale Scale { get; private set; }
@@ -236,6 +263,17 @@ namespace Excalibur.Timeline
             bool result = container.IsSelectable && (bool)e.NewValue;
             container.OnSelectedChanged(result);
             container.IsSelected = result;
+        }
+        
+        private static void OnIsPreviewingSelectionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is TimelineTrackItemContainer container)) return;
+
+            //bool result = container.IsSelectable && (e.NewValue != null && (bool)e.NewValue);
+            container.RaiseEvent(new IsPreviewingSelectionChangedEventArgs(container.IsPreviewingSelection)
+            { 
+                RoutedEvent = IsPreviewingSelectionChangedEvent
+            });
         }
 
         private void OnSelectedChanged(bool newValue)
@@ -387,5 +425,46 @@ namespace Excalibur.Timeline
             Scale?.UnselectAllTrackItems();
             IsSelected = true;
         }
+
+        /// <summary>
+        /// 在区域中是否能为选中
+        /// </summary>
+        /// <param name="area"></param>
+        /// <param name="isContained"></param>
+        /// <returns></returns>
+        public virtual bool IsSelectableInArea(Rect area, bool isContained)
+        {
+            if (!IsEnabled) return false;
+
+            var p = TranslatePoint(new Point(0, 0), Scale);
+            var bounds = new Rect(p, RenderSize);
+            return isContained ? area.Contains(bounds) : area.IntersectsWith(bounds);
+        }
     }
+
+    /// <summary>
+    /// 预览框选改变事件处理
+    /// </summary>
+    public delegate void IsPreviewingSelectionChangedEventHandler(object sender, IsPreviewingSelectionChangedEventArgs e);
+
+    /// <summary>
+    /// 预览框选改变事件参数
+    /// </summary>
+    public class IsPreviewingSelectionChangedEventArgs : RoutedEventArgs
+    {
+        /// <summary>
+        /// 当前值
+        /// </summary>
+        public bool? Value { get; set; }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="value"></param>
+        public IsPreviewingSelectionChangedEventArgs(bool? value)
+        {
+            Value = value;
+        }
+    }
+
 }

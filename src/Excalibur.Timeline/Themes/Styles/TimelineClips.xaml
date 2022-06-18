@@ -24,13 +24,27 @@
                             Background="{TemplateBinding Background}" />
 
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected"
+                        <Trigger Property="IsPreviewingSelection"
                                  Value="True">
                             <Setter Property="BorderBrush"
                                     Value="Red" />
                             <Setter Property="BorderThickness"
                                     Value="1" />
                         </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected"
+                                           Value="True" />
+                                <Condition Property="IsPreviewingSelection"
+                                           Value="{x:Null}" />
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="BorderBrush"
+                                        Value="Red" />
+                                <Setter Property="BorderThickness"
+                                        Value="1" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -91,13 +105,27 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected"
+                        <Trigger Property="IsPreviewingSelection"
                                  Value="True">
                             <Setter Property="BorderBrush"
                                     Value="Red" />
                             <Setter Property="BorderThickness"
                                     Value="1" />
                         </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected"
+                                           Value="True" />
+                                <Condition Property="IsPreviewingSelection"
+                                           Value="{x:Null}" />
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="BorderBrush"
+                                        Value="Red" />
+                                <Setter Property="BorderThickness"
+                                        Value="1" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
