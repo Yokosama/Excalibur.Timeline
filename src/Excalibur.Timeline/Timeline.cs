@@ -82,10 +82,21 @@ namespace Excalibur.Timeline
         public static readonly DependencyProperty ItemsProperty =
             DependencyProperty.Register("Items", typeof(IEnumerable), typeof(Timeline));
 
+        private TimelineScale _scale; 
+
         static Timeline()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata(typeof(Timeline)));
             FocusableProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata(BoxValue.True));
+        }
+
+        /// <summary>
+        /// Override OnApplyTemplate
+        /// </summary>
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            _scale = Template.FindName(ElementTimelineScale, this) as TimelineScale;
         }
     }
 }

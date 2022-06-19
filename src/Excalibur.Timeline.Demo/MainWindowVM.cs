@@ -10,6 +10,7 @@ namespace Excalibur.Timeline.Demo
             {
                 new CutSceneTrack
                 {
+                    Name = "Track_1",
                     Items = new ObservableCollection<IClip>
                     {
                         new TriggerClip(0),
@@ -17,8 +18,9 @@ namespace Excalibur.Timeline.Demo
                         new TriggerClip(12.5)
                     }
                 },
-                new CutSceneTrack 
+                new CutSceneTrack
                 {
+                    Name = "Track_2",
                     Items = new ObservableCollection<IClip>
                     {
                         new TriggerClip(2),
@@ -26,13 +28,15 @@ namespace Excalibur.Timeline.Demo
                         new TriggerClip(13.5)
                     }
                 },
-                new CutSceneTrack(),
+                new CutSceneTrack { Name = "Track_3", },
                 new CutSceneGroup
                 {
+                    Name = "Group_1",
                     Items = new ObservableCollection<IDirectable>()
                     {
                         new CutSceneTrack
                         {
+                                 Name = "Track_4",
                             Items = new ObservableCollection<IClip>
                             {
                                 new TriggerClip(3),
@@ -41,10 +45,11 @@ namespace Excalibur.Timeline.Demo
                             }
                         },
                         new CutSceneTrack {
+                                 Name = "Track_5",
                             Items = new ObservableCollection<IClip>
                             {
                                 new TriggerClip(2),
-                                new TriggerClip(6),    
+                                new TriggerClip(6),
                                 new DurationClip(2, 3),
                                 new TriggerClip(10.5)
                             }
@@ -53,11 +58,13 @@ namespace Excalibur.Timeline.Demo
                 },
                 new CutSceneGroup
                 {
+                    Name = "Group_2",
                     IsExpanded=false,
                     Items = new ObservableCollection<IDirectable>()
                     {
                         new CutSceneTrack
                         {
+                                 Name = "Track_6",
                             Items = new ObservableCollection<IClip>
                             {
                                 new DurationClip(2, 3),
@@ -65,6 +72,7 @@ namespace Excalibur.Timeline.Demo
                             }
                         },
                         new CutSceneTrack {
+                                 Name = "Track_7",
                             Items = new ObservableCollection<IClip>
                             {
                                 new DurationClip(2, 3),

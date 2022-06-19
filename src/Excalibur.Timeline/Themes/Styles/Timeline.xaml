@@ -35,7 +35,8 @@
                             <!--TimelineHeader-->
                             <Grid Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top'}"
                                   Background="{StaticResource TimelineHeader.BackgroundBrush}">
-                             
+                                    <tl:TimelineHeader ItemsSource="{TemplateBinding Items}"
+                                                       VerticalAlignment="Stretch"/>
                             </Grid>
 
                             <Border Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,-0.5'}" 

@@ -35,6 +35,7 @@
 
             <local:TimelineScaleItemSelector x:Key="TimelineScaleItemSelector" />
             <local:TimelineTrackItemSelector x:Key="TimelineTrackItemSelector" />
+            <local:TimelineHeaderItemSelector x:Key="TimelineHeaderItemSelector" />
 
             <DataTemplate x:Key="ContentTemlate">
                 <ContentControl Content="{Binding}" />
@@ -55,6 +56,21 @@
                 <tl:TimelineTrack ItemsSource="{Binding Items}"
                                   ItemTemplate="{x:Null}"
                                   ItemTemplateSelector="{StaticResource TimelineTrackItemSelector}" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="CutSceneTrackHeaderTemplate"
+                          DataType="{x:Type local:CutSceneTrack}">
+                <tl:TimelineTrackHeader>
+                    <TextBlock Text="{Binding Name}" />
+                </tl:TimelineTrackHeader>
+            </DataTemplate>
+
+            <DataTemplate x:Key="CutSceneGroupHeaderTemplate"
+                          DataType="{x:Type local:CutSceneGroup}">
+                <tl:TimelineGroupHeader ItemsSource="{Binding Items}"
+                                        ItemTemplate="{StaticResource CutSceneTrackHeaderTemplate}"
+                                        IsExpanded="{Binding IsExpanded}"
+                                        Header="{Binding Name}"/>
             </DataTemplate>
 
             <DataTemplate x:Key="CutSceneFoldTrackTemplate"
@@ -100,13 +116,15 @@
                         Value="{StaticResource TimelineScaleItemSelector}" />
             </Style>
 
+            <Style TargetType="{x:Type tl:TimelineHeader}"
+                   BasedOn="{StaticResource {x:Type tl:TimelineHeader}}">
+                <Setter Property="ItemTemplateSelector"
+                        Value="{StaticResource TimelineHeaderItemSelector}" />
+            </Style>
+
         </Grid.Resources>
         <tl:Timeline Margin="10,37,10,10"
                      Items="{Binding CutScene.Items}">
-            <tl:Timeline.Resources>
-
-            </tl:Timeline.Resources>
-
             <tl:Timeline.AdditionalContent>
                 <Grid Background="LightBlue">
                 </Grid>

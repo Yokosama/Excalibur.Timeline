@@ -1,12 +1,19 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
+        <!--Header-->
+        <ResourceDictionary Source="TimelineTrackHeader.xaml" />
+        <ResourceDictionary Source="TimelineGroupHeader.xaml" />
+        <ResourceDictionary Source="TimelineHeader.xaml" />
+
+        <!--TimelineScale-->
         <ResourceDictionary Source="TimelineClips.xaml" />
         <ResourceDictionary Source="TimelineTrackItemContainer.xaml" />
         <ResourceDictionary Source="TimelineTrack.xaml" />
         <ResourceDictionary Source="TimelineGroup.xaml" />
         <ResourceDictionary Source="TimelinePointers.xaml" />
         <ResourceDictionary Source="TimelineScale.xaml" />
+        
         <ResourceDictionary Source="Timeline.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

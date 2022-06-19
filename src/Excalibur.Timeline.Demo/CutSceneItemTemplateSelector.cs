@@ -46,5 +46,26 @@ namespace Excalibur.Timeline.Demo
             }
             return null;
         }
+    }   
+    
+    public class TimelineHeaderItemSelector : DataTemplateSelector
+    {
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            FrameworkElement element = container as FrameworkElement;
+            if (element != null && item != null)
+            {
+                if (item is CutSceneTrack)
+                {
+                    return element.FindResource("CutSceneTrackHeaderTemplate") as DataTemplate;
+                }
+                else if (item is CutSceneGroup)
+                {
+                    return
+                     element.FindResource("CutSceneGroupHeaderTemplate") as DataTemplate;
+                }
+            }
+            return null;
+        }
     }
 }
