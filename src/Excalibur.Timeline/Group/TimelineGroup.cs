@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Excalibur.Timeline.Helper;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -95,11 +97,77 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly DependencyProperty FoldTrackTemplateProperty =
             DependencyProperty.Register(nameof(FoldTrackTemplate), typeof(DataTemplate), typeof(TimelineGroup));
-
+     
+        private TimelineScale _scale;
+        private Dictionary<FrameworkElement, object> _curPrepareItem = new Dictionary<FrameworkElement, object>();
         static TimelineGroup()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TimelineGroup), new FrameworkPropertyMetadata(typeof(TimelineGroup)));
             FocusableProperty.OverrideMetadata(typeof(TimelineGroup), new FrameworkPropertyMetadata(true));
+        }
+
+        /// <summary>
+        /// Override OnApplyTemplate
+        /// </summary>
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            _scale = this.TryFindParent<TimelineScale>();
+        }
+
+        /// <summary>
+        /// Override PrepareContainerForItemOverride
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="item"></param>
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.PrepareContainerForItemOverride(element, item);
+            if (item == null || _scale == null) return;
+
+            if (element is FrameworkElement fe)
+            {
+                fe.Loaded += ContainerLoaded;
+                _curPrepareItem[fe] = item;
+            }
+        }
+
+        private void ContainerLoaded(object sender, RoutedEventArgs e)
+        {
+            if (!(e.OriginalSource is FrameworkElement element) || _curPrepareItem == null) return;
+            element.Loaded -= ContainerLoaded;
+
+            if (_curPrepareItem.ContainsKey(element))
+            {
+                var group = element.TryFindChild<TimelineGroup>();
+                if (group != null)
+                {
+                    _scale.AddGroupOrTrackItems(_curPrepareItem[element], group);
+                    _curPrepareItem.Remove(element);
+                }
+                else
+                {
+                    var track = element.TryFindChild<TimelineTrack>();
+                    if (track != null)
+                    {
+                        _scale.AddGroupOrTrackItems(_curPrepareItem[element], track);
+                        _curPrepareItem.Remove(element);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Override ClearContainerForItemOverride
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="item"></param>
+        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.ClearContainerForItemOverride(element, item);
+            if (item == null || _scale == null) return;
+
+            _scale.RemoveGroupOrTrackItems(item);
         }
     }
 }

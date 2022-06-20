@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Excalibur.Timeline.Helper;
+using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
@@ -83,7 +84,16 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly RoutedEvent IsExpandedChangedEvent = EventManager.RegisterRoutedEvent(nameof(IsExpandedChanged), RoutingStrategy.Bubble, typeof(IsExpandedChangedEventHandler), typeof(TimelineGroupHeader));
 
-        private Expander _expander;
+        /// <summary>
+        /// TimelineGroupHeader or TimelineHeader
+        /// </summary>
+        public ItemsControl ParentHeader { get; private set; }
+        /// <summary>
+        /// 所处的容器
+        /// </summary>
+        public ContentPresenter ContentPresenter { get; private set; }
+
+        private TimelineHeader _header;
 
         static TimelineGroupHeader()
         {
@@ -97,14 +107,9 @@ namespace Excalibur.Timeline
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            _expander = Template.FindName(ElementExpander, this) as Expander;
-            if(_expander !=null)
-                _expander.PreviewMouseDown += ExpanderPreviewMouseDown;
-        }
-
-        private void ExpanderPreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            IsSelected = true;
+            ParentHeader = this.TryFindParent<ItemsControl>();
+            ContentPresenter = this.TryFindParent<ContentPresenter>();
+            _header = this.TryFindParent<TimelineHeader>();
         }
 
         private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -123,9 +128,23 @@ namespace Excalibur.Timeline
         /// <param name="e"></param>
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
-            base.OnMouseDown(e);
-            IsSelected = true;
-            e.Handled = true;
+            base.OnMouseDown(e); 
+            switch (Keyboard.Modifiers)
+            {
+                case ModifierKeys.Control:
+                    IsSelected = !IsSelected;
+                    break;
+                case ModifierKeys.Shift:
+                    IsSelected = true;
+                    break;
+                default:
+                    if (!IsSelected)
+                    {
+                        _header?.UnselectAllHeaderItems();
+                        IsSelected = true;
+                    }
+                    break;
+            }
         }
 
         private void OnSelectedChanged()

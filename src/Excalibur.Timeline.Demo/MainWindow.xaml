@@ -37,10 +37,6 @@
             <local:TimelineTrackItemSelector x:Key="TimelineTrackItemSelector" />
             <local:TimelineHeaderItemSelector x:Key="TimelineHeaderItemSelector" />
 
-            <DataTemplate x:Key="ContentTemlate">
-                <ContentControl Content="{Binding}" />
-            </DataTemplate>
-
             <DataTemplate x:Key="TriggerClipTemplate"
                           DataType="{x:Type local:TriggerClip}">
                 <tl:TimelineTriggerClip />
@@ -69,7 +65,7 @@
                           DataType="{x:Type local:CutSceneGroup}">
                 <tl:TimelineGroupHeader ItemsSource="{Binding Items}"
                                         ItemTemplate="{StaticResource CutSceneTrackHeaderTemplate}"
-                                        IsExpanded="{Binding IsExpanded}"
+                                        IsExpanded="{Binding IsExpanded,Mode=TwoWay}"
                                         Header="{Binding Name}"/>
             </DataTemplate>
 
@@ -97,7 +93,7 @@
                 <tl:TimelineGroup ItemsSource="{Binding Items}"
                                   TrackTemplate="{StaticResource CutSceneTrackTemplate}"
                                   FoldTrackTemplate="{StaticResource CutSceneFoldTrackTemplate}"
-                                  IsExpanded="{Binding IsExpanded}"
+                                  IsExpanded="{Binding IsExpanded,Mode=TwoWay}"
                                   Locked="{Binding IsLocked}"
                                   Disabled="{Binding IsDisabled}" />
             </DataTemplate>

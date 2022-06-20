@@ -106,6 +106,7 @@ namespace Excalibur.Timeline
             get { return (double)GetValue(ScaleMiddleLineHeightProperty); }
             set { SetValue(ScaleMiddleLineHeightProperty, value); }
         }
+
         /// <summary>
         /// ScaleMiddleLineHeight属性
         /// </summary>
@@ -558,7 +559,7 @@ namespace Excalibur.Timeline
         #endregion
 
         private SelectionHelper _selection;
-
+        private Dictionary<object, object> _groupOrTrackItems = new Dictionary<object, object>();
         #region Drag
         private bool _dragStart = false;
         private Point _dragStartPosition;
@@ -606,7 +607,7 @@ namespace Excalibur.Timeline
             AddHandler(TimelineTrackItemContainer.DragDeltaEvent, new DragDeltaEventHandler(OnTrackItemsDragDelta));
             AddHandler(TimelineTrackItemContainer.SelectedEvent, new RoutedEventHandler(OnTrackItemSelected));
             AddHandler(TimelineTrackItemContainer.UnselectedEvent, new RoutedEventHandler(OnTrackItemUnselected));
-
+            
             TrackItems.CollectionChanged += TrackItemsCollectionChanged;
             if (SelectedTrackItems is INotifyCollectionChanged c) c.CollectionChanged += OnSelectedTrackItemsChanged;
         }
@@ -624,7 +625,7 @@ namespace Excalibur.Timeline
             Pointers = Template.FindName(ElementTimelinePointers, this) as TimelinePointers;
 
             if (_horizontalBar != null) _horizontalBar.Scroll += HorizontalBarScroll;
-
+               
             OnDisableAutoPanningChanged(DisableAutoPanning);
         }
 
@@ -1244,6 +1245,7 @@ namespace Excalibur.Timeline
             IList selectedItems = SelectedTrackItems;
 
             selectedItems.Clear();
+            _selectedTrackItems.Clear();
             if (newValue != null)
             {
                 for (var i = 0; i < newValue.Count; i++)
@@ -1268,7 +1270,6 @@ namespace Excalibur.Timeline
                     IList oldItems = e.OldItems;
                     if (oldItems != null)
                     {
-                        IList selectedItems = SelectedTrackItems;
                         for (var i = 0; i < oldItems.Count; i++)
                         {
                             if (_selectedTrackItems.TryGetValue(oldItems[i], out TimelineTrackItemContainer container))
@@ -1296,7 +1297,7 @@ namespace Excalibur.Timeline
                             {
                                 container.IsSelected = false;
                                 var item = container.Track.ItemContainerGenerator.ContainerFromItem(container);
-                                if (_selectedTrackItems.ContainsKey(item))
+                                if (item != null && _selectedTrackItems.ContainsKey(item))
                                 {
                                     SelectedTrackItems.Remove(item);
                                 }
@@ -1530,6 +1531,102 @@ namespace Excalibur.Timeline
 
         #endregion
 
+        #region Group or Track Items
+        private Dictionary<FrameworkElement, object> _curPrepareItem = new Dictionary<FrameworkElement, object>();
+
+        /// <summary>
+        /// Override PrepareContainerForItemOverride
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="item"></param>
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.PrepareContainerForItemOverride(element, item);
+            if (item == null) return;
+
+            if (element is FrameworkElement fe)
+            {
+                fe.Loaded += ContainerLoaded;
+                _curPrepareItem[fe] = item;
+            }
+        }
+
+        private void ContainerLoaded(object sender, RoutedEventArgs e)
+        {
+            if (!(e.OriginalSource is FrameworkElement element) || _curPrepareItem == null) return;
+            element.Loaded -= ContainerLoaded;
+
+            if (_curPrepareItem.ContainsKey(element))
+            {
+                var group = element.TryFindChild<TimelineGroup>();
+                if (group != null)
+                {
+                    AddGroupOrTrackItems(_curPrepareItem[element], group);
+                    _curPrepareItem.Remove(element);
+                }
+                else
+                {
+                    var track = element.TryFindChild<TimelineTrack>();
+                    if (track != null)
+                    {
+                        AddGroupOrTrackItems(_curPrepareItem[element], track);
+                        _curPrepareItem.Remove(element);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Override ClearContainerForItemOverride
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="item"></param>
+        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.ClearContainerForItemOverride(element, item);
+            if (item != null)
+            {
+                RemoveGroupOrTrackItems(item);
+            }
+        }
+
+        internal void AddGroupOrTrackItems(object item, object container)
+        {
+            if (item == null || container == null || _groupOrTrackItems.ContainsKey(item)) return;
+
+            _groupOrTrackItems[item] = container;
+        }
+
+        internal void RemoveGroupOrTrackItems(object item)
+        {
+            if (item == null || !_groupOrTrackItems.ContainsKey(item)) return;
+            _groupOrTrackItems.Remove(item);
+        }
+
+        internal void ClearGroupOrTrackItems()
+        {
+            _groupOrTrackItems.Clear();
+        }
+
+        internal void SetAllGroupOrTrackItemSelected(bool value)
+        {
+            foreach (var item in _groupOrTrackItems)
+            {
+                if (item.Value is TimelineGroup group) group.IsSelected = value;
+                else if (item.Value is TimelineTrack track) track.IsSelected = value;
+            }
+        }
+
+        internal void SetGroupOrTrackItemSelected(object item, bool value)
+        {
+            if (item == null || !_groupOrTrackItems.ContainsKey(item)) return;
+
+            var container = _groupOrTrackItems[item];
+            if (container is TimelineGroup group) group.IsSelected = value;
+            else if (container is TimelineTrack track) track.IsSelected = value;
+        }
+        #endregion
+
         private void VerticalDrag(double delta)
         {
             var yoffset = _verticalBar.Value - delta;
@@ -1644,6 +1741,7 @@ namespace Excalibur.Timeline
         public void UnselectAllTrackItems()
         {
             SelectedTrackItems.Clear();
+            _selectedTrackItems.Clear();
         }
         #endregion
     }

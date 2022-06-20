@@ -14,7 +14,8 @@
                         <ScrollViewer x:Name="PART_ScrollViewer"
                                       HorizontalScrollBarVisibility="Hidden"
                                       VerticalScrollBarVisibility="Hidden">
-                            <StackPanel IsItemsHost="True" />
+                            <StackPanel x:Name="PART_ItemsHost"
+                                        IsItemsHost="True" />
                         </ScrollViewer>
                     </Border>
                 </ControlTemplate>

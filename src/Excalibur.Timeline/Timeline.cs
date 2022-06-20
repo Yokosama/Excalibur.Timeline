@@ -8,9 +8,11 @@ namespace Excalibur.Timeline
     /// 时间轴控件
     /// </summary>
     [TemplatePart(Name = ElementTimelineScale, Type = typeof(TimelineScale))]
+    [TemplatePart(Name = ElementTimelineHeader, Type = typeof(TimelineHeader))]
     public class Timeline : Control
     {
-        private const string ElementTimelineScale = "PART_TineimeScale";
+        private const string ElementTimelineScale = "PART_TimelineScale";
+        private const string ElementTimelineHeader = "PART_TimelineHeader";
 
         /// <summary>
         /// 左边区域，Track和Group的Header区域最小宽度
@@ -83,6 +85,7 @@ namespace Excalibur.Timeline
             DependencyProperty.Register("Items", typeof(IEnumerable), typeof(Timeline));
 
         private TimelineScale _scale; 
+        private TimelineHeader _header; 
 
         static Timeline()
         {
@@ -97,6 +100,42 @@ namespace Excalibur.Timeline
         {
             base.OnApplyTemplate();
             _scale = Template.FindName(ElementTimelineScale, this) as TimelineScale;
+            _header = Template.FindName(ElementTimelineHeader, this) as TimelineHeader;
+            if(_header != null)
+            {
+                _header.SelectedHeaderItemsChanged += HeaderSelectedHeaderItemsChanged;
+            }
+        }
+
+        private void HeaderSelectedHeaderItemsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (_scale == null) return;
+            switch (e.Action)
+            {
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+                    if(e.NewItems != null)
+                    {
+                        foreach (var item in e.NewItems)
+                        {
+                            _scale.SetGroupOrTrackItemSelected(item, true);
+                        }
+                    }
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+                    if (e.OldItems != null)
+                    {
+                        foreach (var item in e.OldItems)
+                        {
+                            _scale.SetGroupOrTrackItemSelected(item, false);
+                        }
+                    }
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
+                    _scale.SetAllGroupOrTrackItemSelected(false);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

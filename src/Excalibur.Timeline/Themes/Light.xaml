@@ -6,10 +6,10 @@
     <Color x:Key="Timeline.SplitterColor">#FFCCCCCC</Color>
 
     <!--TimelineHeader-->
-    <Color x:Key="TimelineHeader.BackgroundColor">Pink</Color>
+    <Color x:Key="TimelineHeader.BackgroundColor">White</Color>
 
     <!--TimelineScale-->
-    <Color x:Key="TimelineScale.BackgroundColor">LightGreen</Color>
+    <Color x:Key="TimelineScale.BackgroundColor">White</Color>
     <Color x:Key="TimelineScale.LineColor">Black</Color>
 
 </ResourceDictionary>

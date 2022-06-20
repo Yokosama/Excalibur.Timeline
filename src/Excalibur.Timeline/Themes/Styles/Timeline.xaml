@@ -6,56 +6,66 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Brushes.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    
+
     <cvrts:MarginConverter x:Key="MarginConverter" />
 
     <Style TargetType="{x:Type tl:Timeline}">
-        <Setter Property="Background" Value="{StaticResource Timeline.BackgroundBrush}"/>
-        <Setter Property="SnapsToDevicePixels" Value="True"/>
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Background"
+                Value="{StaticResource Timeline.BackgroundBrush}" />
+        <Setter Property="SnapsToDevicePixels"
+                Value="True" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:Timeline}">
-                    <Border BorderThickness="{TemplateBinding BorderThickness}" 
+                    <Border BorderThickness="{TemplateBinding BorderThickness}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             Background="{TemplateBinding Background}"
                             SnapsToDevicePixels="True">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" MinWidth="{TemplateBinding HeaderMinWidth}"/>
-                                <ColumnDefinition Width="3"/>
-                                <ColumnDefinition Width="2*" MinWidth="{TemplateBinding ScaleMinWidth}"/>
+                                <ColumnDefinition Width="*"
+                                                  MinWidth="{TemplateBinding HeaderMinWidth}" />
+                                <ColumnDefinition Width="3" />
+                                <ColumnDefinition Width="2*"
+                                                  MinWidth="{TemplateBinding ScaleMinWidth}" />
                             </Grid.ColumnDefinitions>
 
                             <ContentControl Content="{TemplateBinding AdditionalContent}"
                                             Height="{TemplateBinding ScaleLineAreaHeight}"
                                             VerticalAlignment="Top"
                                             FocusVisualStyle="{x:Null}" />
-                            
+
                             <!--TimelineHeader-->
-                            <Grid Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top'}"
+                            <Grid Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,1'}"
                                   Background="{StaticResource TimelineHeader.BackgroundBrush}">
-                                    <tl:TimelineHeader ItemsSource="{TemplateBinding Items}"
-                                                       VerticalAlignment="Stretch"/>
+                                <tl:TimelineHeader ItemsSource="{TemplateBinding Items}"
+                                                   VerticalAlignment="Stretch"
+                                                   x:Name="PART_TimelineHeader"/>
                             </Grid>
 
-                            <Border Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,-0.5'}" 
-                                    VerticalAlignment="Top" 
+                            <Border Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,-0.5'}"
+                                    VerticalAlignment="Top"
                                     Height="1"
-                                    Background="{StaticResource TimelineScale.LineBrush}"/>
+                                    Background="{StaticResource TimelineScale.LineBrush}" />
 
-                            <GridSplitter HorizontalAlignment="Stretch" Grid.Column="1" Background="{StaticResource Timeline.SplitterBrush}"/>
+                            <GridSplitter HorizontalAlignment="Stretch"
+                                          Grid.Column="1"
+                                          Background="{StaticResource Timeline.SplitterBrush}" />
 
                             <!--TimlineScale-->
-                            <tl:TimelineScale Grid.Column="2" 
-                                              ItemsSource="{TemplateBinding Items}">
-                                
-                            </tl:TimelineScale>
+                            <Grid Grid.Column="2"
+                                  Background="{StaticResource TimelineScale.BackgroundBrush}">
+                                <tl:TimelineScale ItemsSource="{TemplateBinding Items}" 
+                                                  x:Name="PART_TimelineScale"/>
+                            </Grid>
+
                         </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    
+
 </ResourceDictionary>

@@ -62,5 +62,29 @@ namespace Excalibur.Timeline.Helper
 
 			return TryFindParent<T>(parentObject);
 		}
+
+		/// <summary>
+		/// 返回第一个符合指定类型的子对象
+		/// </summary>
+		/// <param name="parent">当前开始的对象.</param>
+		/// <returns>null：没有找到，否则为第一个符合指定类型的子对象.</returns>
+		public static T TryFindChild<T>(this DependencyObject parent) where T : DependencyObject
+		{
+			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+			{
+				DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+
+				if (child is T)
+				{
+					return (T)child;
+				}
+				child = TryFindChild<T>(child);
+				if (child != null)
+				{
+					return (T)child;
+				}
+			}
+			return null;
+		}
 	}
 }

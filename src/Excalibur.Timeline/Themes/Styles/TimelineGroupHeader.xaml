@@ -82,20 +82,21 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Background="{TemplateBinding Background}">
-                            <ToggleButton HorizontalAlignment="Stretch"
-                                          HorizontalContentAlignment="Stretch"
-                                          Focusable="False"
-                                          Padding="5,0,0,0"
-                                          Foreground="{TemplateBinding Foreground}"
-                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                          Width="{TemplateBinding Width}"
-                                          Height="{TemplateBinding MinHeight}"
-                                          Style="{StaticResource ToggleButtonCustom}">
-                                <Grid Background="Transparent">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <ToggleButton HorizontalAlignment="Stretch"
+                                              HorizontalContentAlignment="Stretch"
+                                              Focusable="False"
+                                              Padding="5,0,0,0"
+                                              Foreground="{TemplateBinding Foreground}"
+                                              IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                              Width="{TemplateBinding Width}"
+                                              Height="{TemplateBinding MinHeight}"
+                                              Style="{StaticResource ToggleButtonCustom}">
                                     <Path Name="PathArrow"
                                           Fill="#FF575757"
                                           Stretch="Fill"
@@ -105,12 +106,12 @@
                                           Height="14"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                           HorizontalAlignment="Left" />
-                                    <ContentPresenter ContentSource="Header"
-                                                      Grid.Column="2"
-                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                </Grid>
-                            </ToggleButton>
+                                </ToggleButton>
+                                <ContentPresenter ContentSource="Header"
+                                                  Grid.Column="1"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Grid>
                         </Border>
                         <ContentPresenter Name="ExpandSite"
                                           Visibility="Collapsed"
@@ -161,7 +162,10 @@
                               Style="{StaticResource TimelineGroupHeaderExpander}"
                               Background="{TemplateBinding Background}"
                               Foreground="{TemplateBinding Foreground}">
-                        <StackPanel IsItemsHost="True"/>
+                        <Border Background="{TemplateBinding Background}">
+                            <StackPanel IsItemsHost="True" 
+                                        Margin="0,-5,0,5"/>
+                        </Border>
                     </Expander>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected"

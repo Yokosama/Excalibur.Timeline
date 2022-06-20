@@ -20,7 +20,7 @@
         <Setter Property="MinHeight"
                 Value="25" />
         <Setter Property="Background"
-                Value="#99D2D2D2" />
+                Value="Red" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
         <Setter Property="ItemTemplate" Value="{StaticResource DefaultTimelineTrackItemTemplate}"/>
@@ -49,6 +49,8 @@
            BasedOn="{StaticResource {x:Type tl:TimelineTrack}}">
         <Setter Property="Background"
                 Value="Transparent" />
+        <Setter Property="Margin"
+                Value="0,0,0,0" />
         <Setter Property="ItemTemplate"
                 Value="{StaticResource DefaultTimelineFoldTrackItemTemplate}" />
     </Style>
