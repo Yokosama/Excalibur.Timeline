@@ -528,7 +528,6 @@ namespace Excalibur.Timeline
             CurrentTimePointerPosition = timePos - CurrentTimePointerPositionOffset;
 
             if (IsCurrentTimePointerDragging && IsShowMinDraggingTimeText) MinDraggingTimeTextPosition = CurrentTimePointerPosition + TimeTextBox.X;
-            Debug.WriteLine(_minTimeTextBox.Visibility);
         }
 
         /// <summary>
@@ -540,7 +539,8 @@ namespace Excalibur.Timeline
         {
             MinDraggingTimeText = timeText;
             DurationPointerPosition = timePos - DurationPointerPositionOffset;
-            if (IsDurationPointerDragging && IsShowMinDraggingTimeText) MinDraggingTimeTextPosition = DurationPointerPosition + TimeTextBox.X; Debug.WriteLine(_minTimeTextBox.Visibility);
+            if (IsDurationPointerDragging && IsShowMinDraggingTimeText)
+                MinDraggingTimeTextPosition = DurationPointerPosition + TimeTextBox.X;
         }
 
         /// <summary>

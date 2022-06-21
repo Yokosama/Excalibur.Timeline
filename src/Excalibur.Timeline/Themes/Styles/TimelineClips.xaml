@@ -5,8 +5,6 @@
     <Style TargetType="{x:Type tl:TimelineTriggerClip}">
         <Setter Property="Height"
                 Value="25" />
-        <Setter Property="Width"
-                Value="10" />
         <Setter Property="Background"
                 Value="Blue" />
         <Setter Property="BorderThickness"
@@ -18,11 +16,19 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineTriggerClip}">
-                    <Border Width="{TemplateBinding Width}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="{TemplateBinding Background}" />
-
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="10"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}" />
+                        <ContentPresenter Content="{TemplateBinding Content}" 
+                                          Grid.Column="1"/>
+                    </Grid>
+         
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsPreviewingSelection"
                                  Value="True">
@@ -106,6 +112,8 @@
                                    HorizontalAlignment="Right"
                                    Height="{TemplateBinding Height}"
                                    Width="3" />
+
+                            <ContentPresenter Content="{TemplateBinding Content}"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

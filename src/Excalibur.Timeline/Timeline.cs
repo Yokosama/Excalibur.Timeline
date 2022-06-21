@@ -26,7 +26,7 @@ namespace Excalibur.Timeline
         /// HeaderMinWidth属性
         /// </summary>
         public static readonly DependencyProperty HeaderMinWidthProperty =
-            DependencyProperty.Register("HeaderMinWidth", typeof(double), typeof(Timeline), new FrameworkPropertyMetadata(BoxValue.Double10));
+            DependencyProperty.Register(nameof(HeaderMinWidth), typeof(double), typeof(Timeline), new FrameworkPropertyMetadata(BoxValue.Double10));
 
         /// <summary>
         /// 右边区域，刻度，Track，Group，Clip的区域最小宽度
@@ -40,7 +40,7 @@ namespace Excalibur.Timeline
         /// HeaderMinWidth属性
         /// </summary>
         public static readonly DependencyProperty ScaleMinWidthProperty =
-            DependencyProperty.Register("ScaleMinWidth", typeof(double), typeof(Timeline), new FrameworkPropertyMetadata(BoxValue.Double10));
+            DependencyProperty.Register(nameof(ScaleMinWidth), typeof(double), typeof(Timeline), new FrameworkPropertyMetadata(BoxValue.Double10));
         
         /// <summary>
         /// 刻度线区域的高度
@@ -54,7 +54,7 @@ namespace Excalibur.Timeline
         /// ScaleLineAreaHeight属性
         /// </summary>
         public static readonly DependencyProperty ScaleLineAreaHeightProperty =
-            DependencyProperty.Register("ScaleLineAreaHeight", typeof(double), typeof(Timeline), new FrameworkPropertyMetadata(BoxValue.Double20));
+            DependencyProperty.Register(nameof(ScaleLineAreaHeight), typeof(double), typeof(Timeline), new FrameworkPropertyMetadata(BoxValue.Double20));
 
         /// <summary>
         /// 左上区域，可添加控件的区别内容
@@ -68,7 +68,21 @@ namespace Excalibur.Timeline
         /// AdditionalContent属性
         /// </summary>
         public static readonly DependencyProperty AdditionalContentProperty =
-            DependencyProperty.Register("AdditionalContent", typeof(object), typeof(Timeline), new FrameworkPropertyMetadata(default(object)));
+            DependencyProperty.Register(nameof(AdditionalContent), typeof(object), typeof(Timeline), new FrameworkPropertyMetadata(default(object)));
+
+        /// <summary>
+        /// TimelineHeader离底部的偏移量，主要是为了与TimelineScale的高度对齐
+        /// </summary>
+        public double TimelineHeaderBottomOffset
+        {
+            get { return (double)GetValue(TimelineHeaderBottomOffsetProperty); }
+            set { SetValue(TimelineHeaderBottomOffsetProperty, value); }
+        }
+        /// <summary>
+        /// TimelineHeaderBottomOffset属性
+        /// </summary>
+        public static readonly DependencyProperty TimelineHeaderBottomOffsetProperty =
+            DependencyProperty.Register(nameof(TimelineHeaderBottomOffset), typeof(double), typeof(Timeline), new FrameworkPropertyMetadata(BoxValue.Double0));
 
         /// <summary>
         /// Timeline的Items，包括Group、Track
@@ -82,15 +96,39 @@ namespace Excalibur.Timeline
         /// Items属性
         /// </summary>
         public static readonly DependencyProperty ItemsProperty =
-            DependencyProperty.Register("Items", typeof(IEnumerable), typeof(Timeline));
+            DependencyProperty.Register(nameof(Items), typeof(IEnumerable), typeof(Timeline));
 
         private TimelineScale _scale; 
-        private TimelineHeader _header; 
+        private TimelineHeader _header;
+
+        private bool _scaleVBValueChanging;
 
         static Timeline()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata(typeof(Timeline)));
             FocusableProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata(BoxValue.True));
+        }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        public Timeline()
+        {
+            Loaded += TimelineLoaded;
+        }
+
+        private void TimelineLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_header != null)
+            {
+                _header.ScrollViewer.ScrollChanged += ScrollViewerScrollChanged;
+            }
+            if (_scale != null)
+            {
+                _scale.VerticalBar.ValueChanged += VerticalBarValueChanged;
+            }
+
+            Loaded -= TimelineLoaded;
         }
 
         /// <summary>
@@ -105,6 +143,19 @@ namespace Excalibur.Timeline
             {
                 _header.SelectedHeaderItemsChanged += HeaderSelectedHeaderItemsChanged;
             }
+        }
+
+        private void VerticalBarValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_scaleVBValueChanging) return;
+            _header.ScrollViewer.ScrollToVerticalOffset(e.NewValue);
+        }
+
+        private void ScrollViewerScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            _scaleVBValueChanging = true;
+            _scale.VerticalBar.Value = e.VerticalOffset;
+            _scaleVBValueChanging = false;
         }
 
         private void HeaderSelectedHeaderItemsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

@@ -70,7 +70,8 @@ namespace Excalibur.Timeline.Helper
 		/// <returns>null：没有找到，否则为第一个符合指定类型的子对象.</returns>
 		public static T TryFindChild<T>(this DependencyObject parent) where T : DependencyObject
 		{
-			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+			var childCount = VisualTreeHelper.GetChildrenCount(parent);
+			for (int i = 0; i < childCount; i++)
 			{
 				DependencyObject child = VisualTreeHelper.GetChild(parent, i);
 

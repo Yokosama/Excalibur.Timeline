@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -222,6 +223,8 @@ namespace Excalibur.Timeline
         /// </summary>
         public double PreviewPosition { get; private set; }
 
+        private Size? _desiredSizeForSelection;
+
         #region Drag
         private Point _previousDragPosition;
         private Point _initialDragPosition;
@@ -238,6 +241,40 @@ namespace Excalibur.Timeline
         }
 
         /// <summary>
+        /// 构造函数
+        /// </summary>
+        public TimelineTrackItemContainer()
+        {
+            Loaded += TimelineTrackItemContainerLoaded;
+        }
+
+        private void TimelineTrackItemContainerLoaded(object sender, RoutedEventArgs e)
+        {
+            UpdateDesiredSizeForSelection();
+            Loaded -= TimelineTrackItemContainerLoaded;
+        }
+
+        private void UpdateDesiredSizeForSelection()
+        {
+            var rect = GetHitableRect(this);
+
+            if (!rect.IsEmpty && rect.Width > 0 && rect.Height > 0)
+            {
+                _desiredSizeForSelection = new Size(rect.Width, rect.Height);
+            }
+        }
+
+        /// <summary>
+        /// Override OnRenderSizeChanged
+        /// </summary>
+        /// <param name="sizeInfo"></param>
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+            UpdateDesiredSizeForSelection();
+        }
+
+        /// <summary>
         /// Override OnApplyTemplate
         /// </summary>
         public override void OnApplyTemplate()
@@ -249,6 +286,25 @@ namespace Excalibur.Timeline
             Owner = this.TryFindParent<TimelineTrackCanvas>();
             Track = this.TryFindParent<TimelineTrack>();
             UpdatePosition();
+        }
+
+        private Rect GetHitableRect(DependencyObject parent)
+        {
+            Rect rect = new Rect();
+         
+            var childCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childCount; i++)
+            {
+                if (!(VisualTreeHelper.GetChild(parent, i) is UIElement child) || !child.IsHitTestVisible) continue;
+
+                var curRect = VisualTreeHelper.GetContentBounds(child);
+
+                rect.Union(curRect);
+
+                var childRect = GetHitableRect(child);
+                rect.Union(childRect);
+            }
+            return rect;
         }
 
         private void TimeScaleChanged(object sender, RoutedEventArgs e)
@@ -395,7 +451,7 @@ namespace Excalibur.Timeline
                 container.UpdatePosition();
             }
         }
-
+        
         private static void OnPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is TimelineTrackItemContainer container)
@@ -434,10 +490,11 @@ namespace Excalibur.Timeline
         /// <returns></returns>
         public virtual bool IsSelectableInArea(Rect area, bool isContained)
         {
-            if (!IsEnabled) return false;
-
+            if (!IsEnabled || Track.Locked) return false;
+       
             var p = TranslatePoint(new Point(0, 0), Scale);
-            var bounds = new Rect(p, RenderSize);
+
+            var bounds = new Rect(p, _desiredSizeForSelection ?? RenderSize);
             return isContained ? area.Contains(bounds) : area.IntersectsWith(bounds);
         }
     }

@@ -9,7 +9,8 @@
         Height="450"
         Width="800"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        xmlns:tl="clr-namespace:Excalibur.Timeline;assembly=Excalibur.Timeline">
+        xmlns:tl="clr-namespace:Excalibur.Timeline;assembly=Excalibur.Timeline"
+        x:Name="mainWnd">
     <Window.Resources>
         <Style TargetType="{x:Type tl:TimelineScale}"
                BasedOn="{StaticResource {x:Type tl:TimelineScale}}">
@@ -33,31 +34,86 @@
     <Grid Background="#7F808080">
         <Grid.Resources>
 
+            <local:NullToBooleanConverter x:Key="NullToBooleanConverter" />
             <local:TimelineScaleItemSelector x:Key="TimelineScaleItemSelector" />
             <local:TimelineTrackItemSelector x:Key="TimelineTrackItemSelector" />
             <local:TimelineHeaderItemSelector x:Key="TimelineHeaderItemSelector" />
 
             <DataTemplate x:Key="TriggerClipTemplate"
                           DataType="{x:Type local:TriggerClip}">
-                <tl:TimelineTriggerClip />
+                <tl:TimelineTriggerClip>
+                    <TextBlock Text="{Binding Dispaly}" 
+                               VerticalAlignment="Center"
+                               IsHitTestVisible="False"/>
+                </tl:TimelineTriggerClip>
             </DataTemplate>
 
             <DataTemplate x:Key="DurationClipTemplate"
                           DataType="{x:Type local:DurationClip}">
-                <tl:TimelineDurationClip Duration="{Binding Duration}" />
+                <tl:TimelineDurationClip Duration="{Binding Duration}">
+                    <TextBlock Text="{Binding Dispaly}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               IsHitTestVisible="False" />
+                </tl:TimelineDurationClip>
             </DataTemplate>
 
             <DataTemplate x:Key="CutSceneTrackTemplate"
                           DataType="{x:Type local:CutSceneTrack}">
                 <tl:TimelineTrack ItemsSource="{Binding Items}"
                                   ItemTemplate="{x:Null}"
-                                  ItemTemplateSelector="{StaticResource TimelineTrackItemSelector}" />
+                                  ItemTemplateSelector="{StaticResource TimelineTrackItemSelector}"
+                                  Locked="{Binding IsLocked,Mode=TwoWay}"
+                                  Disabled="{Binding IsDisabled,Mode=TwoWay}"
+                                  ShowStatusContent="{Binding StatusContent, Converter={StaticResource NullToBooleanConverter}}">
+                    <tl:TimelineTrack.StatusContent>
+                        <Border CornerRadius="3"
+                                Background="#FF434444"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                IsHitTestVisible="False">
+                            <TextBlock Text="{Binding StatusContent}"
+                                       Foreground="White"
+                                       Margin="5,2,5,2" />
+                        </Border>
+                    </tl:TimelineTrack.StatusContent>
+                </tl:TimelineTrack>
             </DataTemplate>
 
             <DataTemplate x:Key="CutSceneTrackHeaderTemplate"
                           DataType="{x:Type local:CutSceneTrack}">
                 <tl:TimelineTrackHeader>
-                    <TextBlock Text="{Binding Name}" />
+                    <Grid>
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"
+                                   Margin="5,0,0,0"/>
+
+                        <Border Background="White"
+                                Margin="0,0,5,0"
+                                CornerRadius="2"
+                                HorizontalAlignment="Right"
+                                Height="18"
+                                VerticalAlignment="Center"
+                                Width="46" />
+
+                        <Button Content="L"
+                                ToolTip="Lock"
+                                HorizontalAlignment="Right"
+                                Width="16"
+                                Height="16"
+                                FontSize="10"
+                                Margin="5,0,30,0"
+                                Command="{Binding DataContext.LockCommand, ElementName=mainWnd}"
+                                CommandParameter="{Binding}"/>
+                        <Button Content="D"
+                                ToolTip="Disable"
+                                HorizontalAlignment="Right"
+                                Width="16"
+                                Height="16"
+                                FontSize="10"
+                                Margin="5,0,10,0"
+                                Command="{Binding DataContext.DisableCommand, ElementName=mainWnd}"
+                                CommandParameter="{Binding}" />
+                    </Grid>
                 </tl:TimelineTrackHeader>
             </DataTemplate>
 
@@ -65,8 +121,42 @@
                           DataType="{x:Type local:CutSceneGroup}">
                 <tl:TimelineGroupHeader ItemsSource="{Binding Items}"
                                         ItemTemplate="{StaticResource CutSceneTrackHeaderTemplate}"
-                                        IsExpanded="{Binding IsExpanded,Mode=TwoWay}"
-                                        Header="{Binding Name}"/>
+                                        IsExpanded="{Binding IsExpanded,Mode=TwoWay}">
+                    <tl:TimelineGroupHeader.Header>
+                        <Grid>
+                            <TextBlock Text="{Binding Name}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,0,0" />
+
+                            <Border Background="White" 
+                                    Margin="0,0,5,0"
+                                    CornerRadius="2"
+                                    HorizontalAlignment="Right"
+                                    Height="18"
+                                    VerticalAlignment="Center"
+                                    Width="46"/>
+
+                            <Button Content="L"
+                                    ToolTip="Lock"
+                                    HorizontalAlignment="Right"
+                                    Width="16"
+                                    Height="16"
+                                    FontSize="10"
+                                    Margin="5,0,30,0"
+                                    Command="{Binding DataContext.LockCommand, ElementName=mainWnd}"
+                                    CommandParameter="{Binding}" />
+                            <Button Content="D"
+                                    ToolTip="Disable"
+                                    HorizontalAlignment="Right"
+                                    Width="16"
+                                    Height="16"
+                                    FontSize="10"
+                                    Margin="5,0,10,0"
+                                    Command="{Binding DataContext.DisableCommand, ElementName=mainWnd}"
+                                    CommandParameter="{Binding}" />
+                        </Grid>
+                    </tl:TimelineGroupHeader.Header>
+                </tl:TimelineGroupHeader>
             </DataTemplate>
 
             <DataTemplate x:Key="CutSceneFoldTrackTemplate"
@@ -95,17 +185,39 @@
                                   FoldTrackTemplate="{StaticResource CutSceneFoldTrackTemplate}"
                                   IsExpanded="{Binding IsExpanded,Mode=TwoWay}"
                                   Locked="{Binding IsLocked}"
-                                  Disabled="{Binding IsDisabled}" />
+                                  Disabled="{Binding IsDisabled}"
+                                  ShowStatusContent="{Binding StatusContent, Converter={StaticResource NullToBooleanConverter}}">
+                    <tl:TimelineGroup.StatusContent>
+                        <Border CornerRadius="3"
+                                Background="#FF434444"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Margin="0,3,0,0"
+                                IsHitTestVisible="False">
+                            <TextBlock Text="{Binding StatusContent}"
+                                       Foreground="White"
+                                       Margin="5,2,5,2" />
+                        </Border>
+                    </tl:TimelineGroup.StatusContent>
+                </tl:TimelineGroup>
             </DataTemplate>
 
             <Style TargetType="{x:Type tl:TimelineTrackItemContainer}"
                    BasedOn="{StaticResource {x:Type tl:TimelineTrackItemContainer}}">
                 <Setter Property="CurrentTime"
                         Value="{Binding StartTime}" />
+                <Setter Property="PreviewCurrentTime"
+                        Value="{Binding PreviewStartTime}" />
             </Style>
 
             <Style TargetType="{x:Type tl:TimelineScale}"
                    BasedOn="{StaticResource {x:Type tl:TimelineScale}}">
+                <Setter Property="ZoomMode"
+                        Value="{Binding CutScene.ZoomMode}" />
+                <Setter Property="TimeStep"
+                        Value="{Binding CutScene.StepMode}" />
+                <Setter Property="FrameRate"
+                        Value="{Binding CutScene.FrameRate}" />
                 <Setter Property="ItemTemplate"
                         Value="{x:Null}" />
                 <Setter Property="ItemTemplateSelector"

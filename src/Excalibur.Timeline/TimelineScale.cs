@@ -527,7 +527,7 @@ namespace Excalibur.Timeline
         /// <summary>
         /// 竖直滚动条
         /// </summary>
-        private ScrollBar _verticalBar;
+        public ScrollBar VerticalBar { get; private set; }
         /// <summary>
         /// 前一次水平滚动条的值
         /// </summary>
@@ -576,6 +576,9 @@ namespace Excalibur.Timeline
         public bool IsInAutoPanning { get; set; } = false;
         #endregion
 
+        /// <summary>
+        /// TimelineScale下所有的Clip的Container
+        /// </summary>
         public ObservableCollection<TimelineTrackItemContainer> TrackItems { get; private set; } = new ObservableCollection<TimelineTrackItemContainer>();
 
         static TimelineScale()
@@ -620,11 +623,12 @@ namespace Excalibur.Timeline
             base.OnApplyTemplate();
 
             _horizontalBar = Template.FindName(ElementHorizontalScrollBar, this) as ScrollBar;
-            _verticalBar = Template.FindName(ElementVerticalScrollBar, this) as ScrollBar;
+            VerticalBar = Template.FindName(ElementVerticalScrollBar, this) as ScrollBar;
             _itemsPanel = Template.FindName(ElementTimelineScalePanel, this) as TimelineScalePanel;
             Pointers = Template.FindName(ElementTimelinePointers, this) as TimelinePointers;
 
             if (_horizontalBar != null) _horizontalBar.Scroll += HorizontalBarScroll;
+            if (VerticalBar != null) VerticalBar.ValueChanged += VerticalBarValueChanged;
                
             OnDisableAutoPanningChanged(DisableAutoPanning);
         }
@@ -781,17 +785,27 @@ namespace Excalibur.Timeline
             _horizontalBar.Track.Thumb.DragCompleted += HorizontalBarThumbDragCompleted;
 
             if (Pointers != null) Pointers.UpdatePointersPosition();
+
+            Loaded -= TimelineScaleLoaded;
         }
 
         private void TimelineScaleUnloaded(object sender, RoutedEventArgs e)
         {
             _horizontalBar.Track.Thumb.DragStarted -= HorizontalBarThumbDragStarted;
             _horizontalBar.Track.Thumb.DragCompleted -= HorizontalBarThumbDragCompleted;
+
+            Unloaded -= TimelineScaleUnloaded;
+            LayoutUpdated -= TimelineScaleLayoutUpdated;
         }
 
         private void TimelineScaleLayoutUpdated(object sender, EventArgs e)
         {
             UpdateVerticalScrollBarValue();
+        }
+
+        private void VerticalBarValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_itemsPanel != null) _itemsPanel.VerticalOffset = -e.NewValue;
         }
 
         private void HorizontalBarScroll(object sender, ScrollEventArgs e)
@@ -933,12 +947,12 @@ namespace Excalibur.Timeline
 
         private void UpdateVerticalScrollBarValue()
         {
-            if (_itemsPanel == null || _verticalBar == null) return;
+            if (_itemsPanel == null || VerticalBar == null) return;
 
-            _verticalBar.ViewportSize = _itemsPanel.ViewportHeight;
+            VerticalBar.ViewportSize = _itemsPanel.ViewportHeight;
             var max = _itemsPanel.ExtentHeight - _itemsPanel.ViewportHeight;
             max = Math.Max(max, 0);
-            _verticalBar.Maximum = max;
+            VerticalBar.Maximum = max;
         }
 
         private void RaiseTimeScaleChangedEvent()
@@ -997,7 +1011,6 @@ namespace Excalibur.Timeline
                     if (x != 0)
                     {
                         IsInAutoPanning = true;
-                        Debug.WriteLine(x);
                         HorizontalDrag(-x);
                         RaiseTimeScaleChangedEvent();
                         InvalidateVisual();
@@ -1468,7 +1481,6 @@ namespace Excalibur.Timeline
 
                 var pos = container.Position + dragAccumulator;
                 var previewCurrentTime = SnapTime(PosToTime(pos));
-                Debug.WriteLine($"pos:{pos}, previewCurrentTime:{previewCurrentTime}");
 
                 if (ZoomMode == ZoomMode.Fixed && previewCurrentTime < 0)
                 {
@@ -1629,12 +1641,12 @@ namespace Excalibur.Timeline
 
         private void VerticalDrag(double delta)
         {
-            var yoffset = _verticalBar.Value - delta;
+            var yoffset = VerticalBar.Value - delta;
             if (yoffset <= 0)
                 yoffset = 0;
-            else if (yoffset > _verticalBar.Maximum)
-                yoffset = _verticalBar.Maximum;
-            _verticalBar.Value = yoffset;
+            else if (yoffset > VerticalBar.Maximum)
+                yoffset = VerticalBar.Maximum;
+            VerticalBar.Value = yoffset;
         }
 
         private void HorizontalDrag(double delta)

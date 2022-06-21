@@ -151,6 +151,8 @@
                 Value="#FF849193" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
+        <Setter Property="Padding"
+                Value="5,-5,0,5" />
         <Setter Property="ItemTemplate"
                 Value="{StaticResource DefaultTimelineTrackHeaderTemplate}" />
         <Setter Property="Template">
@@ -163,8 +165,8 @@
                               Background="{TemplateBinding Background}"
                               Foreground="{TemplateBinding Foreground}">
                         <Border Background="{TemplateBinding Background}">
-                            <StackPanel IsItemsHost="True" 
-                                        Margin="0,-5,0,5"/>
+                            <StackPanel IsItemsHost="True"
+                                        Margin="{TemplateBinding Padding}"/>
                         </Border>
                     </Expander>
                     <ControlTemplate.Triggers>

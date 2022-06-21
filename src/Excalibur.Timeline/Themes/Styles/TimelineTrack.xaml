@@ -20,24 +20,91 @@
         <Setter Property="MinHeight"
                 Value="25" />
         <Setter Property="Background"
-                Value="Red" />
+                Value="#99D2D2D2" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
         <Setter Property="ItemTemplate" Value="{StaticResource DefaultTimelineTrackItemTemplate}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineTrack}">
-                    <Border Background="{TemplateBinding Background}"
-                            Height="{TemplateBinding Height}">
+                    <Grid Background="{TemplateBinding Background}"
+                          Height="{TemplateBinding Height}">
                         <tl:TimelineTrackCanvas x:Name="PART_ItemsHost"
                                                 IsItemsHost="True" />
-                    </Border>
+
+                        <Border Visibility="Hidden"
+                                Background="Red"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                x:Name="statusBorder">
+                            <ContentPresenter Content="{TemplateBinding StatusContent}" />
+                        </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected"
                                  Value="True">
                             <Setter Property="Background"
                                     Value="#994A7EE0" />
                         </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Disabled"
+                                           Value="True" />
+                                <Condition Property="ShowStatusContent"
+                                           Value="True" />
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background"
+                                        TargetName="statusBorder"
+                                        Value="#99FF0000" />
+                                <Setter Property="Visibility"
+                                        TargetName="statusBorder"
+                                        Value="Visible" />
+                                <Setter Property="IsHitTestVisible"
+                                        TargetName="statusBorder"
+                                        Value="False" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Locked"
+                                           Value="True" />
+                                <Condition Property="ShowStatusContent"
+                                           Value="True" />
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background"
+                                        TargetName="statusBorder"
+                                        Value="#990000FF" />
+                                <Setter Property="Visibility"
+                                        TargetName="statusBorder"
+                                        Value="Visible" />
+                                <Setter Property="IsHitTestVisible"
+                                        TargetName="statusBorder"
+                                        Value="True" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Locked"
+                                           Value="True" />
+                                <Condition Property="Disabled"
+                                           Value="True" />
+                                <Condition Property="ShowStatusContent"
+                                           Value="True" />
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background"
+                                        TargetName="statusBorder"
+                                        Value="#994BE84E" />
+                                <Setter Property="Visibility"
+                                        TargetName="statusBorder"
+                                        Value="Visible" />
+                                <Setter Property="IsHitTestVisible"
+                                        TargetName="statusBorder"
+                                        Value="True" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

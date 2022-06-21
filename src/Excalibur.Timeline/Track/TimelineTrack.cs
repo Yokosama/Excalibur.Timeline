@@ -53,10 +53,52 @@ namespace Excalibur.Timeline
             set { SetValue(LockedProperty, value); }
         }
         /// <summary>
-        /// 
+        /// 是否锁定
         /// </summary>
         public static readonly DependencyProperty LockedProperty =
-            DependencyProperty.Register("Locked", typeof(bool), typeof(TimelineTrack), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            DependencyProperty.Register(nameof(Locked), typeof(bool), typeof(TimelineTrack), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnLockedChanged));
+
+        /// <summary>
+        /// 是否能显示锁定
+        /// </summary>
+        public bool PreviewLocked
+        {
+            get { return (bool)GetValue(PreviewLockedProperty); }
+            set { SetValue(PreviewLockedProperty, value); }
+        }
+        /// <summary>
+        /// 是否能显示锁定
+        /// </summary>
+        public static readonly DependencyProperty PreviewLockedProperty =
+            DependencyProperty.Register(nameof(PreviewLocked), typeof(bool), typeof(TimelineTrack), new FrameworkPropertyMetadata(BoxValue.True, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnLockedChanged));
+
+        /// <summary>
+        /// Track的状态显示内容
+        /// </summary>
+        public object StatusContent
+        {
+            get { return GetValue(StatusContentProperty); }
+            set { SetValue(StatusContentProperty, value); }
+        }
+        /// <summary>
+        /// StatusContent属性
+        /// </summary>
+        public static readonly DependencyProperty StatusContentProperty =
+            DependencyProperty.Register(nameof(StatusContent), typeof(object), typeof(TimelineTrack), new FrameworkPropertyMetadata(default(object)));
+
+        /// <summary>
+        /// 是否显示Track的状态显示内容
+        /// </summary>
+        public bool ShowStatusContent
+        {
+            get { return (bool)GetValue(ShowStatusContentProperty); }
+            set { SetValue(ShowStatusContentProperty, value); }
+        }
+        /// <summary>
+        /// StatusContent属性
+        /// </summary>
+        public static readonly DependencyProperty ShowStatusContentProperty =
+            DependencyProperty.Register(nameof(ShowStatusContent), typeof(bool), typeof(TimelineTrack), new FrameworkPropertyMetadata(BoxValue.True));
 
         static TimelineTrack()
         {
@@ -106,6 +148,22 @@ namespace Excalibur.Timeline
                     _scale.RemoveSelectedTrackItem(itemContainer, item);
                 }
                 _scale.TrackItems.Remove(itemContainer);
+            }
+        }
+
+        private static void OnLockedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as TimelineTrack)?.OnLockedChanged();
+        }
+
+        private void OnLockedChanged()
+        {
+            foreach (var item in Items)
+            {
+                if (ItemContainerGenerator.ContainerFromItem(item) is TimelineTrackItemContainer container && container.IsSelected)
+                {
+                    container.IsSelected = false;
+                }
             }
         }
     }

@@ -9,7 +9,7 @@
         <Setter Property="MinHeight"
                 Value="25" />
         <Setter Property="Background"
-                Value="Red" />
+                Value="#FFD2D2D2" />
         <Setter Property="Foreground"
                 Value="Black" />
         <Setter Property="Margin"

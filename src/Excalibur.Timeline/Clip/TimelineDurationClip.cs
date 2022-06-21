@@ -77,7 +77,15 @@ namespace Excalibur.Timeline
             EventManager.RegisterRoutedEvent(nameof(DurationResizeCompleted), RoutingStrategy.Bubble, typeof(DurationResizeCompletedEventHandler), typeof(TimelineDurationClip));
 
         private double CurrentTime => container == null ? 0 : container.CurrentTime;
-        private double EndTime => CurrentTime + Duration;
+        private double EndTime
+        {
+            get
+            {
+                if (container == null || container.Scale == null)
+                    return CurrentTime + Duration;
+                else return container.Scale.SnapTime(CurrentTime + Duration);
+            }
+        }
 
         private double _preEndTime;
 
@@ -200,7 +208,6 @@ namespace Excalibur.Timeline
                 {
                     Duration = duration;
                 }
-                Debug.WriteLine(Duration);
                 container.Scale.Pointers.ShowDraggingPrompt(EndTime, EndTime);
                 RaiseEvent(new DurationResizeDeltaEventArgs(deltaTime, DurationResizeMode.EndTime)
                 {

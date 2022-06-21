@@ -8,7 +8,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineTrackItemContainer}">
-                    <Border Background="Transparent">
+                    <Border>
                         <ContentPresenter />
                     </Border>
                 </ControlTemplate>

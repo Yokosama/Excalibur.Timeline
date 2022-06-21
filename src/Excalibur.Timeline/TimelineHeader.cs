@@ -39,7 +39,10 @@ namespace Excalibur.Timeline
 
         private Dictionary<object, object> _selectedHeaderItems = new Dictionary<object, object>();
 
-        private ScrollViewer _scrollViewer;
+        /// <summary>
+        /// ScrollViewer
+        /// </summary>
+        public ScrollViewer ScrollViewer { get; private set; }
 
         static TimelineHeader()
         {
@@ -53,7 +56,7 @@ namespace Excalibur.Timeline
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            _scrollViewer = Template.FindName(ElementScrollViewer, this) as ScrollViewer;
+            ScrollViewer = Template.FindName(ElementScrollViewer, this) as ScrollViewer;
 
             AddHandler(TimelineGroupHeader.SelectedChangedEvent, new SelectedChangedEventHandler(OnGroupHeaderSelectedChanged));
             AddHandler(TimelineTrackHeader.SelectedChangedEvent, new SelectedChangedEventHandler(OnTrackHeaderSelectedChanged));

@@ -54,7 +54,7 @@ namespace Excalibur.Timeline
         /// 是否锁定属性
         /// </summary>
         public static readonly DependencyProperty LockedProperty =
-            DependencyProperty.Register(nameof(Locked), typeof(bool), typeof(TimelineGroup), new FrameworkPropertyMetadata(BoxValue.False));
+            DependencyProperty.Register(nameof(Locked), typeof(bool), typeof(TimelineGroup), new FrameworkPropertyMetadata(BoxValue.False, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnLockedChanged));
 
         /// <summary>
         /// 是否展开
@@ -97,7 +97,35 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly DependencyProperty FoldTrackTemplateProperty =
             DependencyProperty.Register(nameof(FoldTrackTemplate), typeof(DataTemplate), typeof(TimelineGroup));
-     
+
+        /// <summary>
+        /// Group的状态显示内容
+        /// </summary>
+        public object StatusContent
+        {
+            get { return GetValue(StatusContentProperty); }
+            set { SetValue(StatusContentProperty, value); }
+        }
+        /// <summary>
+        /// StatusContent属性
+        /// </summary>
+        public static readonly DependencyProperty StatusContentProperty =
+            DependencyProperty.Register(nameof(StatusContent), typeof(object), typeof(TimelineGroup), new FrameworkPropertyMetadata(default(object)));
+
+        /// <summary>
+        /// 是否显示Track的状态显示内容
+        /// </summary>
+        public bool ShowStatusContent
+        {
+            get { return (bool)GetValue(ShowStatusContentProperty); }
+            set { SetValue(ShowStatusContentProperty, value); }
+        }
+        /// <summary>
+        /// StatusContent属性
+        /// </summary>
+        public static readonly DependencyProperty ShowStatusContentProperty =
+            DependencyProperty.Register(nameof(ShowStatusContent), typeof(bool), typeof(TimelineGroup), new FrameworkPropertyMetadata(BoxValue.True));
+
         private TimelineScale _scale;
         private Dictionary<FrameworkElement, object> _curPrepareItem = new Dictionary<FrameworkElement, object>();
         static TimelineGroup()
@@ -168,6 +196,24 @@ namespace Excalibur.Timeline
             if (item == null || _scale == null) return;
 
             _scale.RemoveGroupOrTrackItems(item);
+        }
+
+        private static void OnLockedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as TimelineGroup)?.OnLockedChanged();
+        }
+
+        private void OnLockedChanged()
+        {
+            foreach (var item in Items)
+            {
+                var container = ItemContainerGenerator.ContainerFromItem(item);
+                var track = container.TryFindChild<TimelineTrack>();
+                if(track != null)
+                {
+                    track.PreviewLocked = !Locked;
+                }
+            }
         }
     }
 }
