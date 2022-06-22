@@ -246,12 +246,20 @@ namespace Excalibur.Timeline
         public TimelineTrackItemContainer()
         {
             Loaded += TimelineTrackItemContainerLoaded;
+            Unloaded += TimelineTrackItemContainerUnloaded;
         }
 
         private void TimelineTrackItemContainerLoaded(object sender, RoutedEventArgs e)
         {
             UpdateDesiredSizeForSelection();
             Loaded -= TimelineTrackItemContainerLoaded;
+        }
+
+        private void TimelineTrackItemContainerUnloaded(object sender, RoutedEventArgs e)
+        {
+            Unloaded -= TimelineTrackItemContainerUnloaded;
+            if (Scale != null)
+                Scale.TimeScaleChanged -= TimeScaleChanged;
         }
 
         private void UpdateDesiredSizeForSelection()

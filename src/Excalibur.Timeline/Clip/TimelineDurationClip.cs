@@ -89,10 +89,45 @@ namespace Excalibur.Timeline
 
         private double _preEndTime;
 
+        private Thumb _leftResizeThumb;
+        private Thumb _rightResizeThumb;
+
         static TimelineDurationClip()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TimelineDurationClip), new FrameworkPropertyMetadata(typeof(TimelineDurationClip)));
             FocusableProperty.OverrideMetadata(typeof(TimelineDurationClip), new FrameworkPropertyMetadata(true));
+        }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        public TimelineDurationClip()
+        {
+            Unloaded += TimelineDurationClipUnloaded;
+        }
+
+        private void TimelineDurationClipUnloaded(object sender, RoutedEventArgs e)
+        {
+            Unloaded-= TimelineDurationClipUnloaded;
+
+            if(_leftResizeThumb != null)
+            {
+                _leftResizeThumb.DragStarted -= LeftResizeThumbDragStarted;
+                _leftResizeThumb.DragDelta -= LeftResizeThumbDragDelta;
+                _leftResizeThumb.DragCompleted -= LeftResizeThumbDragCompleted;
+                _leftResizeThumb = null;
+            }
+            if (_rightResizeThumb != null)
+            {
+                _rightResizeThumb.DragStarted -= RightResizeThumbDragStarted;
+                _rightResizeThumb.DragDelta -= RightResizeThumbDragDelta;
+                _rightResizeThumb.DragCompleted -= RightResizeThumbDragCompleted;
+                _rightResizeThumb = null;
+            }
+            if (container != null && container.Scale != null)
+            {
+                container.Scale.TimeScaleChanged -= TimeScaleChanged;
+            }
         }
 
         /// <summary>
@@ -104,15 +139,15 @@ namespace Excalibur.Timeline
 
             if (container == null) return;
 
-            var leftResizeThumb = Template.FindName(ElementLeftResizeThumb, this) as Thumb;
-            leftResizeThumb.DragStarted += LeftResizeThumbDragStarted;
-            leftResizeThumb.DragDelta += LeftResizeThumbDragDelta;
-            leftResizeThumb.DragCompleted += LeftResizeThumbDragCompleted;
+            _leftResizeThumb = Template.FindName(ElementLeftResizeThumb, this) as Thumb;
+            _leftResizeThumb.DragStarted += LeftResizeThumbDragStarted;
+            _leftResizeThumb.DragDelta += LeftResizeThumbDragDelta;
+            _leftResizeThumb.DragCompleted += LeftResizeThumbDragCompleted;
 
-            var rightResizeThumb = Template.FindName(ElementRightResizeThumb, this) as Thumb;
-            rightResizeThumb.DragStarted += RightResizeThumbDragStarted;
-            rightResizeThumb.DragDelta += RightResizeThumbDragDelta;
-            rightResizeThumb.DragCompleted += RightResizeThumbDragCompleted;
+            _rightResizeThumb = Template.FindName(ElementRightResizeThumb, this) as Thumb;
+            _rightResizeThumb.DragStarted += RightResizeThumbDragStarted;
+            _rightResizeThumb.DragDelta += RightResizeThumbDragDelta;
+            _rightResizeThumb.DragCompleted += RightResizeThumbDragCompleted;
 
             if (container != null && container.Scale != null)
             {

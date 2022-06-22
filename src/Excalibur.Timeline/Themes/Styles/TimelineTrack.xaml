@@ -20,7 +20,7 @@
         <Setter Property="MinHeight"
                 Value="25" />
         <Setter Property="Background"
-                Value="#99D2D2D2" />
+                Value="#8F8C8C8C" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
         <Setter Property="ItemTemplate" Value="{StaticResource DefaultTimelineTrackItemTemplate}"/>
@@ -44,7 +44,7 @@
                         <Trigger Property="IsSelected"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="#994A7EE0" />
+                                    Value="#754677D3" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>

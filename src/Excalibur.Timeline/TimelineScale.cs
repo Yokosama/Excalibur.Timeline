@@ -126,6 +126,20 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly DependencyProperty ScaleLineBrushProperty =
             DependencyProperty.Register(nameof(ScaleLineBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure, OnScaleLineBrushChanged));
+        
+        /// <summary>
+        /// 刻度背景的笔刷
+        /// </summary>
+        public Brush ScaleLineAreaBackground
+        {
+            get { return (Brush)GetValue(ScaleLineAreaBackgroundProperty); }
+            set { SetValue(ScaleLineAreaBackgroundProperty, value); }
+        }
+        /// <summary>
+        /// ScaleLineAreaBackground属性
+        /// </summary>
+        public static readonly DependencyProperty ScaleLineAreaBackgroundProperty =
+            DependencyProperty.Register(nameof(ScaleLineAreaBackground), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
         /// 非文字刻度的刻度线的笔刷
@@ -474,14 +488,36 @@ namespace Excalibur.Timeline
         /// ZoomMode.Fixed模式下，界面的最小有效时间
         /// </summary>
         public double MinEffectiveViewTime { get; set; } = 0d;
+
+        private double _viewTimeMin = 0d;
         /// <summary>
         /// 界面内的最小时间
         /// </summary>
-        public double ViewTimeMin { get; set; } = 0d;
+        public double ViewTimeMin
+        {
+            get => _viewTimeMin;
+            set 
+            {
+                if(ViewTimeMax > 0)
+                {
+                    _viewTimeMin = Math.Min(value, ViewTimeMax - 0.25d);
+                }
+            } 
+        }
+
+        private double _viewTimeMax = 25d;
         /// <summary>
         /// 界面内的最大时间
         /// </summary>
-        public double ViewTimeMax { get; set; } = 25d;
+        public double ViewTimeMax
+        {
+            get => _viewTimeMax;
+            set
+            {
+                var v = Math.Max(value, _viewTimeMin + 0.25d);
+                _viewTimeMax = Math.Max(v, 0);
+            }
+        }
         /// <summary>
         /// 界面时间区间大小
         /// </summary>
@@ -552,6 +588,8 @@ namespace Excalibur.Timeline
         private Pen _itemsLinePen;
         private Pen _itemsLinePen2;
         private HashSet<double> _middleLinePositions = new HashSet<double>();
+        private Typeface _typeface;
+        private GuidelineSet _guidelineSet;
         #endregion
 
         #region Pointer
@@ -613,6 +651,9 @@ namespace Excalibur.Timeline
             
             TrackItems.CollectionChanged += TrackItemsCollectionChanged;
             if (SelectedTrackItems is INotifyCollectionChanged c) c.CollectionChanged += OnSelectedTrackItemsChanged;
+
+            _typeface = new Typeface("Sergio UI");
+            _guidelineSet = new GuidelineSet(new[] { 0.5d }, new[] { 0.5d });
         }
 
         /// <summary>
@@ -649,7 +690,12 @@ namespace Excalibur.Timeline
         /// <param name="dc"></param>
         protected override void OnRender(DrawingContext dc)
         {
-            dc.PushGuidelineSet(new GuidelineSet(new[] { 0.5d }, new[] { 0.5d }));
+            dc.PushGuidelineSet(_guidelineSet);
+
+            if(ScaleLineAreaBackground != null)
+            {
+                dc.DrawRectangle(ScaleLineAreaBackground, null, new Rect(0, -1, ActualWidth, ScaleLineAreaHeight));
+            }
 
             if (!_hsbDragStart)
             {
@@ -701,7 +747,8 @@ namespace Excalibur.Timeline
 
                 var text = doFrames ? (rounded * FrameRate).ToString("0") : rounded.ToString("0.00");
                 var fontColor = rounded % timeInfoHighMod == 0 ? ScaleFontBrush : ScaleFontSecondaryBrush;
-                dc.DrawText(new FormattedText(text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Sergio UI"), ScaleFontSize, fontColor, VisualTreeHelper.GetDpi(this).PixelsPerDip), new Point(posX + 5, ScaleLineAreaHeight - ScaleTextHeight));
+              
+                dc.DrawText(new FormattedText(text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeface, ScaleFontSize, fontColor, VisualTreeHelper.GetDpi(this).PixelsPerDip), new Point(posX + 5, ScaleLineAreaHeight - ScaleTextHeight));
             }
 
             if (ViewWidth / (ViewTime / timeStep) > 6)
@@ -1083,7 +1130,7 @@ namespace Excalibur.Timeline
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
             base.OnMouseWheel(e);
-
+         
             var mousePosition = Mouse.GetPosition(this);
             var pointerTimeA = PosToTime(mousePosition.X);
             var delta = Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) ? 0 : -e.Delta * 0.01f;
@@ -1102,6 +1149,7 @@ namespace Excalibur.Timeline
 
             InvalidateVisual();
             RaiseTimeScaleChangedEvent();
+            e.Handled = true;
         }
 
         /// <summary>
@@ -1198,7 +1246,7 @@ namespace Excalibur.Timeline
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-
+           
             Point pos = e.GetPosition(this);
             if (_dragCurrentTimePointer)
             {

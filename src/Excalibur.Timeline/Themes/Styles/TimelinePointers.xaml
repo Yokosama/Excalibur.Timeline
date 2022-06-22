@@ -10,7 +10,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Polygon Fill="Green"
+                    <Polygon Fill="White"
                              Points="0,0 0,15 5,21 10,15 10,0"
                              StrokeThickness="0" />
                 </ControlTemplate>
@@ -37,7 +37,7 @@
         <Setter Property="DurationPointerPositionOffset"
                 Value="8" />
         <Setter Property="CurrentTimeBrush"
-                Value="Green" />
+                Value="White" />
         <Setter Property="MinEffectiveTimeEdgeLineBrush"
                 Value="Green" />
         <Setter Property="DurationEdgeLineBrush"
@@ -45,7 +45,7 @@
         <Setter Property="TimeTextFontBrush"
                 Value="Blue" />
         <Setter Property="DraggingPromptLineBrush"
-                Value="Violet" />
+                Value="Black" />
         <Setter Property="TimeTextBox"
                 Value="16,15,8,4" />
         <Setter Property="TimeTextPosition"
@@ -118,6 +118,7 @@
                                       x:Name="minDraggingTimeTextLine"
                                       Y2="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}"
                                       StrokeDashArray="4 2"
+                                      SnapsToDevicePixels="True"
                                       StrokeThickness="2" />
                             </Grid>
 

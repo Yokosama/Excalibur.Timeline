@@ -3,13 +3,14 @@
 
     <!--Timeline-->
     <Color x:Key="Timeline.BackgroundColor">White</Color>
-    <Color x:Key="Timeline.SplitterColor">#FFCCCCCC</Color>
+    <Color x:Key="Timeline.SplitterColor">#FF464646</Color>
 
     <!--TimelineHeader-->
-    <Color x:Key="TimelineHeader.BackgroundColor">White</Color>
+    <Color x:Key="TimelineHeader.GridBackgroundColor">#FFC8C8C8</Color>
+    <Color x:Key="TimelineHeader.BackgroundColor">#FFAAAAAA</Color>
 
     <!--TimelineScale-->
-    <Color x:Key="TimelineScale.BackgroundColor">White</Color>
+    <Color x:Key="TimelineScale.BackgroundColor">#FFAAAAAA</Color>
     <Color x:Key="TimelineScale.LineColor">Black</Color>
 
 </ResourceDictionary>

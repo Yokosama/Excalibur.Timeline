@@ -18,6 +18,10 @@
                 Value="{x:Null}" />    
         <Setter Property="TimelineHeaderBottomOffset"
                 Value="{x:Static SystemParameters.HorizontalScrollBarHeight}" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="BorderBrush"
+                Value="#FF999999" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:Timeline}">
@@ -41,13 +45,14 @@
 
                             <!--TimelineHeader-->
                             <Grid Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,1'}"
-                                  Background="{StaticResource TimelineHeader.BackgroundBrush}">
+                                  Background="{StaticResource TimelineHeader.GridBackgroundBrush}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="{Binding TimelineHeaderBottomOffset, RelativeSource={RelativeSource TemplatedParent}}" />
                                 </Grid.RowDefinitions>
                                 <tl:TimelineHeader ItemsSource="{TemplateBinding Items}"
                                                    VerticalAlignment="Stretch"
+                                                   Background="{StaticResource TimelineHeader.BackgroundBrush}"
                                                    x:Name="PART_TimelineHeader"/>
                             </Grid>
 

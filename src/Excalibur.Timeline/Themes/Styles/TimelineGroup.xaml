@@ -22,7 +22,7 @@
         <Setter Property="MinHeight"
                 Value="25" />
         <Setter Property="Background"
-                Value="#CC849193" />
+                Value="#28063C42" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
         <Setter Property="TrackTemplate"
@@ -60,7 +60,7 @@
                         <Trigger Property="IsSelected"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="#994A7EE0" />
+                                    Value="#754677D3" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>

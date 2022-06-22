@@ -41,6 +41,12 @@
                 Value="{StaticResource SelectionRectangleStyle}" />
         <Setter Property="FocusVisualStyle"
                 Value="{x:Null}" />
+        <Setter Property="ScaleLineAreaBackground"
+                Value="#FFDADADA" />
+        <Setter Property="ItemsLineBrush"
+                Value="#FF999999" />
+        <Setter Property="ItemsLineSecondaryBrush"
+                Value="#FFA0A0A0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineScale}">

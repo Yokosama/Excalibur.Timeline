@@ -43,6 +43,7 @@
                           DataType="{x:Type local:TriggerClip}">
                 <tl:TimelineTriggerClip>
                     <TextBlock Text="{Binding Dispaly}" 
+                               Margin="3,0,0,0"
                                VerticalAlignment="Center"
                                IsHitTestVisible="False"/>
                 </tl:TimelineTriggerClip>
@@ -52,6 +53,7 @@
                           DataType="{x:Type local:DurationClip}">
                 <tl:TimelineDurationClip Duration="{Binding Duration}">
                     <TextBlock Text="{Binding Dispaly}"
+                               TextTrimming="CharacterEllipsis"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Center"
                                IsHitTestVisible="False" />

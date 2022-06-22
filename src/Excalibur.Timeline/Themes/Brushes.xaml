@@ -12,6 +12,9 @@
                      Color="{DynamicResource Timeline.SplitterColor}" />
     
     <!--TimelineHeader-->
+    <SolidColorBrush x:Key="TimelineHeader.GridBackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineHeader.GridBackgroundColor}" />   
     <SolidColorBrush x:Key="TimelineHeader.BackgroundBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelineHeader.BackgroundColor}" />
