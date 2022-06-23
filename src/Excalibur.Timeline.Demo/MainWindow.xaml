@@ -44,6 +44,7 @@
                 <tl:TimelineTriggerClip>
                     <TextBlock Text="{Binding Dispaly}" 
                                Margin="3,0,0,0"
+                               FontSize="11"
                                VerticalAlignment="Center"
                                IsHitTestVisible="False"/>
                 </tl:TimelineTriggerClip>
@@ -54,6 +55,7 @@
                 <tl:TimelineDurationClip Duration="{Binding Duration}">
                     <TextBlock Text="{Binding Dispaly}"
                                TextTrimming="CharacterEllipsis"
+                               FontSize="11"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Center"
                                IsHitTestVisible="False" />
@@ -89,7 +91,7 @@
                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center"
                                    Margin="5,0,0,0"/>
 
-                        <Border Background="White"
+                        <Border Background="#FFE8E8E8"
                                 Margin="0,0,5,0"
                                 CornerRadius="2"
                                 HorizontalAlignment="Right"
@@ -130,7 +132,7 @@
                                        VerticalAlignment="Center"
                                        Margin="0,0,0,0" />
 
-                            <Border Background="White" 
+                            <Border Background="#FFE8E8E8" 
                                     Margin="0,0,5,0"
                                     CornerRadius="2"
                                     HorizontalAlignment="Right"
@@ -236,7 +238,7 @@
         <tl:Timeline Margin="10,37,10,10"
                      Items="{Binding CutScene.Items}">
             <tl:Timeline.AdditionalContent>
-                <Grid Background="LightBlue">
+                <Grid Background="#FFCBCBCB">
                 </Grid>
             </tl:Timeline.AdditionalContent>
         </tl:Timeline>

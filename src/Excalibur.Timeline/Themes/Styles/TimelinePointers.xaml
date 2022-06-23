@@ -11,7 +11,7 @@
             <Setter.Value>
                 <ControlTemplate>
                     <Polygon Fill="White"
-                             Points="0,0 0,15 5,21 10,15 10,0"
+                             Points="0,0 0,15 5,21 11,15 11,0"
                              StrokeThickness="0" />
                 </ControlTemplate>
             </Setter.Value>
@@ -23,7 +23,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Polygon Fill="Red"
+                    <Polygon Fill="#B3397AEA"
                              Points="0,8 8,21 16,8"
                              StrokeThickness="0" />
                 </ControlTemplate>
@@ -41,10 +41,14 @@
         <Setter Property="MinEffectiveTimeEdgeLineBrush"
                 Value="Green" />
         <Setter Property="DurationEdgeLineBrush"
-                Value="Red" />
+                Value="#B3397AEA" />
         <Setter Property="TimeTextFontBrush"
                 Value="Blue" />
         <Setter Property="DraggingPromptLineBrush"
+                Value="Black" />
+        <Setter Property="DurationEdgeLineBrush"
+                Value="#B3397AEA" />
+        <Setter Property="MinEffectiveTimeEdgeLineBrush"
                 Value="Black" />
         <Setter Property="TimeTextBox"
                 Value="16,15,8,4" />
@@ -66,11 +70,22 @@
                                 </Thumb>
 
                                 <Rectangle Width="2"
-                                           Margin="0,10,0,0"
+                                           Margin="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}},
+                            Converter={StaticResource MarginConverter}, ConverterParameter='Top'}"
                                            IsHitTestVisible="False"
                                            HorizontalAlignment="Center"
                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"
                                            Fill="{TemplateBinding DurationEdgeLineBrush}" />
+                            </Grid>
+
+                            <Grid Canvas.Left="{Binding MinEffectiveTimePosition, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}"
+                                  Margin="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}},
+                            Converter={StaticResource MarginConverter}, ConverterParameter='Top'}">
+                                <Rectangle Width="1"
+                                           Margin="0,0,0,0"
+                                           IsHitTestVisible="False"
+                                           Height="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                           Fill="{TemplateBinding MinEffectiveTimeEdgeLineBrush}" />
                             </Grid>
 
                             <Grid Canvas.Left="{TemplateBinding CurrentTimePointerPosition}">
@@ -79,21 +94,11 @@
                                        Style="{StaticResource CurrentTimePointerThumb}">
                                 </Thumb>
 
-                                <Rectangle Width="2"
+                                <Rectangle Width="1"
                                            IsHitTestVisible="False"
                                            HorizontalAlignment="Center"
                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"
                                            Fill="{TemplateBinding CurrentTimeBrush }" />
-                            </Grid>
-
-                            <Grid Canvas.Left="{Binding MinEffectiveTimePosition, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}"
-                                  Margin="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}},
-                            Converter={StaticResource MarginConverter}, ConverterParameter='Top'}">
-                                <Rectangle Width="2"
-                                           Margin="-1,0,0,0"
-                                           IsHitTestVisible="False"
-                                           Height="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"
-                                           Fill="{TemplateBinding MinEffectiveTimeEdgeLineBrush}" />
                             </Grid>
 
                             <Grid Canvas.Left="{Binding MinDraggingTimeTextPosition, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}">
@@ -109,17 +114,16 @@
                                                Foreground="{TemplateBinding TimeTextFontBrush}" />
                                 </Border>
 
-                                <Line Stroke="{TemplateBinding DraggingPromptLineBrush}"
-                                      Margin="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}},
-                            Converter={StaticResource MarginConverter}, ConverterParameter='Top'}"
-                                      VerticalAlignment="Stretch"
+                                <Line x:Name="minDraggingTimeTextLine"
+                                      Stroke="{TemplateBinding DraggingPromptLineBrush}"
+                                      X1="0.5"
+                                      Y1="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}}}"
+                                      Y2="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}"
                                       HorizontalAlignment="Center"
                                       Visibility="Hidden"
-                                      x:Name="minDraggingTimeTextLine"
-                                      Y2="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}"
-                                      StrokeDashArray="4 2"
                                       SnapsToDevicePixels="True"
-                                      StrokeThickness="2" />
+                                      StrokeDashArray="4 2"
+                                      StrokeThickness="1" />
                             </Grid>
 
                             <Grid Canvas.Left="{Binding MaxDraggingTimeTextPosition, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}">
@@ -136,18 +140,17 @@
                                                Foreground="{TemplateBinding TimeTextFontBrush}" />
                                 </Border>
 
-                                <Line Stroke="{TemplateBinding DraggingPromptLineBrush}"
-                                      Margin="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}},
-                            Converter={StaticResource MarginConverter}, ConverterParameter='Top'}"
-                                      VerticalAlignment="Stretch"
-                                      HorizontalAlignment="Center"
-                                      x:Name="maxDraggingTimeTextLine"
-                                      Visibility="Hidden"
+                                <Line x:Name="maxDraggingTimeTextLine"
+                                      Stroke="{TemplateBinding DraggingPromptLineBrush}"
+                                      X1="0.5"
+                                      Y1="{Binding ScaleLineAreaHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelineScale}}}"
                                       Y2="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type tl:TimelinePointers}}}"
+                                      HorizontalAlignment="Center"
+                                      Visibility="Hidden"
                                       StrokeDashArray="4 2"
-                                      StrokeThickness="2" />
+                                      SnapsToDevicePixels="True"
+                                      StrokeThickness="1" />
                             </Grid>
-
                         </Canvas>
 
                         <Rectangle x:Name="minEffectiveTimeEdge"

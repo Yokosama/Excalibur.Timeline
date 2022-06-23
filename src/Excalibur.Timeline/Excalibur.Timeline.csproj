@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <None Remove="Resources\Images\PanCursorMouseDown.cur" />
+    <None Remove="Themes\Images\Light\TimelineTrackLockedBackground.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Themes\Images\Light\TimelineTrackLockedBackground.png" />
   </ItemGroup>
 
   <ItemGroup>

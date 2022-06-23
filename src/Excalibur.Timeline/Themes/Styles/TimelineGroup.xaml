@@ -2,11 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tl="clr-namespace:Excalibur.Timeline">
 
-
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Styles/TimelineTrack.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Brushes.xaml" />
     </ResourceDictionary.MergedDictionaries>
-   
+
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
     <DataTemplate x:Key="DefaultTimelineGroupItemTemplate">
@@ -22,7 +21,7 @@
         <Setter Property="MinHeight"
                 Value="25" />
         <Setter Property="Background"
-                Value="#28063C42" />
+                Value="{StaticResource TimelineGroup.BackgroundBrush}" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
         <Setter Property="TrackTemplate"
@@ -49,7 +48,7 @@
                         <ItemsPresenter />
 
                         <Border Visibility="Hidden"
-                                Background="Red"
+                                Background="{StaticResource TimelineGroup.StatusDisabledBackgroundBrush}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 x:Name="statusBorder">
@@ -60,7 +59,7 @@
                         <Trigger Property="IsSelected"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="#754677D3" />
+                                    Value="{StaticResource TimelineGroup.SelectedBackgroundBrush}" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -72,7 +71,7 @@
                             <MultiTrigger.Setters>
                                 <Setter Property="Background"
                                         TargetName="statusBorder"
-                                        Value="#99FF0000" />
+                                        Value="{StaticResource TimelineGroup.StatusDisabledBackgroundBrush}" />
                                 <Setter Property="Visibility"
                                         TargetName="statusBorder"
                                         Value="Visible" />
@@ -91,7 +90,7 @@
                             <MultiTrigger.Setters>
                                 <Setter Property="Background"
                                         TargetName="statusBorder"
-                                        Value="#990000FF" />
+                                        Value="{StaticResource TimelineGroup.StatusLockedBackgroundBrush}" />
                                 <Setter Property="Visibility"
                                         TargetName="statusBorder"
                                         Value="Visible" />
@@ -112,7 +111,7 @@
                             <MultiTrigger.Setters>
                                 <Setter Property="Background"
                                         TargetName="statusBorder"
-                                        Value="#994BE84E" />
+                                        Value="{StaticResource TimelineGroup.StatusLockedAndDisabledBackgroundBrush}" />
                                 <Setter Property="Visibility"
                                         TargetName="statusBorder"
                                         Value="Visible" />

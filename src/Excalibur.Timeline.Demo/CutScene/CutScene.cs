@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Excalibur.Timeline.Demo
 {
@@ -47,20 +48,31 @@ namespace Excalibur.Timeline.Demo
         public virtual bool IsLocked
         {
             get => Parent != null ? Parent.IsLocked || _isLocked : _isLocked;
-            set { SetProperty(ref _isLocked, value); NotifyOfPropertyChange(nameof(StatusContent)); }
+            set 
+            {
+                Debug.WriteLine($"{Name} Set IsLocked Value");
+                SetProperty(ref _isLocked, value); 
+                NotifyOfPropertyChange(nameof(StatusContent));
+            }
         }
 
         protected bool _isDisabled;
         public virtual bool IsDisabled
         {
             get => Parent != null ? Parent.IsDisabled || _isDisabled : _isDisabled;
-            set { SetProperty(ref _isDisabled, value); NotifyOfPropertyChange(nameof(StatusContent)); }
+            set 
+            {
+                Debug.WriteLine($"{Name} Set IsDisabled Value");
+                SetProperty(ref _isDisabled, value); 
+                NotifyOfPropertyChange(nameof(StatusContent)); 
+            }
         }
 
         public string StatusContent
         {
             get
             {
+                Debug.WriteLine($"{Name} Get StatusContent Value");
                 var locked = _isLocked;
                 var disabled = _isDisabled;
                 if (Parent != null)
@@ -95,10 +107,11 @@ namespace Excalibur.Timeline.Demo
         public override bool IsLocked
         {
             get => Parent != null ? Parent.IsLocked || _isLocked : _isLocked;
-            set 
-            { 
+            set
+            {
+                Debug.WriteLine($"{Name} Set IsLocked Value");
                 SetProperty(ref _isLocked, value); 
-                NotifyItemsPropertyChanged(nameof(IsLocked), nameof(StatusContent)); 
+                NotifyItemsPropertyChanged(nameof(IsLocked)); 
                 NotifyOfPropertyChange(nameof(StatusContent)); 
             }
         }
@@ -106,10 +119,11 @@ namespace Excalibur.Timeline.Demo
         public override bool IsDisabled
         {
             get => _isDisabled;
-            set 
+            set
             {
+                Debug.WriteLine($"{Name} Set IsDisabled Value");
                 SetProperty(ref _isDisabled, value); 
-                NotifyItemsPropertyChanged(nameof(IsDisabled), nameof(StatusContent));
+                NotifyItemsPropertyChanged(nameof(IsDisabled));
                 NotifyOfPropertyChange(nameof(StatusContent)); 
             }
         }

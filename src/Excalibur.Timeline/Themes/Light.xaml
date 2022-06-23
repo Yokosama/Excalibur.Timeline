@@ -12,5 +12,21 @@
     <!--TimelineScale-->
     <Color x:Key="TimelineScale.BackgroundColor">#FFAAAAAA</Color>
     <Color x:Key="TimelineScale.LineColor">Black</Color>
+    
+    <!--TimelineTrack-->
+    <Color x:Key="TimelineTrack.BackgroundColor">#8F8C8C8C</Color>
+    <Color x:Key="TimelineTrack.SelectedBackgroundBrush">#754677D3</Color>
+    <Color x:Key="TimelineTrack.StatusDisabledBackgroundColor">#96494949</Color>
+    <Color x:Key="TimelineTrack.StatusLockedAndDisabledBackgroundColor">#96494949</Color>
+    <Color x:Key="TimelineTrack.StatusLockedBackgroundColor">#754677D3</Color>
+    <!--<ImageSource x:Key="TimelineTrack.StatusLockedBackgroundImage">pack://application:,,,/Excalibur.Timeline;component/Themes/Images/Light/TimelineTrackLockedBackground.png</ImageSource>-->
+
+    <!--TimelineGroup-->
+    <Color x:Key="TimelineGroup.BackgroundColor">#28063C42</Color>
+    <Color x:Key="TimelineGroup.SelectedBackgroundBrush">#754677D3</Color>
+    <Color x:Key="TimelineGroup.StatusDisabledBackgroundColor">#96494949</Color>
+    <Color x:Key="TimelineGroup.StatusLockedAndDisabledBackgroundColor">#96494949</Color>
+    <Color x:Key="TimelineGroup.StatusLockedBackgroundColor">#754677D3</Color>
+        <!--<ImageSource x:Key="TimelineGroup.StatusLockedBackgroundImage">pack://application:,,,/Excalibur.Timeline;component/Themes/Images/Light/TimelineTrackLockedBackground.png</ImageSource>-->
 
 </ResourceDictionary>

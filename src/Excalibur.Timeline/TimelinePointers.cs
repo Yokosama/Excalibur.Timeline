@@ -586,7 +586,7 @@ namespace Excalibur.Timeline
         private void UpdateEdgeWidth(double zeroPos, double durationPos)
         {
             if (zeroPos > 0)
-                MinEffectiveTimeEdgeWidth = zeroPos - 1;
+                MinEffectiveTimeEdgeWidth = zeroPos;
             else MinEffectiveTimeEdgeWidth = 0;
 
             if (ActualWidth > durationPos)
