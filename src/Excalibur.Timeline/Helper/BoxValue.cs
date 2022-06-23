@@ -51,6 +51,10 @@ namespace Excalibur.Timeline
         /// </summary>
         public static readonly object Double20 = 20d;
         /// <summary>
+        /// 25d
+        /// </summary>
+        public static readonly object Double25 = 25d;
+        /// <summary>
         /// 20d
         /// </summary>
         public static readonly object Double40 = 40d;

@@ -3,6 +3,10 @@
                     xmlns:tl="clr-namespace:Excalibur.Timeline"
                     xmlns:o="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Brushes.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <Geometry x:Key="TriggerClipGeometry"
               o:Freeze="True">M0 6 L0 24 L8 24 L8 6 L4 1 Z</Geometry>
     <Geometry x:Key="FoldTriggerClipGeometry"
@@ -12,7 +16,7 @@
         <Setter Property="Height"
                 Value="25" />
         <Setter Property="Background"
-                Value="#FFCFCFCF" />
+                Value="{StaticResource TimelineTriggerClip.BackgroundBrush}" />
         <!--<Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="BorderBrush"
@@ -48,7 +52,7 @@
                         <Trigger Property="IsPreviewingSelection"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="#FFFFFFFF" />
+                                    Value="{StaticResource TimelineTriggerClip.PreviewingSelectionBackgroundBrush}" />
                             <!--<Setter Property="BorderBrush"
                                     Value="#FFC8C8C8" />
                             <Setter Property="BorderThickness"
@@ -63,7 +67,7 @@
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
                                 <Setter Property="Background"
-                                        Value="#FFFFFFFF" />
+                                        Value="{StaticResource TimelineTriggerClip.SelectedBackgroundBrush}" />
                                 <!--<Setter Property="BorderBrush"
                                         Value="#FFC8C8C8" />
                                 <Setter Property="BorderThickness"
@@ -79,7 +83,7 @@
     <Style x:Key="FoldTimelineTriggerClipClip"
            TargetType="{x:Type tl:TimelineTriggerClip}">
         <Setter Property="Background"
-                Value="#78B3BCC4" />
+                Value="{StaticResource TimelineTriggerClip.FoldBackgroundBrush}" />
         <Setter Property="Margin"
                 Value="0,3,0,0" />
         <Setter Property="Height"
@@ -124,9 +128,9 @@
         <Setter Property="MinWidth"
                 Value="10" />
         <Setter Property="Background"
-                Value="#FF9CA0A5" />
+                Value="{StaticResource TimelineDurationClip.BackgroundBrush}" />
         <Setter Property="BorderBrush"
-                Value="#FF757980" />
+                Value="{StaticResource TimelineDurationClip.BorderBrush}" />
         <Setter Property="BorderThickness"
                 Value="1,0,1,0" />
         <Setter Property="Cursor"
@@ -139,7 +143,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
                         <Grid>
-                            <Border Background="#FF00AE26"
+                            <Border Background="{StaticResource TimelineDurationClip.BottomBackground}"
                                     Height="3"
                                     VerticalAlignment="Bottom" />
                             <Thumb x:Name="PART_LeftResizeThumb"
@@ -160,9 +164,9 @@
                         <Trigger Property="IsPreviewingSelection"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="#FFAFB2B7" /> 
+                                    Value="{StaticResource TimelineDurationClip.PreviewingSelectionBackgroundBrush}" /> 
                             <Setter Property="BorderBrush"
-                                    Value="#FFFFFFFF" />
+                                    Value="{StaticResource TimelineDurationClip.PreviewingSelectionBorderBrush}" />
                             <Setter Property="BorderThickness"
                                     Value="1" />
                         </Trigger>
@@ -175,9 +179,9 @@
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
                                 <Setter Property="Background"
-                                        Value="#FFAFB2B7" />
+                                        Value="{StaticResource TimelineDurationClip.SelectedBackgroundBrush}" />
                                 <Setter Property="BorderBrush"
-                                        Value="#FFFFFFFF" />
+                                        Value="{StaticResource TimelineDurationClip.SelectedBorderBrush}" />
                                 <Setter Property="BorderThickness"
                                         Value="1" />
                             </MultiTrigger.Setters>
@@ -195,9 +199,9 @@
         <Setter Property="Margin"
                 Value="0,3,0,0" />
         <Setter Property="Background"
-                Value="#78B3BCC4" />
+                Value="{StaticResource TimelineDurationClip.FoldBackgroundBrush}" />
         <Setter Property="BorderBrush"
-                Value="#78909396" />
+                Value="{StaticResource TimelineDurationClip.FoldBorderBrush}" />
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="Template">

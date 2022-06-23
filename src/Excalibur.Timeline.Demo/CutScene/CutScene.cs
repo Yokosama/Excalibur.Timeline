@@ -50,7 +50,6 @@ namespace Excalibur.Timeline.Demo
             get => Parent != null ? Parent.IsLocked || _isLocked : _isLocked;
             set 
             {
-                Debug.WriteLine($"{Name} Set IsLocked Value");
                 SetProperty(ref _isLocked, value); 
                 NotifyOfPropertyChange(nameof(StatusContent));
             }
@@ -62,7 +61,6 @@ namespace Excalibur.Timeline.Demo
             get => Parent != null ? Parent.IsDisabled || _isDisabled : _isDisabled;
             set 
             {
-                Debug.WriteLine($"{Name} Set IsDisabled Value");
                 SetProperty(ref _isDisabled, value); 
                 NotifyOfPropertyChange(nameof(StatusContent)); 
             }
@@ -72,7 +70,6 @@ namespace Excalibur.Timeline.Demo
         {
             get
             {
-                Debug.WriteLine($"{Name} Get StatusContent Value");
                 var locked = _isLocked;
                 var disabled = _isDisabled;
                 if (Parent != null)
@@ -83,7 +80,7 @@ namespace Excalibur.Timeline.Demo
 
                 if (locked && disabled)
                 {
-                    return "Locked/Disabled";
+                    return "Locked / Disabled";
                 }
                 else if (disabled)
                 {
@@ -109,9 +106,8 @@ namespace Excalibur.Timeline.Demo
             get => Parent != null ? Parent.IsLocked || _isLocked : _isLocked;
             set
             {
-                Debug.WriteLine($"{Name} Set IsLocked Value");
-                SetProperty(ref _isLocked, value); 
-                NotifyItemsPropertyChanged(nameof(IsLocked)); 
+                SetProperty(ref _isLocked, value);
+                NotifyItemsPropertyChanged(nameof(IsLocked), nameof(StatusContent));
                 NotifyOfPropertyChange(nameof(StatusContent)); 
             }
         }
@@ -121,9 +117,8 @@ namespace Excalibur.Timeline.Demo
             get => _isDisabled;
             set
             {
-                Debug.WriteLine($"{Name} Set IsDisabled Value");
-                SetProperty(ref _isDisabled, value); 
-                NotifyItemsPropertyChanged(nameof(IsDisabled));
+                SetProperty(ref _isDisabled, value);
+                NotifyItemsPropertyChanged(nameof(IsDisabled), nameof(StatusContent));
                 NotifyOfPropertyChange(nameof(StatusContent)); 
             }
         }

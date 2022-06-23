@@ -2,10 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Excalibur.Timeline.Themes.Styles"
                     xmlns:tl="clr-namespace:Excalibur.Timeline">
+    
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Brushes.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type tl:TimelineHeader}">
         <Setter Property="Background"
-                Value="#99D2D2D2" />
+                Value="{StaticResource TimelineHeader.BackgroundBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineHeader}">

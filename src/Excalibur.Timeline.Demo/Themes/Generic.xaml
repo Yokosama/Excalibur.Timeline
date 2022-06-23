@@ -1,0 +1,71 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:o="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+
+    <SolidColorBrush x:Key="StatusContentBackground"
+                     o:Freeze="True"
+                     Color="{DynamicResource StatusContentBackgroundColor}" />
+
+    <SolidColorBrush x:Key="TimlineAdditionalContent.BackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimlineAdditionalContent.BackgroundColor}" />
+    <SolidColorBrush x:Key="StatusContentButtons.BackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource StatusContentButtons.BackgroundColor}" />
+
+    <Style x:Key="LockToggleButtonStyle"
+           TargetType="{x:Type ToggleButton}">
+        <Setter Property="SnapsToDevicePixels"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid>
+                        <Image x:Name="ImageMain" UseLayoutRounding="True"
+                               Width="{TemplateBinding Width}"
+                               Height="{TemplateBinding Height}"
+                               SnapsToDevicePixels="True"
+                               Stretch="Uniform"
+                               Source="{DynamicResource LockToggleButton.UnlockImageSource}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked"
+                                 Value="True">
+                            <Setter TargetName="ImageMain"
+                                    Property="Source"
+                                    Value="{DynamicResource LockToggleButton.LockedImageSource}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Style x:Key="DisableToggleButtonStyle"
+           TargetType="{x:Type ToggleButton}">
+        <Setter Property="SnapsToDevicePixels"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid>
+                        <Image x:Name="ImageMain" UseLayoutRounding="True"
+                               Width="{TemplateBinding Width}"
+                               Height="{TemplateBinding Height}"
+                               SnapsToDevicePixels="True"
+                               Stretch="Uniform"
+                               Source="{DynamicResource DisableToggleButton.NotDisabledImageSource}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked"
+                                 Value="True">
+                            <Setter TargetName="ImageMain"
+                                    Property="Source"
+                                    Value="{DynamicResource DisableToggleButton.DisabledImageSource}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

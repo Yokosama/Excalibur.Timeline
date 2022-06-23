@@ -8,7 +8,6 @@
         Title="MainWindow"
         Height="450"
         Width="800"
-        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:tl="clr-namespace:Excalibur.Timeline;assembly=Excalibur.Timeline"
         x:Name="mainWnd">
     <Window.Resources>
@@ -25,13 +24,8 @@
             <Setter Property="ZoomMode"
                     Value="Fixed" />
         </Style>
-        <Style TargetType="{x:Type tl:TimelinePointers}"
-               BasedOn="{StaticResource {x:Type tl:TimelinePointers}}">
-            <Setter Property="TimeTextFontBrush"
-                    Value="White" />
-        </Style>
     </Window.Resources>
-    <Grid Background="#7F808080">
+    <Grid>
         <Grid.Resources>
 
             <local:NullToBooleanConverter x:Key="NullToBooleanConverter" />
@@ -72,7 +66,7 @@
                                   ShowStatusContent="{Binding StatusContent, Converter={StaticResource NullToBooleanConverter}}">
                     <tl:TimelineTrack.StatusContent>
                         <Border CornerRadius="3"
-                                Background="#FF434444"
+                                Background="{StaticResource StatusContentBackground}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 IsHitTestVisible="False">
@@ -91,7 +85,7 @@
                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center"
                                    Margin="5,0,0,0"/>
 
-                        <Border Background="#FFE8E8E8"
+                        <Border Background="{StaticResource StatusContentButtons.BackgroundBrush}"
                                 Margin="0,0,5,0"
                                 CornerRadius="2"
                                 HorizontalAlignment="Right"
@@ -99,16 +93,23 @@
                                 VerticalAlignment="Center"
                                 Width="46" />
 
-                        <Button Content="L"
-                                ToolTip="Lock"
-                                HorizontalAlignment="Right"
-                                Width="16"
-                                Height="16"
-                                FontSize="10"
-                                Margin="5,0,30,0"
-                                Command="{Binding DataContext.LockCommand, ElementName=mainWnd}"
-                                CommandParameter="{Binding}"/>
-                        <Button Content="D"
+                        <ToggleButton ToolTip="Lock"
+                                      HorizontalAlignment="Right"
+                                      Width="16"
+                                      Height="16"
+                                      Margin="5,0,30,0" 
+                                      IsChecked="{Binding IsLocked}"
+                                      Style="{StaticResource LockToggleButtonStyle}"/>
+                        <ToggleButton ToolTip="Disable"
+                                      HorizontalAlignment="Right"
+                                      Width="16"
+                                      Height="16"
+                                      Margin="5,0,10,0"
+                                      IsChecked="{Binding IsDisabled}"
+                                      Style="{StaticResource DisableToggleButtonStyle}" />
+                        <!--Command="{Binding DataContext.LockCommand, ElementName=mainWnd}"
+                                        CommandParameter="{Binding}"/>-->
+                        <!--<Button Content="D"
                                 ToolTip="Disable"
                                 HorizontalAlignment="Right"
                                 Width="16"
@@ -116,7 +117,7 @@
                                 FontSize="10"
                                 Margin="5,0,10,0"
                                 Command="{Binding DataContext.DisableCommand, ElementName=mainWnd}"
-                                CommandParameter="{Binding}" />
+                                CommandParameter="{Binding}" />-->
                     </Grid>
                 </tl:TimelineTrackHeader>
             </DataTemplate>
@@ -132,15 +133,15 @@
                                        VerticalAlignment="Center"
                                        Margin="0,0,0,0" />
 
-                            <Border Background="#FFE8E8E8" 
+                            <Border Background="{StaticResource StatusContentButtons.BackgroundBrush}" 
                                     Margin="0,0,5,0"
                                     CornerRadius="2"
                                     HorizontalAlignment="Right"
                                     Height="18"
                                     VerticalAlignment="Center"
-                                    Width="46"/>
+                                    Width="45"/>
 
-                            <Button Content="L"
+                            <!--<Button Content="L"
                                     ToolTip="Lock"
                                     HorizontalAlignment="Right"
                                     Width="16"
@@ -157,7 +158,21 @@
                                     FontSize="10"
                                     Margin="5,0,10,0"
                                     Command="{Binding DataContext.DisableCommand, ElementName=mainWnd}"
-                                    CommandParameter="{Binding}" />
+                                    CommandParameter="{Binding}" />-->
+                            <ToggleButton ToolTip="Lock"
+                                          HorizontalAlignment="Right"
+                                          Width="16"
+                                          Height="16"
+                                          Margin="5,0,30,0"
+                                          IsChecked="{Binding IsLocked}"
+                                          Style="{StaticResource LockToggleButtonStyle}" />
+                            <ToggleButton ToolTip="Disable"
+                                          HorizontalAlignment="Right"
+                                          Width="16"
+                                          Height="16"
+                                          Margin="5,0,10,0"
+                                          IsChecked="{Binding IsDisabled}"
+                                          Style="{StaticResource DisableToggleButtonStyle}" />
                         </Grid>
                     </tl:TimelineGroupHeader.Header>
                 </tl:TimelineGroupHeader>
@@ -193,7 +208,7 @@
                                   ShowStatusContent="{Binding StatusContent, Converter={StaticResource NullToBooleanConverter}}">
                     <tl:TimelineGroup.StatusContent>
                         <Border CornerRadius="3"
-                                Background="#FF434444"
+                                Background="{StaticResource StatusContentBackground}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
                                 Margin="0,3,0,0"
@@ -222,6 +237,10 @@
                         Value="{Binding CutScene.StepMode}" />
                 <Setter Property="FrameRate"
                         Value="{Binding CutScene.FrameRate}" />
+                <Setter Property="Duration"
+                        Value="20" />
+                <Setter Property="ViewTimeMax"
+                        Value="25" />
                 <Setter Property="ItemTemplate"
                         Value="{x:Null}" />
                 <Setter Property="ItemTemplateSelector"
@@ -235,17 +254,17 @@
             </Style>
 
         </Grid.Resources>
-        <tl:Timeline Margin="10,37,10,10"
-                     Items="{Binding CutScene.Items}">
+        <tl:Timeline Items="{Binding CutScene.Items}">
             <tl:Timeline.AdditionalContent>
-                <Grid Background="#FFCBCBCB">
+                <Grid Background="{StaticResource TimlineAdditionalContent.BackgroundBrush}">
+                    <Button Content="ChangeTheme"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            FontSize="10"
+                            Margin="2,0,0,0"/>
                 </Grid>
             </tl:Timeline.AdditionalContent>
         </tl:Timeline>
-        <Button Content="TestRemove"
-                HorizontalAlignment="Left"
-                Margin="10,13,0,0"
-                VerticalAlignment="Top"
-                Click="Button_Click" />
+        
     </Grid>
 </Window>

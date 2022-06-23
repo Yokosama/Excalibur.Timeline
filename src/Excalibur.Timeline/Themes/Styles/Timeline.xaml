@@ -21,7 +21,7 @@
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="BorderBrush"
-                Value="#FF999999" />
+                Value="{StaticResource Timeline.BorderBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:Timeline}">
@@ -44,7 +44,7 @@
                                             FocusVisualStyle="{x:Null}" />
 
                             <!--TimelineHeader-->
-                            <Grid Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,1'}"
+                            <Grid Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top'}"
                                   Background="{StaticResource TimelineHeader.GridBackgroundBrush}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
@@ -52,7 +52,6 @@
                                 </Grid.RowDefinitions>
                                 <tl:TimelineHeader ItemsSource="{TemplateBinding Items}"
                                                    VerticalAlignment="Stretch"
-                                                   Background="{StaticResource TimelineHeader.BackgroundBrush}"
                                                    x:Name="PART_TimelineHeader"/>
                             </Grid>
 

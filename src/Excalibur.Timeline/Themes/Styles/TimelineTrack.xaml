@@ -6,7 +6,6 @@
         <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Brushes.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-
     <DataTemplate x:Key="DefaultTimelineTrackItemTemplate">
         <tl:TimelineTriggerClip />
     </DataTemplate>

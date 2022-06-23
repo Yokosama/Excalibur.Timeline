@@ -512,7 +512,7 @@ namespace Excalibur.Timeline
             MinEffectiveTimePosition = _scale.TimeToPos(_scale.MinEffectiveTime);
 
             UpdateCurrentTimePointerPosition(_scale.TimeToPos(_scale.CurrentTime), _scale.CurrentTimeText);
-            UpdateDurationPointerPosition(durationPos, _scale.DurationText);
+            UpdateDurationPointerPosition(durationPos, _scale.DurationText, false);
 
             UpdateEdgeWidth(MinEffectiveTimePosition, durationPos);
         }
@@ -524,10 +524,13 @@ namespace Excalibur.Timeline
         /// <param name="timeText">当前时间文本</param>
         public void UpdateCurrentTimePointerPosition(double timePos, string timeText)
         {
-            MinDraggingTimeText = timeText;
             CurrentTimePointerPosition = timePos - CurrentTimePointerPositionOffset;
 
-            if (IsCurrentTimePointerDragging && IsShowMinDraggingTimeText) MinDraggingTimeTextPosition = CurrentTimePointerPosition + TimeTextBox.X;
+            if (IsCurrentTimePointerDragging && IsShowMinDraggingTimeText)
+            {
+                MinDraggingTimeText = timeText;
+                MinDraggingTimeTextPosition = CurrentTimePointerPosition + TimeTextBox.X;
+            }
         }
 
         /// <summary>
@@ -535,12 +538,16 @@ namespace Excalibur.Timeline
         /// </summary>
         /// <param name="timePos">当前有效时间位置</param>
         /// <param name="timeText">当前有效时间位置</param>
-        public void UpdateDurationPointerPosition(double timePos, string timeText)
+        public void UpdateDurationPointerPosition(double timePos, string timeText, bool updateEdgeWidth)
         {
-            MinDraggingTimeText = timeText;
             DurationPointerPosition = timePos - DurationPointerPositionOffset;
+            if (updateEdgeWidth) UpdateEdgeWidth(MinEffectiveTimePosition, timePos);
+
             if (IsDurationPointerDragging && IsShowMinDraggingTimeText)
+            {
+                MinDraggingTimeText = timeText;
                 MinDraggingTimeTextPosition = DurationPointerPosition + TimeTextBox.X;
+            }
         }
 
         /// <summary>

@@ -337,6 +337,50 @@ namespace Excalibur.Timeline
         public static readonly DependencyProperty LastTimePosOffsetProperty =
             DependencyProperty.Register(nameof(LastTimePosOffset), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double40, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
 
+
+        private double _viewTimeMin = 0d;
+        /// <summary>
+        /// 界面内的最小时间
+        /// </summary>
+        public double ViewTimeMin
+        {
+            get { return (double)GetValue(ViewTimeMinProperty); }
+            set
+            {
+                if (ViewTimeMax > 0)
+                {
+                    _viewTimeMin = Math.Min(value, ViewTimeMax - 0.25d);
+                    SetValue(ViewTimeMinProperty, _viewTimeMin);
+                }
+            }
+        }
+        /// <summary>
+        /// 界面内的最小时间属性
+        /// </summary>
+        public static readonly DependencyProperty ViewTimeMinProperty =
+            DependencyProperty.Register(nameof(ViewTimeMin), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        private double _viewTimeMax = 0d;
+        /// <summary>
+        /// 界面内的最小时间
+        /// </summary>
+        public double ViewTimeMax
+        {
+            get { return (double)GetValue(ViewTimeMaxProperty); }
+            set
+            {
+                var v = Math.Max(value, _viewTimeMin + 0.25d);
+                _viewTimeMax = Math.Max(v, 0);
+                SetValue(ViewTimeMaxProperty, _viewTimeMax);
+            }
+        }
+        /// <summary>
+        /// 界面内的最大时间属性
+        /// </summary>
+        public static readonly DependencyProperty ViewTimeMaxProperty =
+            DependencyProperty.Register(nameof(ViewTimeMax), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double25, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+
         /// <summary>
         /// 拖拽时间指针或Clip的时候，自动移动
         /// </summary>
@@ -489,35 +533,7 @@ namespace Excalibur.Timeline
         /// </summary>
         public double MinEffectiveViewTime { get; set; } = 0d;
 
-        private double _viewTimeMin = 0d;
-        /// <summary>
-        /// 界面内的最小时间
-        /// </summary>
-        public double ViewTimeMin
-        {
-            get => _viewTimeMin;
-            set 
-            {
-                if(ViewTimeMax > 0)
-                {
-                    _viewTimeMin = Math.Min(value, ViewTimeMax - 0.25d);
-                }
-            } 
-        }
-
-        private double _viewTimeMax = 25d;
-        /// <summary>
-        /// 界面内的最大时间
-        /// </summary>
-        public double ViewTimeMax
-        {
-            get => _viewTimeMax;
-            set
-            {
-                var v = Math.Max(value, _viewTimeMin + 0.25d);
-                _viewTimeMax = Math.Max(v, 0);
-            }
-        }
+      
         /// <summary>
         /// 界面时间区间大小
         /// </summary>
@@ -917,8 +933,9 @@ namespace Excalibur.Timeline
         {
             if (d is TimelineScale scale)
             {
-                scale.Pointers.UpdateDurationPointerPosition(scale.TimeToPos(scale.Duration),
-                       scale.DurationText);
+                if(scale.Pointers != null)
+                    scale.Pointers.UpdateDurationPointerPosition(scale.TimeToPos(scale.Duration),
+                       scale.DurationText, true);
 
                 if(scale.CurrentTime >= scale.Duration)
                 {
@@ -1741,7 +1758,7 @@ namespace Excalibur.Timeline
             if (IsInAutoPanning) return;
             var time = PosToTime(pos);
             time = SnapTime(time);
-
+            
             CurrentTime = time;
         }
 

@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ImageSource x:Key="LockToggleButton.UnlockImageSource">pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Images/Light/TrackLockButtonDisabled@2x.png</ImageSource>
+    <ImageSource x:Key="LockToggleButton.LockedImageSource">pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Images/Light/TrackLockButtonEnabled@2x.png</ImageSource>
+    <ImageSource x:Key="DisableToggleButton.NotDisabledImageSource">pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Images/Light/TrackMuteButtonDisabled@2x.png</ImageSource>
+    <ImageSource x:Key="DisableToggleButton.DisabledImageSource">pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Images/Light/TrackMuteButtonEnabled@2x.png</ImageSource>
+
+    <Color x:Key="StatusContentBackgroundColor">#DC565656</Color>
+    <Color x:Key="TimlineAdditionalContent.BackgroundColor">#FFCBCBCB</Color>
+    <Color x:Key="StatusContentButtons.BackgroundColor">#FFE8E8E8</Color>
+</ResourceDictionary>

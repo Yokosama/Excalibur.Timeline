@@ -27,10 +27,5 @@ namespace Excalibur.Timeline.Demo
             _vm = new MainWindowVM();
             DataContext = _vm;
         }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            (_vm.CutScene.Items[0] as CutSceneTrack).Items.RemoveAt(0);
-        }
     }
 }

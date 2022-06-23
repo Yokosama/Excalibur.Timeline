@@ -2,16 +2,20 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Excalibur.Timeline.Themes.Styles"
                     xmlns:tl="clr-namespace:Excalibur.Timeline">
-  
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Brushes.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <Style TargetType="{x:Type tl:TimelineTrackHeader}">
         <Setter Property="Height"
                 Value="25" />
         <Setter Property="MinHeight"
                 Value="25" />
         <Setter Property="Background"
-                Value="#FFD2D2D2" />
+                Value="{StaticResource TimelineTrackHeader.BackgroundBrush}" />
         <Setter Property="Foreground"
-                Value="Black" />
+                Value="{StaticResource TimelineTrackHeader.ForegroundBrush}" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
         <Setter Property="Template">
@@ -24,9 +28,9 @@
                         <Trigger Property="IsSelected"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="#FF4A7EE0" />
+                                    Value="{StaticResource TimelineTrackHeader.SelectedBackgroundBrush}" />
                             <Setter Property="Foreground"
-                                    Value="White" />
+                                    Value="{StaticResource TimelineTrackHeader.SelectedForegroundBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

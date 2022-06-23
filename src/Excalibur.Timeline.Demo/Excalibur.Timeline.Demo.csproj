@@ -7,7 +7,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Themes\Images\Light\TrackLockButtonDisabled%402x.png" />
+    <None Remove="Themes\Images\Light\TrackLockButtonDisabled.png" />
+    <None Remove="Themes\Images\Light\TrackLockButtonEnabled%402x.png" />
+    <None Remove="Themes\Images\Light\TrackLockButtonEnabled.png" />
+    <None Remove="Themes\Images\Light\TrackMuteButtonDisabled%402x.png" />
+    <None Remove="Themes\Images\Light\TrackMuteButtonEnabled%402x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Themes\Images\Light\TrackLockButtonEnabled@2x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Excalibur.Timeline\Excalibur.Timeline.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Themes\Images\Light\TrackLockButtonDisabled@2x.png" />
+    <Resource Include="Themes\Images\Light\TrackMuteButtonDisabled@2x.png" />
+    <Resource Include="Themes\Images\Light\TrackMuteButtonEnabled@2x.png" />
   </ItemGroup>
 
 </Project>

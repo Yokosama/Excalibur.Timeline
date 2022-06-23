@@ -8,6 +8,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Light.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Generic.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

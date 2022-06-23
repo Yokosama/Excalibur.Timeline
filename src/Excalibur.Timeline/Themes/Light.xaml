@@ -3,6 +3,8 @@
 
     <!--Timeline-->
     <Color x:Key="Timeline.BackgroundColor">White</Color>
+    <Color x:Key="Timeline.BorderBrushColor">#FF999999</Color>
+
     <Color x:Key="Timeline.SplitterColor">#FF464646</Color>
 
     <!--TimelineHeader-->
@@ -12,21 +14,72 @@
     <!--TimelineScale-->
     <Color x:Key="TimelineScale.BackgroundColor">#FFAAAAAA</Color>
     <Color x:Key="TimelineScale.LineColor">Black</Color>
+    <Color x:Key="TimelineScale.ScaleLineAreaBackgroundColor">#FFDADADA</Color>
+    <Color x:Key="TimelineScale.ItemsLineColor">#FF999999</Color>
+    <Color x:Key="TimelineScale.ItemsLineSecondaryColor">#FFA0A0A0</Color>
+    
+    <Color x:Key="TimelineScale.SelectionStrokeColor">DodgerBlue</Color>
+    <Color x:Key="TimelineScale.SelectionFillColor">DodgerBlue</Color>
     
     <!--TimelineTrack-->
     <Color x:Key="TimelineTrack.BackgroundColor">#8F8C8C8C</Color>
-    <Color x:Key="TimelineTrack.SelectedBackgroundBrush">#754677D3</Color>
+    <Color x:Key="TimelineTrack.SelectedBackgroundColor">#754677D3</Color>
     <Color x:Key="TimelineTrack.StatusDisabledBackgroundColor">#96494949</Color>
     <Color x:Key="TimelineTrack.StatusLockedAndDisabledBackgroundColor">#96494949</Color>
     <Color x:Key="TimelineTrack.StatusLockedBackgroundColor">#754677D3</Color>
-    <!--<ImageSource x:Key="TimelineTrack.StatusLockedBackgroundImage">pack://application:,,,/Excalibur.Timeline;component/Themes/Images/Light/TimelineTrackLockedBackground.png</ImageSource>-->
+    <ImageSource x:Key="TimelineTrack.StatusLockedBackgroundImage">pack://application:,,,/Excalibur.Timeline;component/Themes/Images/Light/TimelineTrackLockedBackground.png</ImageSource>
 
     <!--TimelineGroup-->
     <Color x:Key="TimelineGroup.BackgroundColor">#28063C42</Color>
-    <Color x:Key="TimelineGroup.SelectedBackgroundBrush">#754677D3</Color>
+    <Color x:Key="TimelineGroup.SelectedBackgroundColor">#754677D3</Color>
     <Color x:Key="TimelineGroup.StatusDisabledBackgroundColor">#96494949</Color>
     <Color x:Key="TimelineGroup.StatusLockedAndDisabledBackgroundColor">#96494949</Color>
-    <Color x:Key="TimelineGroup.StatusLockedBackgroundColor">#754677D3</Color>
-        <!--<ImageSource x:Key="TimelineGroup.StatusLockedBackgroundImage">pack://application:,,,/Excalibur.Timeline;component/Themes/Images/Light/TimelineTrackLockedBackground.png</ImageSource>-->
+    <!--<Color x:Key="TimelineGroup.StatusLockedBackgroundColor">#754677D3</Color>-->
+    <ImageSource x:Key="TimelineGroup.StatusLockedBackgroundImage">pack://application:,,,/Excalibur.Timeline;component/Themes/Images/Light/TimelineTrackLockedBackground.png</ImageSource>
+
+    <!--TimelineTriggerClip-->
+    <Color x:Key="TimelineTriggerClip.BackgroundColor">#FFCFCFCF</Color>
+    <Color x:Key="TimelineTriggerClip.PreviewingSelectionBackgroundColor">White</Color>
+    <Color x:Key="TimelineTriggerClip.SelectedBackgroundColor">White</Color>
+
+    <Color x:Key="TimelineTriggerClip.FoldBackgroundColor">#78B3BCC4</Color>
+
+    <!--TimelineDurationClip-->
+    <Color x:Key="TimelineDurationClip.BackgroundColor">#FF9CA0A5</Color>
+    <Color x:Key="TimelineDurationClip.BorderBrushColor">#FF757980</Color>
+    <Color x:Key="TimelineDurationClip.BottomBackgroundColor">#FF00AE26</Color>
+    <Color x:Key="TimelineDurationClip.PreviewingSelectionBackgroundColor">#FFAFB2B7</Color>
+    <Color x:Key="TimelineDurationClip.PreviewingSelectionBorderBrushColor">White</Color>
+    <Color x:Key="TimelineDurationClip.SelectedBackgroundColor">#FFAFB2B7</Color>
+    <Color x:Key="TimelineDurationClip.SelectedBorderBrushColor">White</Color>
+
+    <Color x:Key="TimelineDurationClip.FoldBackgroundColor">#78B3BCC4</Color>
+    <Color x:Key="TimelineDurationClip.FoldBorderBrushColor">#78909396</Color>
+
+    <!--TimelineGroupHeaderExpander-->
+    <Color x:Key="TimelineGroupHeaderExpander.ForegroundColor">#FF020202</Color>
+    <Color x:Key="TimelineGroupHeaderExpander.BackgroundColor">#FFCBCBCB</Color>
+    <Color x:Key="TimelineGroupHeaderExpander.PathArrowFillColor">#FF575757</Color>
+    <Color x:Key="TimelineGroupHeaderExpander.MouseOverBackgroundColor">#FFCBCBCB</Color>
+    
+    <!--TimelineGroupHeader-->
+    <Color x:Key="TimelineGroupHeader.BackgroundColor">#FF849193</Color>
+    <Color x:Key="TimelineGroupHeader.SelectedBackgroundColor">#FF4A7EE0</Color>
+    <Color x:Key="TimelineGroupHeader.SelectedForegroundColor">White</Color>
+
+    <!--TimelinePointers-->
+    <Color x:Key="TimelinePointers.CurrentTimeColor">White</Color>
+    <Color x:Key="TimelinePointers.DurationEdgeLineColor">#B3397AEA</Color>
+    <Color x:Key="TimelinePointers.TimeTextFontColor">White</Color>
+    <Color x:Key="TimelinePointers.DraggingPromptLineColor">Black</Color>
+    <Color x:Key="TimelinePointers.MinEffectiveTimeEdgeLineColor">Black</Color>
+    <Color x:Key="TimelinePointers.MinEffectiveTimeEdgeColor">#4C000000</Color>
+    <Color x:Key="TimelinePointers.DurationEdgeColor">#4C000000</Color>
+    
+    <!--TimelineTrackHeader-->
+    <Color x:Key="TimelineTrackHeader.BackgroundColor">#FFD2D2D2</Color>
+    <Color x:Key="TimelineTrackHeader.ForegroundColor">Black</Color>
+    <Color x:Key="TimelineTrackHeader.SelectedBackgroundColor">#FF4A7EE0</Color>
+    <Color x:Key="TimelineTrackHeader.SelectedForegroundColor">White</Color>
 
 </ResourceDictionary>
