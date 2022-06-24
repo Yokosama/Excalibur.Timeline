@@ -36,7 +36,8 @@
             <DataTemplate x:Key="TriggerClipTemplate"
                           DataType="{x:Type local:TriggerClip}">
                 <tl:TimelineTriggerClip>
-                    <TextBlock Text="{Binding Dispaly}" 
+                    <TextBlock Text="{Binding Dispaly}"
+                               Foreground="{StaticResource TimelineTriggerClip.ForegroundBrush}"
                                Margin="3,0,0,0"
                                FontSize="11"
                                VerticalAlignment="Center"
@@ -48,6 +49,7 @@
                           DataType="{x:Type local:DurationClip}">
                 <tl:TimelineDurationClip Duration="{Binding Duration}">
                     <TextBlock Text="{Binding Dispaly}"
+                               Foreground="{StaticResource TimelineDurationClip.ForegroundBrush}"
                                TextTrimming="CharacterEllipsis"
                                FontSize="11"
                                VerticalAlignment="Center"
@@ -63,7 +65,8 @@
                                   ItemTemplateSelector="{StaticResource TimelineTrackItemSelector}"
                                   Locked="{Binding IsLocked,Mode=TwoWay}"
                                   Disabled="{Binding IsDisabled,Mode=TwoWay}"
-                                  ShowStatusContent="{Binding StatusContent, Converter={StaticResource NullToBooleanConverter}}">
+                                  PreviewDisabled="{Binding PreviewDisabled}"
+                                  PreviewLocked="{Binding PreviewLocked}">
                     <tl:TimelineTrack.StatusContent>
                         <Border CornerRadius="3"
                                 Background="{StaticResource StatusContentBackground}"
@@ -139,7 +142,7 @@
                                     HorizontalAlignment="Right"
                                     Height="18"
                                     VerticalAlignment="Center"
-                                    Width="45"/>
+                                    Width="46"/>
 
                             <!--<Button Content="L"
                                     ToolTip="Lock"

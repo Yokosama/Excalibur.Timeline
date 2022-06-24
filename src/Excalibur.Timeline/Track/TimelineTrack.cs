@@ -70,7 +70,21 @@ namespace Excalibur.Timeline
         /// 是否能显示锁定
         /// </summary>
         public static readonly DependencyProperty PreviewLockedProperty =
-            DependencyProperty.Register(nameof(PreviewLocked), typeof(bool), typeof(TimelineTrack), new FrameworkPropertyMetadata(BoxValue.True, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnLockedChanged));
+            DependencyProperty.Register(nameof(PreviewLocked), typeof(bool), typeof(TimelineTrack), new FrameworkPropertyMetadata(BoxValue.True, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        /// <summary>
+        /// 是否能显示禁用
+        /// </summary>
+        public bool PreviewDisabled
+        {
+            get { return (bool)GetValue(PreviewDisabledProperty); }
+            set { SetValue(PreviewDisabledProperty, value); }
+        }
+        /// <summary>
+        /// 是否能显示禁用
+        /// </summary>
+        public static readonly DependencyProperty PreviewDisabledProperty =
+            DependencyProperty.Register(nameof(PreviewDisabled), typeof(bool), typeof(TimelineTrack), new FrameworkPropertyMetadata(BoxValue.True, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
         /// Track的状态显示内容

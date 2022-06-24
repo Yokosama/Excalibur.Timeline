@@ -12,6 +12,12 @@
     <SolidColorBrush x:Key="StatusContentButtons.BackgroundBrush"
                      o:Freeze="True"
                      Color="{DynamicResource StatusContentButtons.BackgroundColor}" />
+    <SolidColorBrush x:Key="TimelineTriggerClip.ForegroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineTriggerClip.ForegroundColor}" />
+    <SolidColorBrush x:Key="TimelineDurationClip.ForegroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineDurationClip.ForegroundColor}" />
 
     <Style x:Key="LockToggleButtonStyle"
            TargetType="{x:Type ToggleButton}">

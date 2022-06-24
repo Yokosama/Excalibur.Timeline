@@ -37,12 +37,24 @@
                 Value="{StaticResource SelectionRectangleStyle}" />
         <Setter Property="FocusVisualStyle"
                 Value="{x:Null}" />
+        <Setter Property="ScaleFontBrush"
+                Value="{StaticResource TimelineScale.ScaleFontBrush}" />
+        <Setter Property="ScaleFontSecondaryBrush"
+                Value="{StaticResource TimelineScale.ScaleFontSecondaryBrush}" />
+        <Setter Property="ScaleLineBrush"
+                Value="{StaticResource TimelineScale.ScaleLineBrush}" />
+        <Setter Property="ScaleLineSecondaryBrush"
+                Value="{StaticResource TimelineScale.ScaleLineSecondaryBrush}" />
+        <Setter Property="ScaleAndItemsSeparatorBrush"
+                Value="{StaticResource TimelineScale.ScaleAndItemsSeparatorBrush}" />
         <Setter Property="ScaleLineAreaBackground"
                 Value="{StaticResource TimelineScale.ScaleLineAreaBackgroundBrush}" />
         <Setter Property="ItemsLineBrush"
                 Value="{StaticResource TimelineScale.ItemsLineBrush}" />
         <Setter Property="ItemsLineSecondaryBrush"
                 Value="{StaticResource TimelineScale.ItemsLineSecondaryBrush}" />
+        <Setter Property="DurationLineBrush"
+                Value="{StaticResource TimelineScale.DurationLineBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineScale}">

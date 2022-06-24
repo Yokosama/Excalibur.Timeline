@@ -13,11 +13,19 @@
 
     <!--TimelineScale-->
     <Color x:Key="TimelineScale.BackgroundColor">#FFAAAAAA</Color>
-    <Color x:Key="TimelineScale.LineColor">Black</Color>
+
+    <Color x:Key="TimelineScale.ScaleFontColor">Black</Color>
+    <Color x:Key="TimelineScale.ScaleFontSecondaryColor">#B2000000</Color>
+    <Color x:Key="TimelineScale.ScaleLineColor">Black</Color>
+    <Color x:Key="TimelineScale.ScaleLineSecondaryColor">#FF3C3C3C</Color>
+    <Color x:Key="TimelineScale.ScaleAndItemsSeparatorColor">#FF909090</Color>
+
+    <Color x:Key="TimelineScale.LineColor">#FF909090</Color>
     <Color x:Key="TimelineScale.ScaleLineAreaBackgroundColor">#FFDADADA</Color>
     <Color x:Key="TimelineScale.ItemsLineColor">#FF999999</Color>
     <Color x:Key="TimelineScale.ItemsLineSecondaryColor">#FFA0A0A0</Color>
-    
+    <Color x:Key="TimelineScale.DurationLineColor">#B177A1EB</Color>
+
     <Color x:Key="TimelineScale.SelectionStrokeColor">DodgerBlue</Color>
     <Color x:Key="TimelineScale.SelectionFillColor">DodgerBlue</Color>
     
@@ -38,7 +46,7 @@
     <ImageSource x:Key="TimelineGroup.StatusLockedBackgroundImage">pack://application:,,,/Excalibur.Timeline;component/Themes/Images/Light/TimelineTrackLockedBackground.png</ImageSource>
 
     <!--TimelineTriggerClip-->
-    <Color x:Key="TimelineTriggerClip.BackgroundColor">#FFCFCFCF</Color>
+    <Color x:Key="TimelineTriggerClip.BackgroundColor">#FFC8C8C8</Color>
     <Color x:Key="TimelineTriggerClip.PreviewingSelectionBackgroundColor">White</Color>
     <Color x:Key="TimelineTriggerClip.SelectedBackgroundColor">White</Color>
 
@@ -57,13 +65,13 @@
     <Color x:Key="TimelineDurationClip.FoldBorderBrushColor">#78909396</Color>
 
     <!--TimelineGroupHeaderExpander-->
-    <Color x:Key="TimelineGroupHeaderExpander.ForegroundColor">#FF020202</Color>
     <Color x:Key="TimelineGroupHeaderExpander.BackgroundColor">#FFCBCBCB</Color>
     <Color x:Key="TimelineGroupHeaderExpander.PathArrowFillColor">#FF575757</Color>
     <Color x:Key="TimelineGroupHeaderExpander.MouseOverBackgroundColor">#FFCBCBCB</Color>
     
     <!--TimelineGroupHeader-->
     <Color x:Key="TimelineGroupHeader.BackgroundColor">#FF849193</Color>
+    <Color x:Key="TimelineGroupHeader.ForegroundColor">#FF020202</Color>
     <Color x:Key="TimelineGroupHeader.SelectedBackgroundColor">#FF4A7EE0</Color>
     <Color x:Key="TimelineGroupHeader.SelectedForegroundColor">White</Color>
 
@@ -78,7 +86,7 @@
     
     <!--TimelineTrackHeader-->
     <Color x:Key="TimelineTrackHeader.BackgroundColor">#FFD2D2D2</Color>
-    <Color x:Key="TimelineTrackHeader.ForegroundColor">Black</Color>
+    <Color x:Key="TimelineTrackHeader.ForegroundColor">#FF020202</Color>
     <Color x:Key="TimelineTrackHeader.SelectedBackgroundColor">#FF4A7EE0</Color>
     <Color x:Key="TimelineTrackHeader.SelectedForegroundColor">White</Color>
 

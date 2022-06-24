@@ -8,15 +8,23 @@
 
   <ItemGroup>
     <None Remove="Resources\Images\PanCursorMouseDown.cur" />
+    <None Remove="Themes\Images\Dark\TimelineTrackLockedBackground.png" />
     <None Remove="Themes\Images\Light\TimelineTrackLockedBackground.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Themes\Images\Dark\TimelineTrackLockedBackground.png" />
     <Resource Include="Themes\Images\Light\TimelineTrackLockedBackground.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Resources\Images\PanCursorMouseDown.cur" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Themes\Dark.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
   </ItemGroup>
 
 </Project>

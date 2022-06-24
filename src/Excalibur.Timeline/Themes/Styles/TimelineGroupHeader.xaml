@@ -66,8 +66,6 @@
 
     <Style x:Key="TimelineGroupHeaderExpander"
            TargetType="Expander">
-        <Setter Property="Foreground"
-                Value="{StaticResource TimelineGroupHeaderExpander.ForegroundBrush}" />
         <Setter Property="Background"
                 Value="{StaticResource TimelineGroupHeaderExpander.BackgroundBrush}" />
         <Setter Property="BorderThickness"
@@ -96,7 +94,6 @@
                                               HorizontalContentAlignment="Stretch"
                                               Focusable="False"
                                               Padding="5,0,0,0"
-                                              Foreground="{TemplateBinding Foreground}"
                                               IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                               Width="{TemplateBinding Width}"
                                               Height="{TemplateBinding MinHeight}"
@@ -153,6 +150,8 @@
                 Value="25" />
         <Setter Property="Background"
                 Value="{StaticResource TimelineGroupHeader.BackgroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{StaticResource TimelineGroupHeader.ForegroundBrush}" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
         <Setter Property="Padding"

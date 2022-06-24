@@ -66,6 +66,20 @@ namespace Excalibur.Timeline.Demo
             }
         }
 
+        protected bool _previewLocked;
+        public virtual bool PreviewLocked
+        {
+            get => _previewLocked;
+            set => SetProperty(ref _previewLocked, value);
+        }
+
+        protected bool _previewDisabled;
+        public virtual bool PreviewDisabled
+        {
+            get => _previewDisabled;
+            set => SetProperty(ref _previewDisabled, value);
+        }
+
         public string StatusContent
         {
             get
@@ -77,6 +91,8 @@ namespace Excalibur.Timeline.Demo
                     locked = _isLocked && !Parent.IsLocked;
                     disabled = _isDisabled && !Parent.IsDisabled;
                 }
+                PreviewLocked = locked;
+                PreviewDisabled = disabled;
 
                 if (locked && disabled)
                 {

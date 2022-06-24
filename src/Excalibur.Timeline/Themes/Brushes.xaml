@@ -25,7 +25,24 @@
     <!--TimelineScale-->
     <SolidColorBrush x:Key="TimelineScale.BackgroundBrush"
                      o:Freeze="True"
-                     Color="{DynamicResource TimelineScale.BackgroundColor}" />   
+                     Color="{DynamicResource TimelineScale.BackgroundColor}" />
+
+    <SolidColorBrush x:Key="TimelineScale.ScaleFontBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScale.ScaleFontColor}" />
+    <SolidColorBrush x:Key="TimelineScale.ScaleFontSecondaryBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScale.ScaleFontSecondaryColor}" />
+    <SolidColorBrush x:Key="TimelineScale.ScaleLineBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScale.ScaleLineColor}" />
+    <SolidColorBrush x:Key="TimelineScale.ScaleLineSecondaryBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScale.ScaleLineSecondaryColor}" />
+    <SolidColorBrush x:Key="TimelineScale.ScaleAndItemsSeparatorBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScale.ScaleAndItemsSeparatorColor}" />
+
     <SolidColorBrush x:Key="TimelineScale.LineBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelineScale.LineColor}" />
@@ -38,7 +55,10 @@
     <SolidColorBrush x:Key="TimelineScale.ItemsLineSecondaryBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelineScale.ItemsLineSecondaryColor}" />
-
+    <SolidColorBrush x:Key="TimelineScale.DurationLineBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScale.DurationLineColor}" />
+    
     <SolidColorBrush x:Key="TimelineScale.SelectionStrokeBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelineScale.SelectionStrokeColor}" />
@@ -142,9 +162,6 @@
 
     <!--TimelineHeader-->
     <!--TimelineGroupHeaderExpander-->
-    <SolidColorBrush x:Key="TimelineGroupHeaderExpander.ForegroundBrush"
-                     o:Freeze="True"
-                     Color="{DynamicResource TimelineGroupHeaderExpander.ForegroundColor}" />
     <SolidColorBrush x:Key="TimelineGroupHeaderExpander.BackgroundBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelineGroupHeaderExpander.BackgroundColor}" />
@@ -159,6 +176,9 @@
     <SolidColorBrush x:Key="TimelineGroupHeader.BackgroundBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelineGroupHeader.BackgroundColor}" />
+    <SolidColorBrush x:Key="TimelineGroupHeader.ForegroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineGroupHeader.ForegroundColor}" />
     <SolidColorBrush x:Key="TimelineGroupHeader.SelectedBackgroundBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelineGroupHeader.SelectedBackgroundColor}" />

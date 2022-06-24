@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Themes\Images\Dark\d_TrackLockButtonDisabled%402x.png" />
+    <None Remove="Themes\Images\Dark\d_TrackLockButtonEnabled%402x.png" />
+    <None Remove="Themes\Images\Dark\d_TrackMuteButtonDisabled%402x.png" />
+    <None Remove="Themes\Images\Dark\d_TrackMuteButtonEnabled%402x.png" />
     <None Remove="Themes\Images\Light\TrackLockButtonDisabled%402x.png" />
     <None Remove="Themes\Images\Light\TrackLockButtonDisabled.png" />
     <None Remove="Themes\Images\Light\TrackLockButtonEnabled%402x.png" />
@@ -16,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Themes\Images\Dark\d_TrackLockButtonDisabled@2x.png" />
+    <Resource Include="Themes\Images\Dark\d_TrackLockButtonEnabled@2x.png" />
+    <Resource Include="Themes\Images\Dark\d_TrackMuteButtonDisabled@2x.png" />
+    <Resource Include="Themes\Images\Dark\d_TrackMuteButtonEnabled@2x.png" />
     <Resource Include="Themes\Images\Light\TrackLockButtonEnabled@2x.png" />
   </ItemGroup>
 
@@ -27,6 +35,13 @@
     <Resource Include="Themes\Images\Light\TrackLockButtonDisabled@2x.png" />
     <Resource Include="Themes\Images\Light\TrackMuteButtonDisabled@2x.png" />
     <Resource Include="Themes\Images\Light\TrackMuteButtonEnabled@2x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Themes\Dark.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

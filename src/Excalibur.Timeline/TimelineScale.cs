@@ -71,6 +71,20 @@ namespace Excalibur.Timeline
             DependencyProperty.Register(nameof(ScaleLineAreaHeight), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double20, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         /// <summary>
+        /// 持续时间区域显示高度
+        /// </summary>
+        public double DurationLineAreaHeight
+        {
+            get { return (double)GetValue(DurationLineAreaHeightProperty); }
+            set { SetValue(DurationLineAreaHeightProperty, value); }
+        }
+        /// <summary>
+        /// DurationLineAreaHeight属性
+        /// </summary>
+        public static readonly DependencyProperty DurationLineAreaHeightProperty =
+            DependencyProperty.Register(nameof(DurationLineAreaHeight), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double5, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        /// <summary>
         /// 刻度线的文字高度
         /// </summary>
         public double ScaleTextHeight
@@ -153,7 +167,7 @@ namespace Excalibur.Timeline
         /// ScaleLineSecondaryBrush属性
         /// </summary>
         public static readonly DependencyProperty ScaleLineSecondaryBrushProperty =
-            DependencyProperty.Register(nameof(ScaleLineSecondaryBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure, OnScaleLineSecondaryBrushChanged));
+            DependencyProperty.Register(nameof(ScaleLineSecondaryBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender, OnScaleLineSecondaryBrushChanged));
 
         /// <summary>
         /// Items区域内的刻度线笔刷
@@ -167,7 +181,7 @@ namespace Excalibur.Timeline
         /// ItemsLineBrush属性
         /// </summary>
         public static readonly DependencyProperty ItemsLineBrushProperty =
-            DependencyProperty.Register(nameof(ItemsLineBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure, OnItemsLineBrushChanged));
+            DependencyProperty.Register(nameof(ItemsLineBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender, OnItemsLineBrushChanged));
 
         /// <summary>
         /// Items区域内的刻度线次级笔刷
@@ -181,7 +195,7 @@ namespace Excalibur.Timeline
         /// ItemsLineSecondaryBrush属性
         /// </summary>
         public static readonly DependencyProperty ItemsLineSecondaryBrushProperty =
-            DependencyProperty.Register(nameof(ItemsLineSecondaryBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromArgb(80, 0, 0, 0)), FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure, OnItemsLineSecondaryBrushChanged));
+            DependencyProperty.Register(nameof(ItemsLineSecondaryBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromArgb(80, 0, 0, 0)), FrameworkPropertyMetadataOptions.AffectsRender, OnItemsLineSecondaryBrushChanged));
 
         /// <summary>
         /// 刻度文字笔刷
@@ -195,7 +209,7 @@ namespace Excalibur.Timeline
         /// ScaleFontBrush属性
         /// </summary>
         public static readonly DependencyProperty ScaleFontBrushProperty =
-            DependencyProperty.Register(nameof(ScaleFontBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
+            DependencyProperty.Register(nameof(ScaleFontBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
         /// 刻度文字次级笔刷
@@ -209,7 +223,35 @@ namespace Excalibur.Timeline
         /// ScaleFontSecondaryBrush属性
         /// </summary>
         public static readonly DependencyProperty ScaleFontSecondaryBrushProperty =
-            DependencyProperty.Register(nameof(ScaleFontSecondaryBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromArgb(180, 0, 0, 0)), FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
+            DependencyProperty.Register(nameof(ScaleFontSecondaryBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromArgb(180, 0, 0, 0)), FrameworkPropertyMetadataOptions.AffectsRender));
+
+        /// <summary>
+        /// 持续时间区域笔刷
+        /// </summary>
+        public Brush DurationLineBrush
+        {
+            get { return (Brush)GetValue(DurationLineBrushProperty); }
+            set { SetValue(DurationLineBrushProperty, value); }
+        }
+        /// <summary>
+        /// DurationLineBrush属性
+        /// </summary>
+        public static readonly DependencyProperty DurationLineBrushProperty =
+            DependencyProperty.Register(nameof(DurationLineBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));   
+        
+        /// <summary>
+        /// 刻度区域与Track区域的分割线笔刷
+        /// </summary>
+        public Brush ScaleAndItemsSeparatorBrush
+        {
+            get { return (Brush)GetValue(ScaleAndItemsSeparatorBrushProperty); }
+            set { SetValue(ScaleAndItemsSeparatorBrushProperty, value); }
+        }
+        /// <summary>
+        /// ScaleAndItemsSeparatorBrush属性
+        /// </summary>
+        public static readonly DependencyProperty ScaleAndItemsSeparatorBrushProperty =
+            DependencyProperty.Register(nameof(ScaleAndItemsSeparatorBrush), typeof(Brush), typeof(TimelineScale), new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender, OnScaleAndItemsSeparatorBrushChanged));
 
         /// <summary>
         /// 刻度文字字体大小
@@ -603,6 +645,7 @@ namespace Excalibur.Timeline
         private Pen _scaleLinePen2;
         private Pen _itemsLinePen;
         private Pen _itemsLinePen2;
+        private Pen _scaleItemsSeparatorPen;
         private HashSet<double> _middleLinePositions = new HashSet<double>();
         private Typeface _typeface;
         private GuidelineSet _guidelineSet;
@@ -658,6 +701,7 @@ namespace Excalibur.Timeline
             _scaleLinePen2 = new Pen(ScaleLineSecondaryBrush, 1);
             _itemsLinePen = new Pen(ItemsLineBrush, 1);
             _itemsLinePen2 = new Pen(ItemsLineSecondaryBrush, 1);
+            _scaleItemsSeparatorPen = new Pen(ScaleAndItemsSeparatorBrush, 1);
 
             AddHandler(TimelineTrackItemContainer.DragStartedEvent, new DragStartedEventHandler(OnTrackItemsDragStarted));
             AddHandler(TimelineTrackItemContainer.DragCompletedEvent, new DragCompletedEventHandler(OnTrackItemsDragCompleted));
@@ -713,6 +757,20 @@ namespace Excalibur.Timeline
                 dc.DrawRectangle(ScaleLineAreaBackground, null, new Rect(0, -1, ActualWidth, ScaleLineAreaHeight));
             }
 
+            if (DurationLineBrush != null && DurationLineAreaHeight > 0)
+            {
+                var durationPos = TimeToPos(Duration);
+                if (durationPos >= 0)
+                {
+                    var width = durationPos;
+                    if(durationPos >= ActualWidth)
+                    {
+                        width = ActualWidth;
+                    }
+                    dc.DrawRectangle(DurationLineBrush, null, new Rect(0, ScaleLineAreaHeight - DurationLineAreaHeight, width, DurationLineAreaHeight));
+                }
+            }
+
             if (!_hsbDragStart)
             {
                 UpdateHorizontalScrollBarRange();
@@ -747,8 +805,6 @@ namespace Excalibur.Timeline
             _timeInfoEnd = (double)Math.Ceiling(ViewTimeMax / timeInfoInterval) * timeInfoInterval;
             _timeInfoStart = Math.Round(_timeInfoStart * 10) / 10;
             _timeInfoEnd = Math.Round(_timeInfoEnd * 10) / 10;
-
-            dc.DrawLine(_scaleLinePen, new Point(0, ScaleLineAreaHeight), new Point(ActualWidth, ScaleLineAreaHeight));
 
             _middleLinePositions.Clear();
             for (var i = _timeInfoStart; i <= _timeInfoEnd; i += timeInfoInterval)
@@ -802,6 +858,8 @@ namespace Excalibur.Timeline
                     dc.DrawLine(_itemsLinePen2, start, end);
                 }
             }
+
+            dc.DrawLine(_scaleItemsSeparatorPen, new Point(0, ScaleLineAreaHeight), new Point(ActualWidth, ScaleLineAreaHeight));
 
             base.OnRender(dc);
         }
@@ -1005,6 +1063,16 @@ namespace Excalibur.Timeline
             {
                 if (scale._itemsLinePen2 == null) scale._itemsLinePen2 = new Pen(scale.ItemsLineSecondaryBrush, 1);
                 scale._itemsLinePen2.Brush = scale.ItemsLineSecondaryBrush;
+                scale.InvalidateVisual();
+            }
+        }
+        
+        private static void OnScaleAndItemsSeparatorBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is TimelineScale scale)
+            {
+                if (scale._scaleItemsSeparatorPen == null) scale._scaleItemsSeparatorPen = new Pen(scale.ScaleAndItemsSeparatorBrush, 1);
+                scale._scaleItemsSeparatorPen.Brush = scale.ItemsLineSecondaryBrush;
                 scale.InvalidateVisual();
             }
         }
