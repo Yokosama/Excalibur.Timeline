@@ -533,6 +533,19 @@ namespace Excalibur.Timeline
         public static readonly DependencyProperty SelectionRectangleStyleProperty = DependencyProperty.Register(nameof(SelectionRectangleStyle), typeof(Style), typeof(TimelineScale));
 
         /// <summary>
+        /// 滚动条样式
+        /// </summary>
+        public Style ScrollBarStyle
+        {
+            get => (Style)GetValue(ScrollBarStyleProperty);
+            set => SetValue(ScrollBarStyleProperty, value);
+        }
+        /// <summary>
+        /// 滚动条样式
+        /// </summary>
+        public static readonly DependencyProperty ScrollBarStyleProperty = DependencyProperty.Register(nameof(ScrollBarStyle), typeof(Style), typeof(TimelineScale));
+
+        /// <summary>
         /// 选择框区域
         /// </summary>
         public Rect SelectedArea

@@ -1,5 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Brushes.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    
     <ImageSource x:Key="LockToggleButton.UnlockImageSource">pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Images/Light/TrackLockButtonDisabled@2x.png</ImageSource>
     <ImageSource x:Key="LockToggleButton.LockedImageSource">pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Images/Light/TrackLockButtonEnabled@2x.png</ImageSource>
     <ImageSource x:Key="DisableToggleButton.NotDisabledImageSource">pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Images/Light/TrackMuteButtonDisabled@2x.png</ImageSource>
@@ -8,4 +13,6 @@
     <Color x:Key="StatusContentBackgroundColor">#DC565656</Color>
     <Color x:Key="TimlineAdditionalContent.BackgroundColor">#FFCBCBCB</Color>
     <Color x:Key="StatusContentButtons.BackgroundColor">#FFE8E8E8</Color>
+    <Color x:Key="TimelineTriggerClip.ForegroundColor">Black</Color>
+    <Color x:Key="TimelineDurationClip.ForegroundColor">Black</Color>
 </ResourceDictionary>

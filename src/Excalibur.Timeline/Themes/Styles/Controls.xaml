@@ -1,6 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
+        <!--Basic-->
+        <ResourceDictionary Source="ScrollBar.xaml" />
+
         <!--Header-->
         <ResourceDictionary Source="TimelineTrackHeader.xaml" />
         <ResourceDictionary Source="TimelineGroupHeader.xaml" />

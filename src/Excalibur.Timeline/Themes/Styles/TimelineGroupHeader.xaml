@@ -67,7 +67,7 @@
     <Style x:Key="TimelineGroupHeaderExpander"
            TargetType="Expander">
         <Setter Property="Background"
-                Value="{StaticResource TimelineGroupHeaderExpander.BackgroundBrush}" />
+                Value="{DynamicResource TimelineGroupHeaderExpander.BackgroundBrush}" />
         <Setter Property="BorderThickness"
                 Value="0" />
         <Setter Property="MinHeight"
@@ -99,7 +99,7 @@
                                               Height="{TemplateBinding MinHeight}"
                                               Style="{StaticResource ToggleButtonCustom}">
                                     <Path Name="PathArrow"
-                                          Fill="{StaticResource TimelineGroupHeaderExpander.PathArrowFillBrush}"
+                                          Fill="{DynamicResource TimelineGroupHeaderExpander.PathArrowFillBrush}"
                                           Stretch="Fill"
                                           Data="{StaticResource RightTriangleGeometry}"
                                           Margin="0,0,5,0"
@@ -123,7 +123,7 @@
                         <Trigger Property="IsMouseOver"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="{StaticResource TimelineGroupHeaderExpander.MouseOverBackgroundBrush}" />
+                                    Value="{DynamicResource TimelineGroupHeaderExpander.MouseOverBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsExpanded"
                                  Value="True">
@@ -149,9 +149,9 @@
         <Setter Property="MinHeight"
                 Value="25" />
         <Setter Property="Background"
-                Value="{StaticResource TimelineGroupHeader.BackgroundBrush}" />
+                Value="{DynamicResource TimelineGroupHeader.BackgroundBrush}" />
         <Setter Property="Foreground"
-                Value="{StaticResource TimelineGroupHeader.ForegroundBrush}" />
+                Value="{DynamicResource TimelineGroupHeader.ForegroundBrush}" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
         <Setter Property="Padding"
@@ -176,9 +176,9 @@
                         <Trigger Property="IsSelected"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="{StaticResource TimelineGroupHeader.SelectedBackgroundBrush}" />
+                                    Value="{DynamicResource TimelineGroupHeader.SelectedBackgroundBrush}" />
                             <Setter Property="Foreground"
-                                    Value="{StaticResource TimelineGroupHeader.SelectedForegroundBrush}" />
+                                    Value="{DynamicResource TimelineGroupHeader.SelectedForegroundBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

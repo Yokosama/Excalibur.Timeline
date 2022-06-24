@@ -190,12 +190,18 @@
     <SolidColorBrush x:Key="TimelinePointers.CurrentTimeBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelinePointers.CurrentTimeColor}" />
+    <SolidColorBrush x:Key="TimelinePointers.CurrentTimePointerThumbBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelinePointers.CurrentTimePointerThumbColor}" />
     <SolidColorBrush x:Key="TimelinePointers.MinEffectiveTimeEdgeLineBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelinePointers.MinEffectiveTimeEdgeLineColor}" />
     <SolidColorBrush x:Key="TimelinePointers.DurationEdgeLineBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelinePointers.DurationEdgeLineColor}" />
+    <SolidColorBrush x:Key="TimelinePointers.DurationPointerThumbFillBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelinePointers.DurationPointerThumbFillColor}" />
     <SolidColorBrush x:Key="TimelinePointers.TimeTextFontBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelinePointers.TimeTextFontColor}" />
@@ -222,4 +228,42 @@
     <SolidColorBrush x:Key="TimelineTrackHeader.SelectedForegroundBrush"
                      o:Freeze="True"
                      Color="{DynamicResource TimelineTrackHeader.SelectedForegroundColor}" />
+    
+    <!--TimelineScrollBar-->
+    <SolidColorBrush x:Key="TimelineScrollBar.HorizontalBackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.HorizontalBackgroundColor}" />
+    <SolidColorBrush x:Key="TimelineScrollBar.HorizontalBorderBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.HorizontalBorderBrushColor}" />
+
+    <SolidColorBrush x:Key="TimelineScrollBar.VerticalBackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.VerticalBackgroundColor}" />
+    <SolidColorBrush x:Key="TimelineScrollBar.VerticalBorderBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.VerticalBorderBrushColor}" />
+
+    <SolidColorBrush x:Key="TimelineScrollBar.LineButtonBackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.LineButtonBackgroundColor}" />
+    <SolidColorBrush x:Key="TimelineScrollBar.LineButtonMouseOverBackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.LineButtonMouseOverBackgroundColor}" />
+    <SolidColorBrush x:Key="TimelineScrollBar.LineButtonPressedBackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.LineButtonPressedBackgroundColor}" />
+    <SolidColorBrush x:Key="TimelineScrollBar.LineButtonArrowFillBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.LineButtonArrowFillColor}" />
+
+    <SolidColorBrush x:Key="TimelineScrollBar.ThumbBackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.ThumbBackgroundColor}" />
+    <SolidColorBrush x:Key="TimelineScrollBar.ThumbMouseOverBackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.ThumbMouseOverBackgroundColor}" />
+    <SolidColorBrush x:Key="TimelineScrollBar.ThumbDraggingBackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineScrollBar.ThumbDraggingBackgroundColor}" />
 </ResourceDictionary>

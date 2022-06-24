@@ -13,9 +13,9 @@
         <Setter Property="MinHeight"
                 Value="25" />
         <Setter Property="Background"
-                Value="{StaticResource TimelineTrackHeader.BackgroundBrush}" />
+                Value="{DynamicResource TimelineTrackHeader.BackgroundBrush}" />
         <Setter Property="Foreground"
-                Value="{StaticResource TimelineTrackHeader.ForegroundBrush}" />
+                Value="{DynamicResource TimelineTrackHeader.ForegroundBrush}" />
         <Setter Property="Margin"
                 Value="0,5,0,0" />
         <Setter Property="Template">
@@ -28,9 +28,9 @@
                         <Trigger Property="IsSelected"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="{StaticResource TimelineTrackHeader.SelectedBackgroundBrush}" />
+                                    Value="{DynamicResource TimelineTrackHeader.SelectedBackgroundBrush}" />
                             <Setter Property="Foreground"
-                                    Value="{StaticResource TimelineTrackHeader.SelectedForegroundBrush}" />
+                                    Value="{DynamicResource TimelineTrackHeader.SelectedForegroundBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:o="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+
+    <SolidColorBrush x:Key="StatusContentBackground"
+                     o:Freeze="True"
+                     Color="{DynamicResource StatusContentBackgroundColor}" />
+
+    <SolidColorBrush x:Key="TimlineAdditionalContent.BackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimlineAdditionalContent.BackgroundColor}" />
+    <SolidColorBrush x:Key="StatusContentButtons.BackgroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource StatusContentButtons.BackgroundColor}" />
+    <SolidColorBrush x:Key="TimelineTriggerClip.ForegroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineTriggerClip.ForegroundColor}" />
+    <SolidColorBrush x:Key="TimelineDurationClip.ForegroundBrush"
+                     o:Freeze="True"
+                     Color="{DynamicResource TimelineDurationClip.ForegroundColor}" />
+
+</ResourceDictionary>

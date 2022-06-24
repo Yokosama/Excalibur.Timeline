@@ -9,7 +9,7 @@
 
     <Style TargetType="{x:Type tl:TimelineHeader}">
         <Setter Property="Background"
-                Value="{StaticResource TimelineHeader.BackgroundBrush}" />
+                Value="{DynamicResource TimelineHeader.BackgroundBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineHeader}">

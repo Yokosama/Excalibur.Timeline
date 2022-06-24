@@ -225,9 +225,40 @@ namespace Excalibur.Timeline.Demo
 
     public class CutScene : ObservableObject, IDirector
     {
-        public ZoomMode ZoomMode { get; set; } = ZoomMode.Fixed;
-        public TimeStepMode StepMode { get; set; } = TimeStepMode.Seconds;
-        public int FrameRate { get; set; } = 100;
+        private ZoomMode _zoomMode = ZoomMode.Fixed;
+        public ZoomMode ZoomMode
+        {
+            get => _zoomMode;
+            set => SetProperty(ref _zoomMode, value);
+        }
+
+        private TimeStepMode _stepMode = TimeStepMode.Seconds;
+        public TimeStepMode StepMode
+        {
+            get => _stepMode;
+            set => SetProperty(ref _stepMode, value);
+        }
+
+        private int _frameRate = 100;
+        public int FrameRate
+        {
+            get => _frameRate;
+            set => SetProperty(ref _frameRate, value);
+        }
+
+        //private int _viewTimeMin = 0;
+        //public int ViewTimeMin
+        //{
+        //    get => _viewTimeMin;
+        //    set => SetProperty(ref _viewTimeMin, value);
+        //}
+
+        //private int _viewTimeMax = 25;
+        //public int ViewTimeMax
+        //{
+        //    get => _viewTimeMax;
+        //    set => SetProperty(ref _viewTimeMax, value);
+        //}
 
         public ObservableCollection<IDirectable> Items { get; set; } = new ObservableCollection<IDirectable>();
      

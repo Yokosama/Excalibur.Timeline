@@ -11,17 +11,17 @@
 
     <Style TargetType="{x:Type tl:Timeline}">
         <Setter Property="Background"
-                Value="{StaticResource Timeline.BackgroundBrush}" />
+                Value="{DynamicResource Timeline.BackgroundBrush}" />
         <Setter Property="SnapsToDevicePixels"
                 Value="True" />
         <Setter Property="FocusVisualStyle"
                 Value="{x:Null}" />    
         <Setter Property="TimelineHeaderBottomOffset"
-                Value="{x:Static SystemParameters.HorizontalScrollBarHeight}" />
+                Value="13" />
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="BorderBrush"
-                Value="{StaticResource Timeline.BorderBrush}" />
+                Value="{DynamicResource Timeline.BorderBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:Timeline}">
@@ -45,7 +45,7 @@
 
                             <!--TimelineHeader-->
                             <Grid Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top'}"
-                                  Background="{StaticResource TimelineHeader.GridBackgroundBrush}">
+                                  Background="{DynamicResource TimelineHeader.GridBackgroundBrush}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="{Binding TimelineHeaderBottomOffset, RelativeSource={RelativeSource TemplatedParent}}" />
@@ -58,15 +58,15 @@
                             <Border Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,-0.5'}"
                                     VerticalAlignment="Top"
                                     Height="1"
-                                    Background="{StaticResource TimelineScale.LineBrush}" />
+                                    Background="{DynamicResource TimelineScale.LineBrush}" />
 
                             <GridSplitter HorizontalAlignment="Stretch"
                                           Grid.Column="1"
-                                          Background="{StaticResource Timeline.SplitterBrush}" />
+                                          Background="{DynamicResource Timeline.SplitterBrush}" />
 
                             <!--TimlineScale-->
                             <Grid Grid.Column="2"
-                                  Background="{StaticResource TimelineScale.BackgroundBrush}">
+                                  Background="{DynamicResource TimelineScale.BackgroundBrush}">
                                 <tl:TimelineScale ItemsSource="{TemplateBinding Items}" 
                                                   x:Name="PART_TimelineScale"/>
                             </Grid>

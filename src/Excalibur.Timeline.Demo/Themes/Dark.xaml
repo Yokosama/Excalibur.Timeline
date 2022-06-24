@@ -1,5 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Brushes.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <ImageSource x:Key="LockToggleButton.UnlockImageSource">pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Images/Dark/d_TrackLockButtonDisabled@2x.png</ImageSource>
     <ImageSource x:Key="LockToggleButton.LockedImageSource">pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Images/Dark/d_TrackLockButtonEnabled@2x.png</ImageSource>
     <ImageSource x:Key="DisableToggleButton.NotDisabledImageSource">pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Images/Dark/d_TrackMuteButtonDisabled@2x.png</ImageSource>

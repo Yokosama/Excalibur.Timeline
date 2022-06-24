@@ -4,6 +4,7 @@
                     xmlns:cvrts="clr-namespace:Excalibur.Timeline.Converters">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Brushes.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Styles/ScrollBar.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Excalibur.Timeline;component/Themes/Styles/TimelineTrack.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
@@ -17,11 +18,11 @@
     <Style x:Key="SelectionRectangleStyle"
            TargetType="Rectangle">
         <Setter Property="Stroke"
-                Value="{StaticResource TimelineScale.SelectionStrokeBrush}" />
+                Value="{DynamicResource TimelineScale.SelectionStrokeBrush}" />
         <Setter Property="StrokeThickness"
                 Value="1" />
         <Setter Property="Fill"
-                Value="{StaticResource TimelineScale.SelectionFillBrush}" />
+                Value="{DynamicResource TimelineScale.SelectionFillBrush}" />
     </Style>
 
     <Style TargetType="{x:Type tl:TimelineScale}">
@@ -38,23 +39,25 @@
         <Setter Property="FocusVisualStyle"
                 Value="{x:Null}" />
         <Setter Property="ScaleFontBrush"
-                Value="{StaticResource TimelineScale.ScaleFontBrush}" />
+                Value="{DynamicResource TimelineScale.ScaleFontBrush}" />
         <Setter Property="ScaleFontSecondaryBrush"
-                Value="{StaticResource TimelineScale.ScaleFontSecondaryBrush}" />
+                Value="{DynamicResource TimelineScale.ScaleFontSecondaryBrush}" />
         <Setter Property="ScaleLineBrush"
-                Value="{StaticResource TimelineScale.ScaleLineBrush}" />
+                Value="{DynamicResource TimelineScale.ScaleLineBrush}" />
         <Setter Property="ScaleLineSecondaryBrush"
-                Value="{StaticResource TimelineScale.ScaleLineSecondaryBrush}" />
+                Value="{DynamicResource TimelineScale.ScaleLineSecondaryBrush}" />
         <Setter Property="ScaleAndItemsSeparatorBrush"
-                Value="{StaticResource TimelineScale.ScaleAndItemsSeparatorBrush}" />
+                Value="{DynamicResource TimelineScale.ScaleAndItemsSeparatorBrush}" />
         <Setter Property="ScaleLineAreaBackground"
                 Value="{StaticResource TimelineScale.ScaleLineAreaBackgroundBrush}" />
         <Setter Property="ItemsLineBrush"
-                Value="{StaticResource TimelineScale.ItemsLineBrush}" />
+                Value="{DynamicResource TimelineScale.ItemsLineBrush}" />
         <Setter Property="ItemsLineSecondaryBrush"
-                Value="{StaticResource TimelineScale.ItemsLineSecondaryBrush}" />
+                Value="{DynamicResource TimelineScale.ItemsLineSecondaryBrush}" />
         <Setter Property="DurationLineBrush"
-                Value="{StaticResource TimelineScale.DurationLineBrush}" />
+                Value="{DynamicResource TimelineScale.DurationLineBrush}" />
+        <Setter Property="ScrollBarStyle"
+                Value="{StaticResource TimelineScrollBar}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineScale}">
@@ -81,6 +84,7 @@
                         <ScrollBar x:Name="PART_HorizontalScrollBar"
                                    Orientation="Horizontal"
                                    VerticalAlignment="Bottom"
+                                   Style="{TemplateBinding ScrollBarStyle}"
                                    Grid.Row="1" />
 
                         <ScrollBar x:Name="PART_VerticalScrollBar"
@@ -88,6 +92,7 @@
                                    SmallChange="16"
                                    LargeChange="242"
                                    HorizontalAlignment="Right"
+                                   Style="{TemplateBinding ScrollBarStyle}"
                                    Margin="{TemplateBinding ScaleLineAreaHeight, Converter={StaticResource MarginConverter},ConverterParameter='Top,1'}"
                                    Grid.Row="0" />
 

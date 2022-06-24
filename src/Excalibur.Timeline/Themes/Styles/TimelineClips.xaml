@@ -16,7 +16,7 @@
         <Setter Property="Height"
                 Value="25" />
         <Setter Property="Background"
-                Value="{StaticResource TimelineTriggerClip.BackgroundBrush}" />
+                Value="{DynamicResource TimelineTriggerClip.BackgroundBrush}" />
         <!--<Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="BorderBrush"
@@ -52,7 +52,7 @@
                         <Trigger Property="IsPreviewingSelection"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="{StaticResource TimelineTriggerClip.PreviewingSelectionBackgroundBrush}" />
+                                    Value="{DynamicResource TimelineTriggerClip.PreviewingSelectionBackgroundBrush}" />
                             <!--<Setter Property="BorderBrush"
                                     Value="#FFC8C8C8" />
                             <Setter Property="BorderThickness"
@@ -67,7 +67,7 @@
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
                                 <Setter Property="Background"
-                                        Value="{StaticResource TimelineTriggerClip.SelectedBackgroundBrush}" />
+                                        Value="{DynamicResource TimelineTriggerClip.SelectedBackgroundBrush}" />
                                 <!--<Setter Property="BorderBrush"
                                         Value="#FFC8C8C8" />
                                 <Setter Property="BorderThickness"
@@ -83,7 +83,7 @@
     <Style x:Key="FoldTimelineTriggerClipClip"
            TargetType="{x:Type tl:TimelineTriggerClip}">
         <Setter Property="Background"
-                Value="{StaticResource TimelineTriggerClip.FoldBackgroundBrush}" />
+                Value="{DynamicResource TimelineTriggerClip.FoldBackgroundBrush}" />
         <Setter Property="Margin"
                 Value="0,3,0,0" />
         <Setter Property="Height"
@@ -128,9 +128,9 @@
         <Setter Property="MinWidth"
                 Value="10" />
         <Setter Property="Background"
-                Value="{StaticResource TimelineDurationClip.BackgroundBrush}" />
+                Value="{DynamicResource TimelineDurationClip.BackgroundBrush}" />
         <Setter Property="BorderBrush"
-                Value="{StaticResource TimelineDurationClip.BorderBrush}" />
+                Value="{DynamicResource TimelineDurationClip.BorderBrush}" />
         <Setter Property="BorderThickness"
                 Value="1,0,1,0" />
         <Setter Property="Cursor"
@@ -143,7 +143,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
                         <Grid>
-                            <Border Background="{StaticResource TimelineDurationClip.BottomBackground}"
+                            <Border Background="{DynamicResource TimelineDurationClip.BottomBackground}"
                                     Height="3"
                                     VerticalAlignment="Bottom" />
                             <Thumb x:Name="PART_LeftResizeThumb"
@@ -164,9 +164,9 @@
                         <Trigger Property="IsPreviewingSelection"
                                  Value="True">
                             <Setter Property="Background"
-                                    Value="{StaticResource TimelineDurationClip.PreviewingSelectionBackgroundBrush}" /> 
+                                    Value="{DynamicResource TimelineDurationClip.PreviewingSelectionBackgroundBrush}" /> 
                             <Setter Property="BorderBrush"
-                                    Value="{StaticResource TimelineDurationClip.PreviewingSelectionBorderBrush}" />
+                                    Value="{DynamicResource TimelineDurationClip.PreviewingSelectionBorderBrush}" />
                             <Setter Property="BorderThickness"
                                     Value="1" />
                         </Trigger>
@@ -179,9 +179,9 @@
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
                                 <Setter Property="Background"
-                                        Value="{StaticResource TimelineDurationClip.SelectedBackgroundBrush}" />
+                                        Value="{DynamicResource TimelineDurationClip.SelectedBackgroundBrush}" />
                                 <Setter Property="BorderBrush"
-                                        Value="{StaticResource TimelineDurationClip.SelectedBorderBrush}" />
+                                        Value="{DynamicResource TimelineDurationClip.SelectedBorderBrush}" />
                                 <Setter Property="BorderThickness"
                                         Value="1" />
                             </MultiTrigger.Setters>
@@ -199,9 +199,9 @@
         <Setter Property="Margin"
                 Value="0,3,0,0" />
         <Setter Property="Background"
-                Value="{StaticResource TimelineDurationClip.FoldBackgroundBrush}" />
+                Value="{DynamicResource TimelineDurationClip.FoldBackgroundBrush}" />
         <Setter Property="BorderBrush"
-                Value="{StaticResource TimelineDurationClip.FoldBorderBrush}" />
+                Value="{DynamicResource TimelineDurationClip.FoldBorderBrush}" />
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="Template">

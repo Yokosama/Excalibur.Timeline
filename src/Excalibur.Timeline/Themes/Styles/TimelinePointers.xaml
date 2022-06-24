@@ -14,7 +14,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Polygon Fill="White"
+                    <Polygon Fill="{DynamicResource TimelinePointers.CurrentTimePointerThumbBrush}"
                              Points="0,0 0,15 5,21 10,15 10,0"
                              StrokeThickness="0" />
                 </ControlTemplate>
@@ -27,7 +27,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Polygon Fill="#B3397AEA"
+                    <Polygon Fill="{DynamicResource TimelinePointers.DurationPointerThumbFillBrush}"
                              Points="0,8 8,21 16,8"
                              StrokeThickness="0" />
                 </ControlTemplate>
@@ -41,19 +41,19 @@
         <Setter Property="DurationPointerPositionOffset"
                 Value="8" />
         <Setter Property="CurrentTimeBrush"
-                Value="{StaticResource TimelinePointers.CurrentTimeBrush}" />
+                Value="{DynamicResource TimelinePointers.CurrentTimeBrush}" />
         <Setter Property="DurationEdgeLineBrush"
-                Value="{StaticResource TimelinePointers.DurationEdgeLineBrush}" />
+                Value="{DynamicResource TimelinePointers.DurationEdgeLineBrush}" />
         <Setter Property="TimeTextFontBrush"
-                Value="{StaticResource TimelinePointers.TimeTextFontBrush}" />
+                Value="{DynamicResource TimelinePointers.TimeTextFontBrush}" />
         <Setter Property="DraggingPromptLineBrush"
-                Value="{StaticResource TimelinePointers.DraggingPromptLineBrush}" />
+                Value="{DynamicResource TimelinePointers.DraggingPromptLineBrush}" />
         <Setter Property="MinEffectiveTimeEdgeLineBrush"
-                Value="{StaticResource TimelinePointers.MinEffectiveTimeEdgeLineBrush}" />
+                Value="{DynamicResource TimelinePointers.MinEffectiveTimeEdgeLineBrush}" />
         <Setter Property="MinEffectiveTimeEdgeBrush"
-                Value="{StaticResource TimelinePointers.MinEffectiveTimeEdgeBrush}" />
+                Value="{DynamicResource TimelinePointers.MinEffectiveTimeEdgeBrush}" />
         <Setter Property="DurationEdgeBrush"
-                Value="{StaticResource TimelinePointers.DurationEdgeBrush}" />
+                Value="{DynamicResource TimelinePointers.DurationEdgeBrush}" />
         <Setter Property="TimeTextBox"
                 Value="16,15,8,4" />
         <Setter Property="TimeTextPosition"

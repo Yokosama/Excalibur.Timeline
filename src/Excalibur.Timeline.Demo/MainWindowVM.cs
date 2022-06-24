@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Excalibur.Timeline.Demo
@@ -7,8 +10,7 @@ namespace Excalibur.Timeline.Demo
     public class MainWindowVM : ObservableObject
     {
         public CutScene CutScene { get; set; } = new CutScene();
-        public ICommand LockCommand { get; private set; }
-        public ICommand DisableCommand { get; private set; }
+        public ICommand ChangeThemeCommand { get; private set; }
 
         public MainWindowVM()
         {
@@ -103,60 +105,118 @@ namespace Excalibur.Timeline.Demo
             CutScene.Items.Add(group1);
             CutScene.Items.Add(group2);
 
-            LockCommand = new RelayCommand(OnLockCommandExecute);
-            DisableCommand = new RelayCommand(OnDisableCommandExecute);
+            InitThemes();
+            ChangeThemeCommand = new RelayCommand(OnChangeThemeCommandExecute);
         }
 
-        private void OnLockCommandExecute(object obj)
+        #region Themes
+        private string _activeTheme;
+        private readonly List<string> _availableThemes = new List<string>();
+        private readonly Dictionary<string, List<Uri>> _themes = new Dictionary<string, List<Uri>>();
+        private readonly Dictionary<string, List<ResourceDictionary>> _themesResources = new Dictionary<string, List<ResourceDictionary>>();
+
+        private void InitThemes()
         {
-            if (obj is CutSceneTrack track)
+            _themes.Add("Light", new List<Uri>
             {
-                track.IsLocked = !track.IsLocked;
-            }
-            else if (obj is CutSceneGroup group)
+                new Uri("pack://application:,,,/Excalibur.Timeline;component/Themes/Light.xaml"),
+                new Uri("pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Light.xaml"),
+            });
+            LoadResources("Light");
+         
+            _themes.Add("Dark", new List<Uri>
             {
-                group.IsLocked = !group.IsLocked;
-                //  LockChildren(group.Items, group.IsLocked);
-            }
+                new Uri("pack://application:,,,/Excalibur.Timeline;component/Themes/Dark.xaml"),
+                new Uri("pack://application:,,,/Excalibur.Timeline.Demo;component/Themes/Dark.xaml"),
+            });
+            LoadResources("Dark");
         }
 
-        private void LockChildren(ObservableCollection<IDirectable> items, bool isLocked)
+        private void LoadResources(string name)
         {
-            if (items == null || items.Count == 0) return;
-            foreach (var item in items)
+            if (!_themes.ContainsKey(name)) return;
+            var themeUris = _themes[name];
+
+            var resources = FindExistingResources(themeUris);
+            if (resources.Count == 0)
             {
-                item.IsLocked = isLocked;
-                if (item is CutSceneGroup group)
+                for (int i = 0; i < themeUris.Count; i++)
                 {
-                    LockChildren(group.Items, group.IsLocked);
+                    try
+                    {
+                        resources.Add(new ResourceDictionary
+                        {
+                            Source = themeUris[i]
+                        });
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
+            else if (_activeTheme == null)
+            {
+                _activeTheme = name;
+            }
+            _themesResources.Add(name, resources);
+            _availableThemes.Add(name);
         }
 
-        private void OnDisableCommandExecute(object obj)
+        private List<ResourceDictionary> FindExistingResources(List<Uri> uris)
         {
-            if (obj is CutSceneTrack track)
+            var result = new List<ResourceDictionary>();
+            foreach (var d in Application.Current.Resources.MergedDictionaries)
             {
-                track.IsDisabled = !track.IsDisabled;
-            }
-            else if (obj is CutSceneGroup group)
-            {
-                group.IsDisabled = !group.IsDisabled;
-                //  DisableChildren(group.Items, group.IsDisabled);
-            }
-        }
-
-        private void DisableChildren(ObservableCollection<IDirectable> items, bool isDisabled)
-        {
-            if (items == null || items.Count == 0) return;
-            foreach (var item in items)
-            {
-                item.IsDisabled = isDisabled;
-                if (item is CutSceneGroup group)
+                if (d.Source != null && uris.Contains(d.Source))
                 {
-                    DisableChildren(group.Items, group.IsLocked);
+                    result.Add(d);
                 }
             }
+
+            return result;
         }
+
+        public void SetTheme(string name)
+        {
+            if (!_themesResources.ContainsKey(name))
+            {
+                return;
+            }
+
+            if (_themesResources.TryGetValue(name, out var resources))
+            {
+                foreach (var res in resources)
+                {
+                    Application.Current.Resources.MergedDictionaries.Add(res);
+                }
+
+                if (_activeTheme != null)
+                {
+                    foreach (var res in _themesResources[_activeTheme])
+                    {
+                        Application.Current.Resources.MergedDictionaries.Remove(res);
+                    }
+                }
+
+                _activeTheme = name;
+            }
+        }
+
+        private void OnChangeThemeCommandExecute(object obj)
+        {
+            if (_activeTheme != null)
+            {
+                var i = _availableThemes.IndexOf(_activeTheme);
+                var next = i + 1 == _themes.Count ? 0 : i + 1;
+
+                SetTheme(_availableThemes[next]);
+            }
+            else if (_availableThemes.Count > 0)
+            {
+                SetTheme(_availableThemes[0]);
+            }
+        }
+        #endregion
     }
 }
