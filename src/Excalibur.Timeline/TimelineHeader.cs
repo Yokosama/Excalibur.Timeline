@@ -33,9 +33,22 @@ namespace Excalibur.Timeline
             DependencyProperty.Register(nameof(SelectedHeaderItems), typeof(System.Collections.IList), typeof(TimelineScale), new FrameworkPropertyMetadata(new ObservableCollection<object>(), OnSelectedHeaderItemsSourceChanged));
 
         /// <summary>
+        /// 选中的Group/Track改变事件
+        /// </summary>
+        public event SelectionChangedEventHandler SelectionHeaderItemsChanged
+        {
+            add { AddHandler(SelectionHeaderItemsChangedEvent, value); }
+            remove { RemoveHandler(SelectionHeaderItemsChangedEvent, value); }
+        }
+        /// <summary>
+        /// 选中的Clip改变事件
+        /// </summary>
+        public static readonly RoutedEvent SelectionHeaderItemsChangedEvent = EventManager.RegisterRoutedEvent(nameof(SelectionHeaderItemsChanged), RoutingStrategy.Bubble, typeof(SelectionChangedEventHandler), typeof(TimelineHeader));
+
+        /// <summary>
         /// 选中的HeaderItems集合修改事件
         /// </summary>
-        public event NotifyCollectionChangedEventHandler SelectedHeaderItemsChanged;
+        internal event NotifyCollectionChangedEventHandler SelectedHeaderItemsChanged;
 
         private Dictionary<object, object> _selectedHeaderItems = new Dictionary<object, object>();
 
@@ -110,12 +123,14 @@ namespace Excalibur.Timeline
                         SelectedHeaderItems.Add(item);
                         _selectedHeaderItems[item] = trackHeader;
                         SelectedHeaderItemsChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+                        RaiseSelectionTrackItemsChanged(new List<object> { item }, null);
                     }
                     else if(SelectedHeaderItems.Contains(item))
                     {
                         SelectedHeaderItems.Remove(item);
                         _selectedHeaderItems.Remove(item);
                         SelectedHeaderItemsChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
+                        RaiseSelectionTrackItemsChanged(null, new List<object> { item });
                     }
                 }
             }
@@ -204,13 +219,31 @@ namespace Excalibur.Timeline
         /// </summary>
         public void UnselectAllHeaderItems()
         {
+            if (SelectedHeaderItems.Count <= 0) return;
+
             SelectedHeaderItems.Clear();
+            List<object> unselected = new List<object>();
             foreach (var item in _selectedHeaderItems)
             {
+                unselected.Add(item.Key);
                 UnselectHeaderItem(item.Value);
             }
             _selectedHeaderItems.Clear();
             SelectedHeaderItemsChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+
+            if(unselected.Count > 0)
+            {
+                RaiseSelectionTrackItemsChanged(null, unselected);
+            }
+        }
+
+        private void RaiseSelectionTrackItemsChanged(List<object> selected, List<object> unselected)
+        {
+            SelectionChangedEventArgs selectionChanged = new SelectionChangedEventArgs(SelectionHeaderItemsChangedEvent, unselected, selected)
+            {
+                Source = this,
+            };
+            RaiseEvent(selectionChanged);
         }
     }
 }

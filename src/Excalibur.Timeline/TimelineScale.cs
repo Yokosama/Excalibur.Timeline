@@ -494,6 +494,19 @@ namespace Excalibur.Timeline
             DependencyProperty.Register(nameof(IsSelecting), typeof(bool), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.False));
 
         /// <summary>
+        /// 选中的Clip改变事件
+        /// </summary>
+        public event SelectionChangedEventHandler SelectionTrackItemsChanged
+        {
+            add { AddHandler(SelectionTrackItemsChangedEvent, value); }
+            remove { RemoveHandler(SelectionTrackItemsChangedEvent, value); }
+        }
+        /// <summary>
+        /// 选中的Clip改变事件
+        /// </summary>
+        public static readonly RoutedEvent SelectionTrackItemsChangedEvent = EventManager.RegisterRoutedEvent(nameof(SelectionTrackItemsChanged), RoutingStrategy.Bubble, typeof(SelectionChangedEventHandler), typeof(TimelineScale));
+
+        /// <summary>
         /// Clip Items拖拽开始
         /// </summary>
         public ICommand ItemsDragStartedCommand
@@ -668,6 +681,7 @@ namespace Excalibur.Timeline
         private bool _dragCurrentTimePointer = false;
         #endregion
 
+        private bool _inSelection;
         private SelectionHelper _selection;
         private Dictionary<object, object> _groupOrTrackItems = new Dictionary<object, object>();
         #region Drag
@@ -1477,6 +1491,10 @@ namespace Excalibur.Timeline
                 {
                     SelectedTrackItems.Add(item);
                     _selectedTrackItems[item] = itemContainer;
+                    if (!_inSelection)
+                    {
+                        RaiseSelectionTrackItemsChanged(new List<object> { item }, null);
+                    }
                 }
             }
         }
@@ -1490,7 +1508,11 @@ namespace Excalibur.Timeline
                 if (item != null && SelectedTrackItems.Contains(item))
                 {
                     SelectedTrackItems.Remove(item);
-                    _selectedTrackItems.Remove(item);
+                    _selectedTrackItems.Remove(item); 
+                    if (!_inSelection)
+                    {
+                        RaiseSelectionTrackItemsChanged(null, new List<object> { item });
+                    }
                 }
             }
         }
@@ -1673,18 +1695,45 @@ namespace Excalibur.Timeline
 
         internal void ApplyPreviewingSelection()
         {
+            _inSelection = true;
+            List<object> selected = new List<object>();
+            List<object> unselected = new List<object>();
             foreach (var item in TrackItems)
             {
+                var obj = GetItemOrContainerFromTrackItemContainer(item);
+                
                 if (item.IsPreviewingSelection==true)
                 {
+                    if (obj != null && !item.IsSelected)
+                    {
+                        selected.Add(obj);
+                    }
                     item.IsSelected = true;
                 }
                 else if(item.IsPreviewingSelection == false)
                 {
+                    if (obj != null && item.IsSelected)
+                    {
+                        unselected.Add(obj);
+                    }
                     item.IsSelected = false;
                 }
                 item.IsPreviewingSelection = null;
             }
+            _inSelection = false;
+            if(selected.Count > 0 || unselected.Count > 0)
+            {
+                RaiseSelectionTrackItemsChanged(selected, unselected);
+            }
+        }
+
+        private void RaiseSelectionTrackItemsChanged(List<object> selected, List<object> unselected)
+        {
+            SelectionChangedEventArgs selectionChanged = new SelectionChangedEventArgs(SelectionTrackItemsChangedEvent, unselected, selected)
+            {
+                Source = this,
+            };
+            RaiseEvent(selectionChanged);
         }
 
         #endregion
