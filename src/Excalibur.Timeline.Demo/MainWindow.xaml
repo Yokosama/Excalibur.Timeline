@@ -10,21 +10,6 @@
         Width="800"
         xmlns:tl="clr-namespace:Excalibur.Timeline;assembly=Excalibur.Timeline"
         x:Name="mainWnd">
-    <Window.Resources>
-        <Style TargetType="{x:Type tl:TimelineScale}"
-               BasedOn="{StaticResource {x:Type tl:TimelineScale}}">
-            <Setter Property="ScaleMiddleLineHeight"
-                    Value="10" />
-            <Setter Property="ScaleNormalLineHeight"
-                    Value="5" />
-            <Setter Property="ScaleTextHeight"
-                    Value="16" />
-            <Setter Property="LastTimePosOffset"
-                    Value="40" />
-            <Setter Property="ZoomMode"
-                    Value="Fixed" />
-        </Style>
-    </Window.Resources>
     <Grid>
         <Grid.Resources>
 
@@ -205,6 +190,14 @@
 
             <Style TargetType="{x:Type tl:TimelineScale}"
                    BasedOn="{StaticResource {x:Type tl:TimelineScale}}">
+                <Setter Property="ScaleMiddleLineHeight"
+                        Value="10" />
+                <Setter Property="ScaleNormalLineHeight"
+                        Value="5" />
+                <Setter Property="ScaleTextHeight"
+                        Value="16" />
+                <Setter Property="LastTimePosOffset"
+                        Value="40" />
                 <Setter Property="ZoomMode"
                         Value="{Binding CutScene.ZoomMode}" />
                 <Setter Property="TimeStep"

@@ -1039,7 +1039,7 @@ namespace Excalibur.Timeline
 
         private static void OnCurrentTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TimelineScale scale && !scale.IsInAutoPanning)
+            if (d is TimelineScale scale && scale.Pointers != null && !scale.IsInAutoPanning)
             {
                 scale.Pointers.UpdateCurrentTimePointerPosition(scale.TimeToPos(scale.CurrentTime),
                       scale.CurrentTimeText);
@@ -1493,7 +1493,7 @@ namespace Excalibur.Timeline
                     _selectedTrackItems[item] = itemContainer;
                     if (!_inSelection)
                     {
-                        RaiseSelectionTrackItemsChanged(new List<object> { item }, null);
+                        RaiseSelectionTrackItemsChanged(new List<object> { item }, new List<object>());
                     }
                 }
             }
@@ -1511,7 +1511,7 @@ namespace Excalibur.Timeline
                     _selectedTrackItems.Remove(item); 
                     if (!_inSelection)
                     {
-                        RaiseSelectionTrackItemsChanged(null, new List<object> { item });
+                        RaiseSelectionTrackItemsChanged(new List<object>(), new List<object> { item });
                     }
                 }
             }

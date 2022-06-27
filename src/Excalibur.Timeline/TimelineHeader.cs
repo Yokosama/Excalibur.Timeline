@@ -123,14 +123,14 @@ namespace Excalibur.Timeline
                         SelectedHeaderItems.Add(item);
                         _selectedHeaderItems[item] = trackHeader;
                         SelectedHeaderItemsChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
-                        RaiseSelectionTrackItemsChanged(new List<object> { item }, null);
+                        RaiseSelectionTrackItemsChanged(new List<object> { item }, new List<object>());
                     }
                     else if(SelectedHeaderItems.Contains(item))
                     {
                         SelectedHeaderItems.Remove(item);
                         _selectedHeaderItems.Remove(item);
                         SelectedHeaderItemsChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
-                        RaiseSelectionTrackItemsChanged(null, new List<object> { item });
+                        RaiseSelectionTrackItemsChanged(new List<object>(), new List<object> { item });
                     }
                 }
             }
@@ -233,7 +233,7 @@ namespace Excalibur.Timeline
 
             if(unselected.Count > 0)
             {
-                RaiseSelectionTrackItemsChanged(null, unselected);
+                RaiseSelectionTrackItemsChanged(new List<object>(), unselected);
             }
         }
 
