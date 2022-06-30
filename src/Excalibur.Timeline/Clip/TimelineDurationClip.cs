@@ -103,7 +103,7 @@ namespace Excalibur.Timeline
         /// </summary>
         public TimelineDurationClip()
         {
-            Unloaded += TimelineDurationClipUnloaded;
+            //Unloaded += TimelineDurationClipUnloaded;
         }
 
         private void TimelineDurationClipUnloaded(object sender, RoutedEventArgs e)

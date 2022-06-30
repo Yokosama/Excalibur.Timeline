@@ -246,7 +246,7 @@ namespace Excalibur.Timeline
         public TimelineTrackItemContainer()
         {
             Loaded += TimelineTrackItemContainerLoaded;
-            Unloaded += TimelineTrackItemContainerUnloaded;
+            //Unloaded += TimelineTrackItemContainerUnloaded;
         }
 
         private void TimelineTrackItemContainerLoaded(object sender, RoutedEventArgs e)
@@ -431,6 +431,12 @@ namespace Excalibur.Timeline
 
             if (Owner == null || Scale == null) return;
 
+            if (!IsSelected && e.ChangedButton == MouseButton.Right)
+            {
+                Scale.UnselectAllTrackItems();
+                IsSelected = true;
+            }
+
             if (IsDragging)
             {
                 IsDragging = false;
@@ -449,7 +455,6 @@ namespace Excalibur.Timeline
             {
                 ReleaseMouseCapture();
             }
-            e.Handled = true;
         }
 
         private static void OnCurrentTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

@@ -589,6 +589,20 @@ namespace Excalibur.Timeline
         public static readonly DependencyProperty EnableRealtimeSelectionProperty = DependencyProperty.Register(nameof(EnableRealtimeSelection), typeof(bool), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.False));
 
         /// <summary>
+        /// 鼠标点击的位置
+        /// </summary>
+        public Point MouseDownLocation
+        {
+            get => (Point)GetValue(MouseDownLocationProperty);
+            protected set => SetValue(MouseDownLocationPropertyKey, value);
+        }
+        protected static readonly DependencyPropertyKey MouseDownLocationPropertyKey = DependencyProperty.RegisterReadOnly(nameof(MouseDownLocation), typeof(Point), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Point));
+        /// <summary>
+        /// 鼠标点击的位置
+        /// </summary>
+        public static readonly DependencyProperty MouseDownLocationProperty = MouseDownLocationPropertyKey.DependencyProperty;
+
+        /// <summary>
         /// 当前时间的最小有效时间
         /// </summary>
         public double MinEffectiveTime { get; set; } = 0d;
@@ -721,7 +735,7 @@ namespace Excalibur.Timeline
             _selection = new SelectionHelper(this);
 
             Loaded += TimelineScaleLoaded;
-            Unloaded += TimelineScaleUnloaded;
+            //Unloaded += TimelineScaleUnloaded;
             LayoutUpdated += TimelineScaleLayoutUpdated;
 
             _scaleLinePen = new Pen(ScaleLineBrush, 1);
@@ -1273,6 +1287,7 @@ namespace Excalibur.Timeline
             base.OnMouseLeftButtonDown(e);
 
             var pos = e.GetPosition(this);
+            MouseDownLocation = pos;
             if (pos.Y < ScaleLineAreaHeight && pos.Y >= 0 && !_dragCurrentTimePointer) // 鼠标左键点击刻度线区域，设置当前时间
             {
                 _dragCurrentTimePointer = true;
@@ -1290,6 +1305,13 @@ namespace Excalibur.Timeline
                 e.Handled = true;
             }
             e.Handled = true;
+        }
+
+        protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseRightButtonDown(e);
+            var pos = e.GetPosition(this);
+            MouseDownLocation = pos;
         }
 
         /// <summary>
@@ -1414,17 +1436,13 @@ namespace Excalibur.Timeline
             {
                 nc.CollectionChanged += OnSelectedTrackItemsChanged;
             }
-
-            IList selectedItems = SelectedTrackItems;
-
-            selectedItems.Clear();
-            _selectedTrackItems.Clear();
-            if (newValue != null)
+            if(_selectedTrackItems.Count > 0)
             {
-                for (var i = 0; i < newValue.Count; i++)
+                foreach (var item in _selectedTrackItems)
                 {
-                    selectedItems.Add(newValue[i]);
+                    item.Value.IsSelected = false;
                 }
+                _selectedTrackItems.Clear();
             }
         }
 
@@ -1948,6 +1966,15 @@ namespace Excalibur.Timeline
         public void UnselectAllTrackItems()
         {
             SelectedTrackItems.Clear();
+
+            if (_selectedTrackItems.Count > 0)
+            {
+                // 没有走 OnSelectedTrackItemsChanged的情况
+                foreach (var trackItem in _selectedTrackItems)
+                {
+                    trackItem.Value.IsSelected = false;
+                }
+            }
             _selectedTrackItems.Clear();
         }
         #endregion

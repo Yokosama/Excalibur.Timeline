@@ -104,6 +104,7 @@ namespace Excalibur.Timeline
                     }
                     break;
             }
+            Focus();
             e.Handled = true;
         }
     }

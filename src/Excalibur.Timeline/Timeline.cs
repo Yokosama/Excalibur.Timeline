@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Excalibur.Timeline
 {
@@ -187,6 +188,28 @@ namespace Excalibur.Timeline
                 default:
                     break;
             }
+        }
+
+        /// <summary>
+        /// 获取在Scale区域的鼠标点击位置的所处时间
+        /// </summary>
+        /// <returns></returns>
+        public double ScaleMouseDownPositionToTime()
+        {
+            if (_scale == null) return 0;
+            return _scale.SnapTime(_scale.PosToTime(_scale.MouseDownLocation.X));
+        }
+
+        /// <summary>
+        /// 获取Scale区域时间位置加上偏移之后的时间
+        /// </summary>
+        /// <param name="startTime"></param>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public double ScalePositionOffsetToTime(double startTime, double offset)
+        {
+            if (_scale == null) return startTime;
+            return _scale.SnapTime(_scale.PosToTime(_scale.TimeToPos(startTime) + offset));
         }
     }
 }
