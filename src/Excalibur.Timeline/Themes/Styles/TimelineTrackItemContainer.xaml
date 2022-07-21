@@ -5,6 +5,8 @@
     <Style TargetType="{x:Type tl:TimelineTrackItemContainer}">
         <Setter Property="KeyboardNavigation.IsTabStop"
                 Value="False" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineTrackItemContainer}">

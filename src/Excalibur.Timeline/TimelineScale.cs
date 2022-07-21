@@ -1451,11 +1451,14 @@ namespace Excalibur.Timeline
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Reset:
+                    List<object> items = new List<object>();
                     foreach (var item in _selectedTrackItems)
                     {
                         item.Value.IsSelected = false;
+                        items.Add(item.Key);
                     }
                     _selectedTrackItems.Clear();
+                    RaiseSelectionTrackItemsChanged(new List<object>(), new List<object> { items });
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     IList oldItems = e.OldItems;
@@ -1469,6 +1472,7 @@ namespace Excalibur.Timeline
                                 _selectedTrackItems.Remove(oldItems[i]);
                             }
                         }
+                        RaiseSelectionTrackItemsChanged(new List<object>(), new List<object> { oldItems });
                     }
                     break;
             }
@@ -1491,6 +1495,10 @@ namespace Excalibur.Timeline
                                 if (item != null && _selectedTrackItems.ContainsKey(item))
                                 {
                                     SelectedTrackItems.Remove(item);
+                                }
+                                else if(item == null && container.DataContext != null && _selectedTrackItems.ContainsKey(container.DataContext))
+                                {
+                                    SelectedTrackItems.Remove(container.DataContext);
                                 }
                             }
                         }
@@ -1527,10 +1535,6 @@ namespace Excalibur.Timeline
                 {
                     SelectedTrackItems.Remove(item);
                     _selectedTrackItems.Remove(item); 
-                    if (!_inSelection)
-                    {
-                        RaiseSelectionTrackItemsChanged(new List<object>(), new List<object> { item });
-                    }
                 }
             }
         }

@@ -25,6 +25,8 @@
                 Value="SizeAll" />
         <Setter Property="SnapsToDevicePixels"
                 Value="True" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineTriggerClip}">
@@ -90,6 +92,8 @@
                 Value="20" />
         <Setter Property="SnapsToDevicePixels"
                 Value="True" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineTriggerClip}">
@@ -135,6 +139,8 @@
                 Value="1,0,1,0" />
         <Setter Property="Cursor"
                 Value="SizeAll" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineDurationClip}">
@@ -204,6 +210,8 @@
                 Value="{DynamicResource TimelineDurationClip.FoldBorderBrush}" />
         <Setter Property="BorderThickness"
                 Value="1" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineDurationClip}">

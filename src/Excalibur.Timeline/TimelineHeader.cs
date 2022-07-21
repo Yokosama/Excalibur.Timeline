@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Excalibur.Timeline
 {
@@ -244,6 +245,25 @@ namespace Excalibur.Timeline
                 Source = this,
             };
             RaiseEvent(selectionChanged);
+        }
+
+        /// <summary>
+        /// Override OnPreviewMouseLeftButtonDown
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnPreviewMouseLeftButtonDown(e);
+            // 为点击在GroupHeader或TrackHeader上，取消选中的HeaderItem
+            if(SelectedHeaderItems.Count > 0 && e.OriginalSource is DependencyObject source)
+            {
+                if(source.TryFindParent<TimelineTrackHeader>() != null ||
+                   source.TryFindParent<TimelineGroupHeader>() != null)
+                {
+                    return;
+                }
+                UnselectAllHeaderItems();
+            }
         }
     }
 }

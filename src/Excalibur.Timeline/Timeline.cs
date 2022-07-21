@@ -120,7 +120,7 @@ namespace Excalibur.Timeline
 
         private void TimelineLoaded(object sender, RoutedEventArgs e)
         {
-            if (_header != null)
+            if (_header != null && _header.ScrollViewer != null)
             {
                 _header.ScrollViewer.ScrollChanged += ScrollViewerScrollChanged;
             }

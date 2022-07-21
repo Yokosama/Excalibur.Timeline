@@ -208,6 +208,7 @@ namespace Excalibur.Timeline
             foreach (var item in Items)
             {
                 var container = ItemContainerGenerator.ContainerFromItem(item);
+                if (container == null) continue;
                 var track = container.TryFindChild<TimelineTrack>();
                 if(track != null)
                 {

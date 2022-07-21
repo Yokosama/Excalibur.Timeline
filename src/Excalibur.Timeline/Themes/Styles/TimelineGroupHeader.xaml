@@ -158,6 +158,8 @@
                 Value="5,-5,0,5" />
         <Setter Property="ItemTemplate"
                 Value="{StaticResource DefaultTimelineTrackHeaderTemplate}" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type tl:TimelineGroupHeader}">
