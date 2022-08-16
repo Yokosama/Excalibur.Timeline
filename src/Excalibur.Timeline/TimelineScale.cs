@@ -389,9 +389,15 @@ namespace Excalibur.Timeline
             get { return (double)GetValue(ViewTimeMinProperty); }
             set
             {
-                if (ViewTimeMax > 0)
+                if (_viewTimeMax > MinEffectiveTime)
                 {
-                    _viewTimeMin = Math.Min(value, ViewTimeMax - 0.25d);
+                    _viewTimeMin = Math.Min(value, _viewTimeMax - 0.25d);
+
+                    if (ZoomMode == ZoomMode.Fixed && _viewTimeMin <= MinEffectiveViewTime)
+                    {
+                        _viewTimeMin = MinEffectiveViewTime;
+                    }
+
                     SetValue(ViewTimeMinProperty, _viewTimeMin);
                 }
             }
@@ -400,7 +406,7 @@ namespace Excalibur.Timeline
         /// 界面内的最小时间属性
         /// </summary>
         public static readonly DependencyProperty ViewTimeMinProperty =
-            DependencyProperty.Register(nameof(ViewTimeMin), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            DependencyProperty.Register(nameof(ViewTimeMin), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender, OnViewTimeMinMaxChanged));
 
         private double _viewTimeMax = 0d;
         /// <summary>
@@ -420,7 +426,7 @@ namespace Excalibur.Timeline
         /// 界面内的最大时间属性
         /// </summary>
         public static readonly DependencyProperty ViewTimeMaxProperty =
-            DependencyProperty.Register(nameof(ViewTimeMax), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double25, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            DependencyProperty.Register(nameof(ViewTimeMax), typeof(double), typeof(TimelineScale), new FrameworkPropertyMetadata(BoxValue.Double25, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault| FrameworkPropertyMetadataOptions.AffectsRender, OnViewTimeMinMaxChanged));
 
 
         /// <summary>
@@ -615,11 +621,10 @@ namespace Excalibur.Timeline
         /// </summary>
         public double MinEffectiveViewTime { get; set; } = 0d;
 
-      
         /// <summary>
         /// 界面时间区间大小
         /// </summary>
-        private double ViewTime => ViewTimeMax - ViewTimeMin;
+        private double ViewTime => Math.Max(ViewTimeMax - ViewTimeMin, MinEffectiveViewTime);
 
         private double ViewWidth => ActualWidth;
 
@@ -1118,6 +1123,14 @@ namespace Excalibur.Timeline
             }
         }
 
+        private static void OnViewTimeMinMaxChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is TimelineScale scale)
+            {
+                scale.RaiseTimeScaleChangedEvent();
+            }
+        }
+
         private void UpdateVerticalScrollBarValue()
         {
             if (_itemsPanel == null || VerticalBar == null) return;
@@ -1258,16 +1271,26 @@ namespace Excalibur.Timeline
             base.OnMouseWheel(e);
          
             var mousePosition = Mouse.GetPosition(this);
-            var pointerTimeA = PosToTime(mousePosition.X);
-            var delta = Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) ? 0 : -e.Delta * 0.01f;
-            var t = (Math.Abs(delta * 25) / RenderSize.Width) * ViewTime;
+            ZoomViewTime(mousePosition.X, e.Delta);
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// 缩放ViewTime
+        /// </summary>
+        /// <param name="pos">左右缩放的中点位置</param>
+        /// <param name="value">缩放操作的值</param>
+        public void ZoomViewTime(double pos, double value)
+        {
+            var pointerTimeA = PosToTime(pos);
+            var delta = Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) ? 0 : -value * 0.01f;
+            var t = (Math.Abs(delta * 35) / RenderSize.Width) * ViewTime;
             ViewTimeMin += delta > 0 ? -t : t;
             ViewTimeMax += delta > 0 ? t : -t;
-            var pointerTimeB = PosToTime(mousePosition.X + 0);
+            var pointerTimeB = PosToTime(pos + 0);
             var diff = pointerTimeA - pointerTimeB;
             ViewTimeMin += diff;
             ViewTimeMax += diff;
-
             if (ZoomMode == ZoomMode.Fixed && ViewTimeMin <= MinEffectiveViewTime)
             {
                 ViewTimeMin = MinEffectiveViewTime;
@@ -1275,7 +1298,6 @@ namespace Excalibur.Timeline
 
             InvalidateVisual();
             RaiseTimeScaleChangedEvent();
-            e.Handled = true;
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,7 +32,7 @@ namespace Excalibur.Timeline
         /// 选中的GroupHeader、TrackHeader集合
         /// </summary>
         public static readonly DependencyProperty SelectedHeaderItemsProperty =
-            DependencyProperty.Register(nameof(SelectedHeaderItems), typeof(System.Collections.IList), typeof(TimelineScale), new FrameworkPropertyMetadata(new ObservableCollection<object>(), OnSelectedHeaderItemsSourceChanged));
+            DependencyProperty.Register(nameof(SelectedHeaderItems), typeof(System.Collections.IList), typeof(TimelineHeader), new FrameworkPropertyMetadata(new ObservableCollection<object>(), OnSelectedHeaderItemsSourceChanged));
 
         /// <summary>
         /// 选中的Group/Track改变事件
@@ -88,12 +89,14 @@ namespace Excalibur.Timeline
                         SelectedHeaderItems.Add(item);
                         _selectedHeaderItems[item] = groupHeader;
                         SelectedHeaderItemsChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+                        RaiseSelectionHeaderItemsChanged(new List<object> { item }, new List<object>());
                     }
                     else if (SelectedHeaderItems.Contains(item))
                     {
                         SelectedHeaderItems.Remove(item);
                         _selectedHeaderItems.Remove(item);
                         SelectedHeaderItemsChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
+                        RaiseSelectionHeaderItemsChanged(new List<object>(), new List<object> { item });
                     }
                 }
             }
@@ -124,14 +127,14 @@ namespace Excalibur.Timeline
                         SelectedHeaderItems.Add(item);
                         _selectedHeaderItems[item] = trackHeader;
                         SelectedHeaderItemsChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
-                        RaiseSelectionTrackItemsChanged(new List<object> { item }, new List<object>());
+                        RaiseSelectionHeaderItemsChanged(new List<object> { item }, new List<object>());
                     }
                     else if(SelectedHeaderItems.Contains(item))
                     {
                         SelectedHeaderItems.Remove(item);
                         _selectedHeaderItems.Remove(item);
                         SelectedHeaderItemsChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
-                        RaiseSelectionTrackItemsChanged(new List<object>(), new List<object> { item });
+                        RaiseSelectionHeaderItemsChanged(new List<object>(), new List<object> { item });
                     }
                 }
             }
@@ -222,23 +225,24 @@ namespace Excalibur.Timeline
         {
             if (SelectedHeaderItems.Count <= 0) return;
 
-            SelectedHeaderItems.Clear();
             List<object> unselected = new List<object>();
-            foreach (var item in _selectedHeaderItems)
+            var headerItems = _selectedHeaderItems.ToList();
+            foreach (var item in headerItems)
             {
                 unselected.Add(item.Key);
                 UnselectHeaderItem(item.Value);
             }
+            SelectedHeaderItems.Clear();
             _selectedHeaderItems.Clear();
             SelectedHeaderItemsChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 
             if(unselected.Count > 0)
             {
-                RaiseSelectionTrackItemsChanged(new List<object>(), unselected);
+                RaiseSelectionHeaderItemsChanged(new List<object>(), unselected);
             }
         }
 
-        private void RaiseSelectionTrackItemsChanged(List<object> selected, List<object> unselected)
+        private void RaiseSelectionHeaderItemsChanged(List<object> selected, List<object> unselected)
         {
             SelectionChangedEventArgs selectionChanged = new SelectionChangedEventArgs(SelectionHeaderItemsChangedEvent, unselected, selected)
             {
